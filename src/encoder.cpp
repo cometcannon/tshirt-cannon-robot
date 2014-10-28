@@ -46,10 +46,9 @@ float Encoder::MeasureAngularVelocity()
     {
         float dt = (now - timeOfLastUpdate)/1000000.0;
         angularVelocity = (encoderTickCount - previousEncoderTickCount)/(TICKS_PER_REV * dt);
-        timeOfLastUpdate = now;
     }
-    else
-        timeOfLastUpdate = now;
+
+    timeOfLastUpdate = now;
     
     previousEncoderTickCount = encoderTickCount;
     
