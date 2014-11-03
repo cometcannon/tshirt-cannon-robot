@@ -1,0 +1,35 @@
+\documentclass[letterpaper,12pt]{article}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, fit}
+
+\usepackage[margin=1.0in]{geometry}
+
+\begin{document}
+
+\tikzstyle{block} = [rectangle, rounded corners, minimum width=3cm, minimum height=2cm,text centered, draw=black]
+\tikzstyle{container} = [draw, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
+\tikzstyle{arrow} = [thick, ->, >=latex]
+
+\begin{tikzpicture}[node distance=2cm]
+  \node (input) [align=center, xshift=-1cm] {User\\Inputs};
+  \node (output) [right of=input, align=center] {Video\\Display};
+  \node (computer) [block, yshift=-2cm] {Computer};
+  \node (ar9331) [block, right of=computer, xshift=9cm, yshift=-2cm, align=center] {Atheros\\AR9331};
+  \node (atmega) [block, below of=ar9331, yshift=-2cm, align=center] {Arduino\\ATmega32u4};
+  \node (rpi) [block, right of=computer, above of=ar9331, xshift=-2cm, yshift=2cm] {Raspberry Pi};
+
+  \node (yun) [container, fit=(atmega) (ar9331)] {};
+  \node (yun_text) [yshift=-0.3cm] at (yun.north) {Yun};
+
+  \draw [arrow] (computer.336) -- node[anchor=east, align=center, yshift=-5mm] {Velocity\\Commands} (ar9331.188);
+  \draw [arrow] (ar9331.172) -- node[anchor=west, align=center, xshift=-12mm, yshift=5mm] {Status Updates} (computer.352);
+  \draw [arrow] (ar9331.240) -- node[anchor=east, align=center] {GPIO\\Commands} (atmega.120);
+  \draw [arrow] (atmega.60) -- node[anchor=west, align=center] {Sensor\\Readings} (ar9331.300);
+  \draw [arrow] (rpi.172) -- node[anchor=east, align=center, yshift=5mm] {Video\\Stream} (computer.24);
+  \draw [arrow] (computer.8) -- node[anchor=west, align=center, xshift=-12mm, yshift=-5mm] {Video Commands} (rpi.188);
+  \draw [arrow] (input) -- (computer.134);
+  \draw [arrow] (computer.46) -- (output);
+\end{tikzpicture}
+
+\end{document}
