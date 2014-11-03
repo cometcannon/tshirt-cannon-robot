@@ -6,8 +6,14 @@
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
 \newcommand{\specialcell}[2][c]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+\newcommand{\xxx}[1]{{\color{red}\bf #1}}
 
 \begin{document}
+
+\title{T-Shirt Cannon Software Architecture}
+\author{Hazen Eckert \hspace{3mm} Omar Hasan \hspace{3mm} Ryan Marcotte \hspace{3mm} Ridhwaan Rahman}
+\date{}
+\maketitle
 
 \section{System Overview}
 
@@ -38,26 +44,69 @@
     \draw [arrow] (computer.46) -- (output);
   \end{tikzpicture}
   \caption{System Overview}
-  \label{system_diagram}
+  \label{fig:system_diagram}
 \end{figure}
+
+\subsection{Computer}
+\subsection{AR9331}
+\subsection{ATmega32u4}
+\subsection{Raspberry Pi}
 
 \section{Application Interface Specifications}
 
 \subsection{Message Formats}
 
+\subsubsection{Origin: Computer}
+
+\xxx{Describe the formats of each message type that will be sent from the computer to the robot. The first byte of each message will identify its type and tell how to interpret the rest of the message. If we are going to be using a Pi in addition to the Yun, some message types will actually be addressed to the Yun and others will be addressed to the Pi}
+
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c | c | c | c | c |}
+  \begin{tabular}{| c | c |}
     \hline
-    \textbf{Field} & 0 & 1 & 2 & 3 & 4 \\
+    \textbf{Field} & 0 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Linear\\Velocity\\X} & \specialcell{Linear\\Velocity\\Y} & \specialcell{Linear\\Velocity\\Z} & \specialcell{Angular\\Velocity} \\
+    \textbf{Description} & \specialcell{Command\\Type} \\
     \hline
-    \textbf{Value} & 0 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
+    \textbf{Value} & 0 \\
+    \hline
+  \end{tabular}
+  \caption{Query Command Message Format}
+  \label{tab:query_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c | c |}
+    \hline
+    \textbf{Field} & 0 & 1 & 2 & 3 \\
+    \hline
+    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Linear\\Velocity\\X} & \specialcell{Linear\\Velocity\\Y} & \specialcell{Angular\\Velocity} \\
+    \hline
+    \textbf{Value} & 1 & -128 to 127 & -128 to 127 & -128 to 127 \\
     \hline
   \end{tabular}
   \caption{Velocity Command Message Format}
-  \label{vel_cmd_msg}
+  \label{tab:vel_cmd_msg}
 \end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c |}
+    \hline
+    \textbf{Field} & 0 \\
+    \hline
+    \textbf{Description} & \specialcell{Command\\Type} \\
+    \hline
+    \textbf{Value} & 2 \\
+    \hline
+  \end{tabular}
+  \caption{Fire Command Message Format}
+  \label{tab:fire_cmd_msg}
+\end{table}
+
+\subsubsection{Origin: AR9331}
+
+\subsubsection{Origin: Raspberry Pi}
 
 \end{document}
