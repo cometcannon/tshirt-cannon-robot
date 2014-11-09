@@ -1,8 +1,8 @@
-#include <encoder.h>
+#include "encoder.h"
 
 Encoder::Encoder(){}
 
-Encoder::Encoder(char pinA, char pinB, char interruptPinRef)
+Encoder::Encoder(int pinA, int pinB, int interruptPinRef)
 {
     encoderTickCount = 0;
     previousEncoderTickCount = 0;
@@ -26,14 +26,14 @@ long Encoder::ReturnEncoderTickCount()
     return encoderTickCount;
 }
 
-byte Encoder::ReturnEncoderInterruptPinRef()
+int Encoder::ReturnEncoderInterruptPinRef()
 {
     return encoderInterruptPinRef;
 }
 
 void Encoder::HandleEncoderPinAInterrupt()
 {
-    encoderPinBState = digitalReadFast(encoderPinB); //Will want to replace this with our own version of digitalReadFast()
+    encoderPinBState = digitalRead(encoderPinB); //Will want to replace this with our own version of digitalReadFast()
     encoderTickCount -= encoderPinBState ? -1 : +1; 
 }
 
@@ -45,7 +45,7 @@ float Encoder::MeasureAngularVelocity()
     if(now > timeOfLastUpdate)
     {
         float dt = (now - timeOfLastUpdate)/1000000.0;
-        angularVelocity = (encoderTickCount - previousEncoderTickCount)/(TICKS_PER_REV * dt);
+        angularVelocity = (encoderTickCount - previousEncoderTickCount)/(TICKS_PER_MOTOR_REV * dt);
     }
 
     timeOfLastUpdate = now;

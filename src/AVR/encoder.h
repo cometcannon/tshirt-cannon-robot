@@ -2,23 +2,24 @@
 #define Encoder_h
 
 #include <Arduino.h>
-#include <digitalWriteFast.h>
+
+#define TICKS_PER_MOTOR_REV         250.0 
 
 class Encoder
 {    
     
 public:
     Encoder();
-    explicit Encoder(char pinA, char pinB, char interruptPinRef);
-    char ReturnEncoderInterruptPinRef();
+    explicit Encoder(int pinA, int pinB, int interruptPinRef);
+    int ReturnEncoderInterruptPinRef();
     long ReturnEncoderTickCount();
     void ZeroEncoderTickCount();
     void HandleEncoderPinAInterrupt();
     float MeasureAngularVelocity();
     
 private:
-    char encoderInterruptPinRef;
-    char encoderPinB;
+    int encoderInterruptPinRef;
+    int encoderPinB;
     
     long previousEncoderTickCount;
     volatile long encoderTickCount;

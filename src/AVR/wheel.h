@@ -2,21 +2,19 @@
 #define Wheel_h
 
 #include <Arduino.h>
-#include <PIDController.h>
-#include <encoder.h>
-#include <digitalWriteFast.h>
+#include <Servo.h>
+#include "PID_controller.h"
+#include "encoder.h"
 
 /* Constants */
 #define WHEEL_DIAMETER              0.1524 //Meters
 #define GEAR_RATIO                  12.75
-#define TICKS_PER_MOTOR_REV         250.0 
-#define TICKS_PER_WHEEL_REV         GEAR_RATIO * TICKS_PER_WHEEL_REV
 
 class Wheel
 {     
 public:
     Wheel();
-    explicit Wheel(char _ESCPin, Encoder* _encoder = NULL, PIDController* _angularVelocityController = NULL);
+    explicit Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController);
     int ReturnThrottle();
     void SetThrottle(int throttle);
     void ControlAngularVelocity(float angularVelocitySetpoint);
@@ -24,8 +22,9 @@ public:
 private:
     Encoder* encoder;
     PIDController* angularVelocityController;
+    Servo* esc;
 
-    char ESCPin
+    char ESCPin;
     int currentThrottle;
 };
 
