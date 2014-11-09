@@ -3,11 +3,14 @@
 \usepackage[margin=1.0in]{geometry}
 \usepackage{multirow}
 \usepackage{tikz}
+\usepackage{amsmath}
+
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
 \newcommand{\botname}{\textit{The Gans Cannon}}
 \newcommand{\specialcell}[2][c]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 \newcommand{\xxx}[1]{{\color{red}\bf #1}}
+\newcommand{\AxisRotator}[1][rotate=0]{\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
 
 \begin{document}
 
@@ -50,6 +53,72 @@
 
 \subsection{Computer}
 \subsection{AR9331}
+\subsubsection{Velocity Kinematics}
+
+\noindent In order to command a desired robot velocity,
+\begin{math}
+  v=
+  \begin{bmatrix}
+    v_x \\
+    v_y \\
+    \omega_z
+  \end{bmatrix}
+\end{math}
+, we calculate the wheel velocities as shown in Equations \ref{eq:rw_to_v}-\ref{eq:v_wheel_4}, according to Figure \ref{fig:robot_top_view}.
+
+\begin{figure}[h!]
+  \centering
+
+  \tikzstyle{robot} = [rectangle, minimum width=3cm, minimum height=4cm,text centered, draw=black]
+  \tikzstyle{wheel} = [rectangle, minimum width=5mm, minimum height=1cm, draw=black]
+  \tikzstyle{arrow} = [thick, ->, >=latex]
+  \tikzstyle{dist} = [thick, <->, >=|]
+
+  \begin{tikzpicture}
+    \node (robot) [robot] {};
+    \node (wheel 1) [wheel, left of=robot, xshift=-7.5mm, yshift=1cm] {1};
+    \node (wheel 2) [wheel, right of=robot, xshift=7.5mm, yshift=1cm] {2};
+    \node (wheel 3) [wheel, right of=robot, xshift=7.5mm, yshift=-1cm] {3};
+    \node (wheel 4) [wheel, left of=robot, xshift=-7.5mm, yshift=-1cm] {4};
+
+    \draw [arrow] (0,0) -- node[anchor=north, xshift=-4mm] {y} (-1,0);
+    \draw [arrow] (0,0) -- node[anchor=west, yshift=5mm] {x} (0,1);
+    \draw (0,0)  -- (0,0) node[xshift=2.8mm] {\AxisRotator[x=0.3cm,y=0.3cm,->,rotate=-90,black] $\omega_z$};
+    \draw [dist] (0,2.3) -- node[anchor=south] {$l_1$} (1.8,2.3);
+    \draw [dist] (0,2.3) -- node[anchor=south] {$l_1$} (-1.8,2.3);
+    \draw [dist] (0,-2.3) -- node[anchor=north] {$l_1$} (1.8,-2.3);
+    \draw [dist] (0,-2.3) -- node[anchor=north] {$l_1$} (-1.8,-2.3);
+    \draw [dist] (2.3,0) -- node[anchor=west] {$l_2$} (2.3, 1);
+    \draw [dist] (2.3,0.01) -- node[anchor=west] {$l_2$} (2.3, -1);
+    \draw [dist] (-2.3,0) -- node[anchor=east] {$l_2$} (-2.3, 1);
+    \draw [dist] (-2.3,0.01) -- node[anchor=east] {$l_2$} (-2.3, -1);
+  \end{tikzpicture}
+  \caption{Top View of Robot}
+  \label{fig:robot_top_view}
+\end{figure}
+
+\begin{equation}
+  v_{wheel}=r_{wheel}\omega_{wheel}
+  \label{eq:rw_to_v}
+\end{equation}
+\begin{equation}
+  v_{wheel\,1}=v_x-v_y-(l_1+l_2)\omega_z
+  \label{eq:v_wheel_1}
+\end{equation}
+\begin{equation}
+  v_{wheel\,2}=v_x+v_y+(l_1+l_2)\omega_z
+  \label{eq:v_wheel_2}
+\end{equation}
+\begin{equation}
+  v_{wheel\,3}=v_x+v_y-(l_1+l_2)\omega_z
+  \label{eq:v_wheel_3}
+\end{equation}
+\begin{equation}
+  v_{wheel\,4}=v_x-v_y+(l_1+l_2)\omega_z
+  \label{eq:v_wheel_4}
+\end{equation}
+
+
 \subsection{ATmega32u4}
 \subsection{Raspberry Pi}
 
@@ -116,7 +185,7 @@
 \end{center}
 
 \subsection{Overview}
-\botname's Chassis is the AndyMark C-Chassis with Mecanum Wheel Drive. This chassis was chosen among others because of its price, modularity, and size. 
+\botname's Chassis is the AndyMark C-Chassis with Mecanum Wheel Drive. This chassis was chosen among others because of its price, modularity, and size.
 
 \subsection{Assembly}
 \subsection{Troubleshooting}
