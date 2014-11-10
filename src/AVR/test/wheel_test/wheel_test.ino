@@ -20,6 +20,8 @@ void setup()
   esc.writeMicroseconds(1000);
   delay(233);
   esc.writeMicroseconds(1500);
+  
+  esc.writeMicroseconds(1800);
 }
 
 void loop(){}
