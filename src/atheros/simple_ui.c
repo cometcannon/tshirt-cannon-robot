@@ -18,21 +18,18 @@ void print_help()
     printf("(e)xit\n\n");
 }
 
-void command_lin_vel(int8_t x, int8_t y)
+void command_velocity(int8_t x, int8_t y, int8_t w)
 {
-
-}
-
-void command_ang_vel()
-{
-
+    printf("x: %d\n", x);
+    printf("y: %d\n", y);
+    printf("w: %d\n", w);
 }
 
 int main(int argc, char *argv[])
 {
     char input[100];
     char command = 0;
-    int magnitude, x, y, direction;
+    int magnitude, x, y, w, direction;
 
     while (command != 'e') {
         printf("-> ");
@@ -43,24 +40,36 @@ int main(int argc, char *argv[])
             case 'f':
                 printf("enter magnitude (0-127)\n--> ");
                 scanf("%d", &magnitude);
+
+                command_velocity(magnitude, 0, 0);
                 break;
             case 'b':
                 printf("enter magnitude (0-127)\n--> ");
                 scanf("%d", &magnitude);
+
+                command_velocity(-1 * magnitude, 0, 0);
                 break;
             case 'r':
                 printf("enter magnitude (0-127)\n--> ");
                 scanf("%d", &magnitude);
+
+                command_velocity(0, -1 * magnitude, 0);
                 break;
             case 'l':
                 printf("enter magnitude (0-127)\n--> ");
                 scanf("%d", &magnitude);
+
+                command_velocity(0, magnitude, 0);
                 break;
             case 'v':
                 printf("enter x (-128 to 127)\n--> ");
                 scanf("%d", &x);
                 printf("enter y (-128 to 127)\n--> ");
                 scanf("%d", &y);
+                printf("enter w (-128 to 127)\n--> ");
+                scanf("%d", &w);
+
+                command_velocity(x, y, w);
                 break;
             case 't':
                 printf("(l)eft or (r)ight:\n--> ");
@@ -72,11 +81,14 @@ int main(int argc, char *argv[])
                 else
                     direction = 1;
 
-                printf("enter magnitude (0-255)\n--> ");
+                printf("enter magnitude (0-127)\n--> ");
                 scanf("%d", &magnitude);
 
+                w = direction ? -1 * magnitude : magnitude;
+                command_velocity(0, 0, w);
                 break;
             case 'k':
+                command_velocity(0, 0, 0);
                 break;
             case 'e':
                 break;
