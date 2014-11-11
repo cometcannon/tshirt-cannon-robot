@@ -18,18 +18,35 @@ void print_help()
     printf("(e)xit\n\n");
 }
 
-void command_velocity(int8_t x, int8_t y, int8_t w)
+void command_velocity(int sockfd, int8_t x, int8_t y, int8_t w)
 {
-    printf("x: %d\n", x);
-    printf("y: %d\n", y);
-    printf("w: %d\n", w);
+    int8_t buffer[4];
+
+    buffer[0] = 0;
+    buffer[1] = x;
+    buffer[2] = y;
+    buffer[3] = w;
+
+    write(sockfd, buffer, 4);
 }
 
 int main(int argc, char *argv[])
 {
     char input[100];
     char command = 0;
-    int magnitude, x, y, w, direction;
+    char sock_name = "socket";
+    int sockfd;
+    struct sockaddr_un name;
+    int magnitude;
+    int x;
+    int y;
+    int w;
+    int direction;
+
+    sockfd = socket(PF_LOCAL, SOCK_STREAM, 0);
+    name.sun_family = AF_LOCAL;
+    strcpy(name.sun_path, socket_name);
+    connect(sockfd, &name, SUN_LEN(&name));
 
     while (command != 'e') {
         printf("-> ");
@@ -96,6 +113,8 @@ int main(int argc, char *argv[])
                 print_help();
         }
     }
+
+    close(sockfd);
 
     return 0;
 }
