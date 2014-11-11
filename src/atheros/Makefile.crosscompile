@@ -3,7 +3,18 @@ CROSS_STAGING := $(BASE_DIR)/openwrt-yun/staging_dir/toolchain-mips_r2_gcc-4.6-l
 CROSS_PATH := $(CROSS_STAGING)/bin/
 CC := $(CROSS_STAGING)/bin/mips-openwrt-linux-uclibc-gcc -std=gnu99 -Wall -Wno-unused-variable
 
-all: hello
+SIMPLE_UI_OBJS = simple_ui.o
+ATHEROS_INTERFACE_OBJS = atheros_interface.o
 
-HELLO_SRC = $(HELLO_SRC)
-	export STAGING_DIR=$(CROSS_STAGING) && $(CC) -o $@ $^ $(CFLAGS)
+APPS = simple_ui atheros_interface
+
+all: $(APPS)
+
+simple_ui: $(SIMPLE_UI_OBJS)
+	$(CC) -o $@ $(SIMPLE_UI_OBJS)
+
+atheros_interface: $(ATHEROS_INTERFACE_OBJS)
+	$(CC) -o $@ $(ATHEROS_INTERFACE_OBJS)
+
+clean:
+	@rm -f *.o $(APPS) *~
