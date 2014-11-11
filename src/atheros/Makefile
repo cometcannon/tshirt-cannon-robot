@@ -1,7 +1,4 @@
-BASE_DIR := /home/ryan
-CROSS_STAGING := $(BASE_DIR)/openwrt-yun/staging_dir/toolchain-mips_r2_gcc-4.6-linaro_uClibc-0.9.33.2
-CROSS_PATH := $(CROSS_STAGING)/bin/
-CC := $(CROSS_STAGING)/bin/mips-openwrt-linux-uclibc-gcc -std=gnu99 -Wall -Wno-unused-variable
+CC := @gcc
 
 SIMPLE_UI_OBJS = simple_ui.o
 ATHEROS_INTERFACE_OBJS = atheros_interface.o
