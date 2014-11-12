@@ -137,6 +137,14 @@ int main(int argc, char *argv[])
 
                 command_motor(sockfd, motor, magnitude);
                 break;
+            case 'm':
+                printf("enter motor number (1-4)\n-->");
+                scanf("%d", &motor);
+                printf("enter magnitude (1000-2000)\n-->");
+                scanf("%d", &magnitude);
+
+                command_motor(sockfd, motor, magnitude);
+                break;
             case 'e':
                 break;
             default:
