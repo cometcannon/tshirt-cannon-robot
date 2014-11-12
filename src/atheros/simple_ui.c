@@ -15,6 +15,7 @@ void print_help()
     printf("(v)ector\n");
     printf("(t)urn\n");
     printf("(k)ill\n");
+    printf("(m)otor\n");
     printf("(e)xit\n\n");
 }
 
@@ -30,6 +31,17 @@ void command_velocity(int sockfd, int8_t x, int8_t y, int8_t w)
     write(sockfd, buffer, 4);
 }
 
+void command_motor(int sockfd, int motor, int cmd)
+{
+    int8_t buffer[3];
+
+    buffer[0] = 200;
+    buffer[1] = motor;
+    buffer[2] = cmd;
+
+    write(sockfd, buffer, 3);
+}
+
 int main(int argc, char *argv[])
 {
     char input[100];
@@ -42,6 +54,7 @@ int main(int argc, char *argv[])
     int y;
     int w;
     int direction;
+    int motor;
 
     sockfd = socket(PF_LOCAL, SOCK_STREAM, 0);
     name.sun_family = AF_LOCAL;
@@ -106,6 +119,14 @@ int main(int argc, char *argv[])
                 break;
             case 'k':
                 command_velocity(sockfd, 0, 0, 0);
+                break;
+            case 'm':
+                printf("enter motor number (1-4)\n--> ");
+                scanf("%d", &motor);
+                printf("enter magnitude (1000-2000)\n--> ");
+                scanf("%d", &magnitude);
+
+                command_motor(sockfd, motor, magnitude);
                 break;
             case 'e':
                 break;
