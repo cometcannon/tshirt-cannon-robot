@@ -19,11 +19,20 @@ void print_help()
     printf("(e)xit\n\n");
 }
 
+void command_kill(int sockfd)
+{
+    int8_t buffer[1];
+
+    buffer[0] = 0;
+
+    write(sockfd, buffer, 1);
+}
+
 void command_velocity(int sockfd, int8_t x, int8_t y, int8_t w)
 {
     int8_t buffer[4];
 
-    buffer[0] = 0;
+    buffer[0] = 1;
     buffer[1] = x;
     buffer[2] = y;
     buffer[3] = w;
@@ -35,9 +44,9 @@ void command_motor(int sockfd, int motor, int cmd)
 {
     int8_t buffer[3];
 
-    buffer[0] = 200;
+    buffer[0] = 100;
     buffer[1] = motor;
-    buffer[2] = cmd;
+    buffer[2] = cmd % 1000 / 10;
 
     write(sockfd, buffer, 3);
 }
@@ -118,7 +127,7 @@ int main(int argc, char *argv[])
                 command_velocity(sockfd, 0, 0, w);
                 break;
             case 'k':
-                command_velocity(sockfd, 0, 0, 0);
+                command_kill(sockfd);
                 break;
             case 'm':
                 printf("enter motor number (1-4)\n--> ");

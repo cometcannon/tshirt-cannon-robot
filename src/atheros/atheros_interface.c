@@ -36,6 +36,29 @@ struct vel_profile inverse_kinematics(int8_t v_x, int8_t v_y, int8_t w)
     return vels;
 }
 
+int process_message(int8_t *msg)
+{
+    int8_t msg_type = msg[0];
+    struct vel_profile vels;
+
+    switch (msg_type) {
+        case 0:
+            // kill motors
+            return -1;
+        case 1:
+            vels = inverse_kinematics(msg[1], msg[2], msg[3]);
+            // command motors
+            break;
+        case 100:
+            printf("motor: %d\n", msg[1]);
+            printf("magnitude: %d\n", 1000 + msg[2] * 10);
+            // command motor
+            break;
+    }
+
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
     char sock_name[] = "socket";
@@ -61,13 +84,7 @@ int main(int argc, char *argv[])
         if (read(client_sockfd, buffer, 100) < 0)
             return 1;
 
-        struct vel_profile vels = inverse_kinematics(buffer[1], buffer[2], buffer[3]);
-        printf("forward left: %d\n", vels.for_left);
-        printf("forward right: %d\n", vels.for_right);
-        printf("reverse right: %d\n", vels.rev_right);
-        printf("reverse left: %d\n", vels.rev_left);
-
-        if (!vels.for_left && !vels.for_right && !vels.rev_left && !vels.rev_right)
+        if (process_message(buffer) < 0)
             break;
     }
 
