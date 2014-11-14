@@ -1,4 +1,5 @@
 #include <Arduino.h>
+//#include <Bridge.h>
 #include <Servo.h>
 #include "PID_controller.h"
 #include "encoder.h"
@@ -7,11 +8,11 @@
 PIDController angularVelocityController(10, 0, 0, 0, 0, 0);
 Encoder encoder(3, 4, 0);
 Servo esc;
-//Wheel wheel(5, &esc, &encoder, &angularVelocityController);
+//Wheel wheel(6, &esc, &encoder, &angularVelocityController);
 
 void setup()
 {
-  esc.attach(5);
+  esc.attach(6);
   
   esc.writeMicroseconds(1500);
   delay(233);
@@ -21,7 +22,55 @@ void setup()
   delay(233);
   esc.writeMicroseconds(1500);
   
+  delay(2000);
+  esc.writeMicroseconds(1600);
+  delay(2000);
+  esc.writeMicroseconds(1700);
+  delay(2000);
   esc.writeMicroseconds(1800);
+  delay(2000);
+  esc.writeMicroseconds(1900);
+  delay(2000);
+  esc.writeMicroseconds(2000);
+  delay(2000);
+  
+  esc.writeMicroseconds(1500);
+  
+  
+  
+  //Bridge.begin();
+  
+  //Serial.begin(57600);
+  
+  //while(!Serial){}
+  
+  /*
+  wheel.SetThrottle(1500);
+  delay(233);
+  wheel.SetThrottle(2000);
+  delay(233);
+  wheel.SetThrottle(1000);
+  delay(233);
+  wheel.SetThrottle(1500);
+  
+  delay(2000);
+  
+  wheel.SetThrottle(1600);
+  */
 }
 
-void loop(){}
+
+
+void loop()
+{
+  /*
+  Serial.println(wheel.currentThrottle);
+  Serial.println(wheel.ESCPin);
+  delay(2000);
+  */
+}
+
+void calibrate()
+{
+  
+}

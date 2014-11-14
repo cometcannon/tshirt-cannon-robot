@@ -23,9 +23,6 @@ int Wheel::ReturnThrottle()
 
 void Wheel::SetThrottle(int throttle)
 {
-/*
-    Will have to test the ESC to determine how to implement this function
-*/
     if(throttle > 2000)
         throttle = 2000;
     else if (throttle < 1000)
@@ -38,6 +35,6 @@ void Wheel::SetThrottle(int throttle)
 
 void Wheel::ControlAngularVelocity(float angularVelocitySetpoint)
 {
-	if(angularVelocityController != NULL && encoder != NULL)
-    	SetThrottle((int)angularVelocityController->ComputeOutput(encoder->MeasureAngularVelocity(), angularVelocitySetpoint));
+    if(angularVelocityController != NULL && encoder != NULL)
+        SetThrottle((int)angularVelocityController->ComputeOutput(encoder->MeasureAngularVelocity(), angularVelocitySetpoint));
 }

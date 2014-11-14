@@ -19,13 +19,13 @@ public:
     void SetThrottle(int throttle);
     void ControlAngularVelocity(float angularVelocitySetpoint);
     
+    char ESCPin;
+    int currentThrottle;
+    
 private:
     Encoder* encoder;
     PIDController* angularVelocityController;
     Servo* esc;
-
-    char ESCPin;
-    int currentThrottle;
 };
 
 #endif
