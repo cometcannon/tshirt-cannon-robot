@@ -12,6 +12,9 @@ Servo esc;
 
 void setup()
 {
+  Serial.begin(9600);
+  
+  /*
   esc.attach(6);
   
   esc.writeMicroseconds(1500);
@@ -22,20 +25,26 @@ void setup()
   delay(233);
   esc.writeMicroseconds(1500);
   
-  delay(2000);
+  
   esc.writeMicroseconds(1600);
+  delay(2000);
+  */
+  
+  attachInterrupt(encoder.ReturnEncoderInterruptPinRef(), handleEncoderPinAInterrupt, RISING);  
+  
+  
+  /*
+  esc.writeMicroseconds(1600);
+  delay(2000);
+  esc.writeMicroseconds(1650);
   delay(2000);
   esc.writeMicroseconds(1700);
   delay(2000);
-  esc.writeMicroseconds(1800);
-  delay(2000);
-  esc.writeMicroseconds(1900);
-  delay(2000);
-  esc.writeMicroseconds(2000);
+  esc.writeMicroseconds(1750);
   delay(2000);
   
   esc.writeMicroseconds(1500);
-  
+  */
   
   
   //Bridge.begin();
@@ -68,9 +77,17 @@ void loop()
   Serial.println(wheel.ESCPin);
   delay(2000);
   */
+  
+  Serial.println(encoder.MeasureAngularVelocity());
+  delay(100);
 }
 
 void calibrate()
 {
   
+}
+
+void handleEncoderPinAInterrupt()
+{
+    encoder.HandleEncoderPinAInterrupt();
 }

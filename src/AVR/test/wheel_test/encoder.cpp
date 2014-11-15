@@ -34,7 +34,7 @@ int Encoder::ReturnEncoderInterruptPinRef()
 void Encoder::HandleEncoderPinAInterrupt()
 {
     encoderPinBState = digitalRead(encoderPinB); //Will want to replace this with our own version of digitalReadFast()
-    encoderTickCount -= encoderPinBState ? -1 : +1; 
+    encoderTickCount += encoderPinBState ? -1 : +1; 
 }
 
 float Encoder::MeasureAngularVelocity() 
