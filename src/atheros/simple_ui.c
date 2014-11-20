@@ -44,9 +44,9 @@ void command_motor(int sockfd, int motor, int cmd)
 {
     int8_t buffer[3];
 
-    buffer[0] = 100;
+    buffer[0] = 2;
     buffer[1] = motor;
-    buffer[2] = cmd % 1000 / 10;
+    buffer[2] = cmd;
 
     write(sockfd, buffer, 3);
 }
@@ -130,17 +130,9 @@ int main(int argc, char *argv[])
                 command_kill(sockfd);
                 break;
             case 'm':
-                printf("enter motor number (1-4)\n--> ");
+                printf("enter motor number (0-3)\n--> ");
                 scanf("%d", &motor);
-                printf("enter magnitude (1000-2000)\n--> ");
-                scanf("%d", &magnitude);
-
-                command_motor(sockfd, motor, magnitude);
-                break;
-            case 'm':
-                printf("enter motor number (1-4)\n-->");
-                scanf("%d", &motor);
-                printf("enter magnitude (1000-2000)\n-->");
+                printf("enter magnitude (-128 to 127)\n--> ");
                 scanf("%d", &magnitude);
 
                 command_motor(sockfd, motor, magnitude);

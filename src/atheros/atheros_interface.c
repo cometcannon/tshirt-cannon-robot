@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
@@ -36,23 +37,41 @@ struct vel_profile inverse_kinematics(int8_t v_x, int8_t v_y, int8_t w)
     return vels;
 }
 
-int process_message(int8_t *msg)
+int process_message(int atmegafd, int8_t *msg)
 {
     int8_t msg_type = msg[0];
     struct vel_profile vels;
+    int8_t *buffer;
 
     switch (msg_type) {
         case 0:
-            // kill motors
+            buffer = calloc(1, sizeof msg_type);
+            buffer[0] = 0;
+            write(atmegafd, buffer, 1);
+            free(buffer);
+
             return -1;
         case 1:
             vels = inverse_kinematics(msg[1], msg[2], msg[3]);
-            // command motors
+
+            buffer = calloc(5, sizeof msg_type);
+            buffer[0] = 2;
+            buffer[1] = vels.for_left;
+            buffer[2] = vels.for_right;
+            buffer[3] = vels.rev_right;
+            buffer[4] = vels.rev_left;
+            write(atmegafd, buffer, 5);
+            free(buffer);
+
             break;
-        case 100:
-            printf("motor: %d\n", msg[1]);
-            printf("magnitude: %d\n", 1000 + msg[2] * 10);
-            // command motor
+        case 2:
+            buffer = calloc(3, sizeof msg_type);
+            buffer[0] = 1;
+            buffer[1] = msg[1];
+            buffer[2] = msg[2];
+            write(atmegafd, buffer, 3);
+            free(buffer);
+
             break;
     }
 
@@ -62,8 +81,10 @@ int process_message(int8_t *msg)
 int main(int argc, char *argv[])
 {
     char sock_name[] = "socket";
-    int sockfd;
+    int sockfd, atmegafd;
     struct sockaddr_un name;
+
+    atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY | O_NDELAY);
 
     sockfd = socket(PF_LOCAL, SOCK_STREAM, 0);
     name.sun_family = AF_LOCAL;
@@ -84,7 +105,7 @@ int main(int argc, char *argv[])
         if (read(client_sockfd, buffer, 100) < 0)
             return 1;
 
-        if (process_message(buffer) < 0)
+        if (process_message(atmegafd, buffer) < 0)
             break;
     }
 
