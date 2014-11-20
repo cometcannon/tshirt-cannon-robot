@@ -83,10 +83,10 @@
 
   \begin{tikzpicture}
     \node (robot) [robot] {};
-    \node (wheel 1) [wheel, left of=robot, xshift=-7.5mm, yshift=1cm] {1};
-    \node (wheel 2) [wheel, right of=robot, xshift=7.5mm, yshift=1cm] {2};
-    \node (wheel 3) [wheel, right of=robot, xshift=7.5mm, yshift=-1cm] {3};
-    \node (wheel 4) [wheel, left of=robot, xshift=-7.5mm, yshift=-1cm] {4};
+    \node (wheel 1) [wheel, left of=robot, xshift=-7.5mm, yshift=1cm] {0};
+    \node (wheel 2) [wheel, right of=robot, xshift=7.5mm, yshift=1cm] {1};
+    \node (wheel 3) [wheel, right of=robot, xshift=7.5mm, yshift=-1cm] {2};
+    \node (wheel 4) [wheel, left of=robot, xshift=-7.5mm, yshift=-1cm] {3};
 
     \draw [arrow] (0,0) -- node[anchor=north, xshift=-4mm] {y} (-1,0);
     \draw [arrow] (0,0) -- node[anchor=west, yshift=5mm] {x} (0,1);
@@ -109,21 +109,40 @@
   \label{eq:rw_to_v}
 \end{equation}
 \begin{equation}
-  v_{wheel\,1}=v_x-v_y-(l_1+l_2)\omega_z
+  v_{wheel\,0}=v_x-v_y-(l_1+l_2)\omega_z
   \label{eq:v_wheel_1}
 \end{equation}
 \begin{equation}
-  v_{wheel\,2}=v_x+v_y+(l_1+l_2)\omega_z
+  v_{wheel\,1}=v_x+v_y+(l_1+l_2)\omega_z
   \label{eq:v_wheel_2}
 \end{equation}
 \begin{equation}
-  v_{wheel\,3}=v_x+v_y-(l_1+l_2)\omega_z
+  v_{wheel\,2}=v_x+v_y-(l_1+l_2)\omega_z
   \label{eq:v_wheel_3}
 \end{equation}
 \begin{equation}
-  v_{wheel\,4}=v_x-v_y+(l_1+l_2)\omega_z
+  v_{wheel\,3}=v_x-v_y+(l_1+l_2)\omega_z
   \label{eq:v_wheel_4}
 \end{equation}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c |}
+    \hline
+    \textbf{Motor} & \textbf{Position} \\
+    \hline
+    0 & Forward Left \\
+    \hline
+    1 & Forward Right \\
+    \hline
+    2 & Reverse Right \\
+    \hline
+    3 & Reverse Left \\
+    \hline
+  \end{tabular}
+  \caption{Motor Numbers}
+  \label{tab:motor_nums}
+\end{table}
 
 
 \subsection{ATmega32u4}
@@ -251,7 +270,7 @@
     \hline
     \textbf{Byte} & 0 & 1 & 2 & 3 & 4 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Motor 1\\Value} & \specialcell{Motor 2\\Value} & \specialcell{Motor 3\\Value} & \specialcell{Motor 4\\Value} \\
+    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Motor 0\\Value} & \specialcell{Motor 1\\Value} & \specialcell{Motor 2\\Value} & \specialcell{Motor 3\\Value} \\
     \hline
     \textbf{Value} & 2 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
     \hline
