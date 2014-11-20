@@ -53,7 +53,14 @@
 
 \subsection{Computer}
 \subsection{AR9331}
+
+\subsection{Serial Communication}
+\label{sec:ar9331_serial_com}
+\noindent The AR9331 and ATMega32U4 communicate via serial. To do this, we open the proper serial device (\texttt{/dev/ttyATH0}) and use the straightforward \texttt{write()} command. No further configuration of the serial device is necessary.
+
+
 \subsubsection{Velocity Kinematics}
+\label{sec:ar9331_vel_kin}
 
 \noindent In order to command a desired robot velocity,
 \begin{math}
@@ -120,36 +127,44 @@
 
 
 \subsection{ATmega32u4}
+
+\subsubsection{Serial Communication}
+\label{sec:atmega_serial_com}
+
+\noindent Serial communication can occur between the ATmega and AR9331 chips or between the ATmega chip and a computer connected via USB. In the former case, we read and write to \texttt{Serial1}, whereas in the latter, we utilize the typical \texttt{Serial}.
+
+
 \subsection{Raspberry Pi}
 
 \section{Application Interface Specifications}
 
 \subsection{Message Formats}
 
-\subsubsection{Origin: Computer}
+\subsubsection{Computer to Robot}
+\label{sec:comp_robot_msg}
 
-\xxx{Describe the formats of each message type that will be sent from the computer to the robot. The first byte of each message will identify its type and tell how to interpret the rest of the message. If we are going to be using a Pi in addition to the Yun, some message types will actually be addressed to the Yun and others will be addressed to the Pi}
+\noindent Tables \ref{tab:comp_kill_cmd_msg}-\ref{tab:comp_fire_cmd_msg} show the various message types that can be sent from the computer to the robot. Some message types are destined for the Yun, while others are destined for the Raspberry Pi. \xxx{Query commands will begin at 101}
 
 \begin{table}[h!]
   \centering
   \begin{tabular}{| c | c |}
     \hline
-    \textbf{Field} & 0 \\
+    \textbf{Byte} & 0 \\
     \hline
     \textbf{Description} & \specialcell{Command\\Type} \\
     \hline
     \textbf{Value} & 0 \\
     \hline
   \end{tabular}
-  \caption{Query Command Message Format}
-  \label{tab:query_cmd_msg}
+  \caption{Kill Command Message Format}
+  \label{tab:comp_kill_cmd_msg}
 \end{table}
 
 \begin{table}[h!]
   \centering
   \begin{tabular}{| c | c | c | c | c |}
     \hline
-    \textbf{Field} & 0 & 1 & 2 & 3 \\
+    \textbf{Byte} & 0 & 1 & 2 & 3 \\
     \hline
     \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Linear\\Velocity\\X} & \specialcell{Linear\\Velocity\\Y} & \specialcell{Angular\\Velocity} \\
     \hline
@@ -157,27 +172,98 @@
     \hline
   \end{tabular}
   \caption{Velocity Command Message Format}
-  \label{tab:vel_cmd_msg}
+  \label{tab:comp_vel_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0 & 1 & 2 \\
+    \hline
+    \textbf{Description} & \specialcell{Command\\Type}& \specialcell{Motor\\Number} & Value \\
+    \hline
+    \textbf{Value} & 2 & 0-3 & -128 to 127 \\
+    \hline
+  \end{tabular}
+  \caption{Individual Motor Command Message Format}
+  \label{tab:comp_ind_motor_cmd_msg}
 \end{table}
 
 \begin{table}[h!]
   \centering
   \begin{tabular}{| c | c |}
     \hline
-    \textbf{Field} & 0 \\
+    \textbf{Byte} & 0 \\
     \hline
     \textbf{Description} & \specialcell{Command\\Type} \\
     \hline
-    \textbf{Value} & 2 \\
+    \textbf{Value} & 3 \\
     \hline
   \end{tabular}
   \caption{Fire Command Message Format}
-  \label{tab:fire_cmd_msg}
+  \label{tab:comp_fire_cmd_msg}
 \end{table}
 
-\subsubsection{Origin: AR9331}
+\subsubsection{Robot to Computer}
+\label{sec:robot_comp_msg}
 
-\subsubsection{Origin: Raspberry Pi}
+
+
+\subsubsection{AR9331 to ATmega32u4}
+\label{sec:ath_mega_msg}
+
+\xxx{Query commands will start at 101, but we have yet to come up with the types that we need}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c |}
+    \hline
+    \textbf{Byte} & 0 \\
+    \hline
+    \textbf{Description} & \specialcell{Command\\Type} \\
+    \hline
+    \textbf{Value} & 0 \\
+    \hline
+  \end{tabular}
+  \caption{Kill Command Message Format}
+  \label{tab:ath_kill_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0 & 1 & 2 \\
+    \hline
+    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Motor\\Number} & Value \\
+    \hline
+    \textbf{Value} & 1 & 0-3 & -128 to 127 \\
+    \hline
+  \end{tabular}
+  \caption{Individual Motor Command Message Format}
+  \label{tab:ath_ind_motor_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0 & 1 & 2 & 3 & 4 \\
+    \hline
+    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Motor 1\\Value} & \specialcell{Motor 2\\Value} & \specialcell{Motor 3\\Value} & \specialcell{Motor 4\\Value} \\
+    \hline
+    \textbf{Value} & 2 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
+    \hline
+  \end{tabular}
+  \caption{All Motor Command Message Format}
+  \label{tab:ath_all_motor_cmd_msg}
+\end{table}
+
+\subsubsection{ATmega32u4 to AR9331}
+\label{sec:mega_ath_msg}
+
+
 
 \section{Chassis}
 \begin{center}
