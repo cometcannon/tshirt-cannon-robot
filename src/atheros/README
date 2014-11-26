@@ -32,19 +32,30 @@ Step 4: build the OpenWrt image (takes a long time, 1-3 hr)
 
 $ make
 
----------------------------------
-Step 5: cd to the tshirt-cannon repo
-$ cd ~/tshirt-cannon/yun/
+** If problems occur during the build, disable any troublesome
+** packages via make menuconfig - all you really need to build
+** is the toolchain
 
 ---------------------------------
-Step 6: build any desired files
+Step 5: cd to the tshirt-cannon repo
+$ cd ~/tshirt-cannon/src/atheros/
+
+---------------------------------
+Step 6: edit the BASE_DIR variable
+
+$ vi properties.mk
+
+BASE_DIR := /path/to/openwrt-yun/repository
+
+---------------------------------
+Step 7: build any desired files
 $ make -f Makefile.crosscompile
 
 ---------------------------------
-Step 7: copy the executables to the yun
+Step 8: copy the executables to the yun
 $ scp hello root@192.168.240.1:/usr/bin/
 
 ---------------------------------
-Step 8: test everything by logging in to yun and executing your program
+Step 9: test everything by logging in to yun and executing your program
 $ ssh root@192.168.240.1
 $ /usr/bin/hello
