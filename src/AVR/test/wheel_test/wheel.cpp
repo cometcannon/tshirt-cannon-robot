@@ -21,7 +21,7 @@ int Wheel::ReturnThrottle()
     return currentThrottle;
 }
 
-void Wheel::SetThrottle(int throttle)
+void Wheel::SetThrottle(float throttle)
 {
     if(throttle > 2000)
         throttle = 2000;

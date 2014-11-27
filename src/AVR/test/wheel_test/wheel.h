@@ -16,7 +16,7 @@ public:
     Wheel();
     explicit Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController);
     int ReturnThrottle();
-    void SetThrottle(int throttle);
+    void SetThrottle(float throttle);
     void ControlAngularVelocity(float angularVelocitySetpoint);
     
     char ESCPin;
