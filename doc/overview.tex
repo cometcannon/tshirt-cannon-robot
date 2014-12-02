@@ -24,53 +24,45 @@
 \begin{figure}[h!]
   \centering
   \tikzstyle{block} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
-  \tikzstyle{voltage} = [thick, ->, >=latex]
-  \tikzstyle{signal} = [->, >=stealth]
+  \tikzstyle{dcvolt} = [solid, thick, red];
+  \tikzstyle{signal} = [solid, ->, >=stealth];
 
   \begin{tikzpicture}
-    %\draw[help lines] (-1, -8) grid (15,1);
+    %\draw[help lines] (-6, -12) grid (12,1);
+    \node (circuitbreaker) [block, align=center] {Circuit\\Breaker};
+    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {Boost\\Converter};
+    \node (buck) [block, align=center, right of=boost, xshift=7cm] {Buck\\Converter};
+    \node (mcu) [block, below of=buck, yshift=-1.25cm] {MCU};
+    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {Trigger\\Solenoid};
+    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {Pressure\\Solenoid};
+    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {Encoders};
+    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {Pressure\\Sensor};
+    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {Camera\\Module};
+    \node (esc) [block, right of=camera, xshift=2cm] {ESC};
+    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {Motors};
 
-    \node (battery) [block, align=center] {Battery};
-    \node (circuitbreaker) [block, align=center, below of=battery, yshift=-15mm] {Circuit\\Breaker};
-    \node (powerboard) [block, align=center, right of=circuitbreaker, minimum height=7cm, xshift=25mm] {Power\\Distribution\\Board};
-    \node (boost) [block, align=center, right of=powerboard, minimum height=2cm, xshift=25mm, yshift=25mm] {Boost\\Converter};
-    \node (buck) [block, align=center, right of=powerboard, minimum height=2cm, xshift=25mm, yshift=-25mm] {Buck\\Converter};
-    \node (triggersolenoid) [block, align=center, right of=boost, yshift=1cm, xshift=18mm] {Trigger\\Solenoid};
-    \node (pressuresolenoid) [block, align=center, right of=boost, yshift=-1cm, xshift=18mm] {Pressure\\Solenoid};
-    \node (arduino) [block, align=center, right of=buck, xshift=65mm] {Arduino};
-    \node (esc) [block, align=center, below of=arduino, xshift=-25mm, yshift=-30mm] {ESC};
-    \node (encoders) [block, align=center, below of=arduino, xshift=-25mm] {Encoders};
-    \node (rpi) [block, align=center, right of=buck, xshift=10mm, yshift=-20mm] {Raspberry\\Pi};
-    \node (pressuresensor) [block, align=center, above of=arduino, xshift=-25mm] {Pressure\\Sensor};
-    \node (controlboard) [block, align=center, above of=arduino, xshift=-25mm, yshift=15mm] {Control\\Board};
-
-    \draw [solid, thick] (battery) -- node[anchor=east] {+12V} (circuitbreaker);
-    \draw [solid, thick] (circuitbreaker) -- node[anchor=north] {+12V} (powerboard);
-    \draw [solid, thick] (powerboard.east) -- +(0.5,0) node[anchor=west] {+12V};
-    \draw [solid, thick] (powerboard.east) -- +(0.5,0) -| +(0.5,-2.5) -| (buck.west);
-    \draw [solid, thick] (powerboard.east) -- +(0.5,0) -| +(0.5,2.5) -| (boost.west);
-    \draw [solid, thick] (boost.east) -- +(0.3,0) -| node[anchor=west] {+24V} +(0.3,1) -| (triggersolenoid.west);
-    \draw [solid, thick] (boost.east) -- +(0.3,0) -| +(0.3,-1) -| (pressuresolenoid.west);
-    \draw [solid, thick] (buck.east) -- node[anchor=south, xshift=-2.5mm] {+5V} (10.5,-5);
-    \draw [solid, thick] (10.5, -5) -- (10.5, -2.5);
-    \draw [solid, thick] (10.5, -5) -- (10.5, -6);
-    \draw [solid, thick] (10.5, -5) -- (arduino.west);
-    \draw [solid, thick] (10.5, -2.5) -- (controlboard.west);
-    \draw [solid, thick] (10.5, -4) -- (pressuresensor.west);
-    \draw [solid, thick] (10.5, -6) -- (encoders.west);
-    \draw [solid, thick] (powerboard.south) -- node[anchor=west, yshift=1cm] {+12V} +(0,-3) -| (esc.west);
-    \draw [solid, thick] (9, -5) -- (rpi.north);
-    \draw [solid] (arduino.60) -- +(0,2) -| (controlboard.east);
-    \draw [solid] (pressuresensor.east) -- +(1.2,0) -| (arduino.120);
-    \draw [solid] (encoders.east) -- +(1.2,0) -| (arduino.240);
-    \draw [solid] (esc.east) -- +(1.8,0) -| (arduino.300);
-    \draw [solid] (triggersolenoid.east) -- +(1.5,0) -| (controlboard.60);
-    \draw [solid] (pressuresolenoid.east) -- +(0.9,0) -| (controlboard.120);
-    \draw [->] (encoders.south) -- +(0,-0.3) node[anchor=north] {Wheels};
-    \draw [->] (esc.north) -- +(0,0.3) node[anchor=south] {Motors};
+    \draw [dcvolt] (circuitbreaker.north) -- +(0,0.5) node[anchor=south] {\textbf{+12V}};
+    \draw [dcvolt] (circuitbreaker.south) -- +(0,-0.9) node[anchor=west, yshift=0.5cm] {\textbf{+12V}};
+    \draw [dcvolt] (boost.north) -- +(0,1) -| +(4,1) node {};
+    \draw [dcvolt] (buck.north) -- +(0,1) -| +(-4,1) node {};
+    \draw [dcvolt] (esc.north) -- +(0,5.55) -| +(-5.5,5.55) node {};
+    \draw [dcvolt] (buck.south) -- node[anchor=west, yshift=0.2cm] {\textbf{+5V}} (mcu.north);
+    \draw [dcvolt] (encoders.north) -- +(0,2.7) -| +(3.5,2.7) node {};
+    \draw [dcvolt] (pressuresensor.north) -- +(0,0.2) -| +(-3,0.2) node {};
+    \draw [dcvolt] (camera.north) -- +(0,2.65) -| +(-2.5,2.65) node{};
+    \draw [dcvolt] (boost.south) -- +(0,-1) node[anchor=west, yshift=0.5cm] {\textbf{+24V}};
+    \draw [dcvolt] (triggersolenoid.north) -- +(0,2.4) -| +(1.5,2.4) node {};
+    \draw [dcvolt] (pressuresolenoid.north) -- +(0,2.4) -| +(-1.5,2.4) node {};
+    \draw [signal] (mcu.300) -- +(0,-1) -| +(0.7,-1) -| +(0.7,-1.75) -| (pressuresensor.east) -- ++(180:1pt);
+    \draw [signal] (mcu.320) -- +(0,-0.8) -| +(3.5,-0.8) -| +(3.5,-1.75) -| (esc.west) -- ++(0:1pt);
+    \draw [signal] (mcu.south) -- +(0,-0.8) -| +(-2,-0.8) -| +(-2,-1.75) -| (encoders.east) -- ++(180:1pt);
+    \draw [signal] (mcu.240) -- +(0,-0.6) -| +(-4.8,-0.6) -| +(-4.8,-1.75) -| (pressuresolenoid.east) -- ++(180:1pt);
+    \draw [signal] (mcu.220) -- +(0,-0.4) -| +(-7.4,-0.4) -| +(-7.4,-1.75) -| (triggersolenoid.east) -- ++(180:1pt);
+    \draw [signal] (esc.south) -- +(0,-1.5) -| (motors.east) -- ++(180:1pt);
+    \draw [signal] (motors.west) -- +(-3.5,0) -| (encoders.south);
   \end{tikzpicture}
   \caption{Electrical System Diagram}
-  \label{fig:electrical_system}
+  \label{fig:e_system}
 \end{figure}
 
 \begin{figure}[h!]
