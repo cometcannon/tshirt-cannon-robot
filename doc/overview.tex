@@ -7,7 +7,7 @@
 
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
-\newcommand{\botname}{\textit{The Gans Cannon}}
+\newcommand{\botname}{\textit{The Comet Cannon}}
 \newcommand{\specialcell}[2][c]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 \newcommand{\xxx}[1]{{\color{red}\bf #1}}
 \newcommand{\AxisRotator}[1][rotate=0]{\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
@@ -23,9 +23,33 @@
 
 \begin{figure}[h!]
   \centering
+  \tikzstyle{block} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+  \tikzstyle{arrow} = [thick, ->, >=latex]
+
+  \begin{tikzpicture}
+    \node (battery) [block, align=center] {Battery};
+    \node (circuitbreaker) [block, align=center, below of=battery, yshift=-5mm] {Circuit\\Breaker};
+    \node (powerboard) [block, align=center, right of=circuitbreaker, minimum height=6cm, xshift=2cm] {Power\\Distribution\\Board};
+    \node (boost) [block, align=center, right of=powerboard, minimum height=2cm, xshift=2cm, yshift=2cm] {Boost\\Converter};
+    \node (buck) [block, align=center, right of=powerboard, minimum height=2cm, xshift=2cm, yshift=-2cm] {Buck\\Converter};
+    \node (triggersolenoid) [block, align=center, right of=boost, yshift=7mm, xshift=3cm] {Trigger\\Solenoid};
+    \node (pressuresolenoid) [block, align=center, right of=boost, yshift=-7mm, xshift=3cm] {Pressure\\Solenoid};
+    \node (arduino) [block, align=center, right of=buck, xshift=3cm] {Arduino};
+    \node (esc) [block, align=center, below of=arduino, xshift=12mm, yshift=-5mm] {Speed\\Controllers};
+    \node (encoders) [block, align=center, below of=arduino, xshift=-12mm, yshift=-5mm] {Encoders};
+    \node (rpi) [block, align=center, right of=arduino, xshift=2cm] {Raspberry\\Pi};
+    \node (pressuresensor) [block, align=center, above of=arduino, xshift=-12mm, yshift=5mm] {Pressure\\Sensor};
+    \node (controlboard) [block, align=center, above of=arduino, xshift=12mm, yshift=5mm] {Control\\Board};
+  \end{tikzpicture}
+  \caption{Electrical System Diagram}
+  \label{fig:electrical_system}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
 
   \tikzstyle{block} = [rectangle, rounded corners, minimum width=3cm, minimum height=2cm,text centered, draw=black]
-  \tikzstyle{container} = [draw, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
+\tikzstyle{container} = [draw, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
   \tikzstyle{arrow} = [thick, ->, >=latex]
   \begin{tikzpicture}[node distance=2cm]
     \node (input) [align=center, xshift=-1cm] {User\\Inputs};
