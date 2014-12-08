@@ -23,23 +23,23 @@
 
 \begin{figure}[h!]
   \centering
-  \tikzstyle{block} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
-  \tikzstyle{dcvolt} = [solid, thick, red];
-  \tikzstyle{signal} = [solid, ->, >=stealth];
+  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+  \tikzstyle{dcvolt} = [solid, ultra thick, red];
+  \tikzstyle{signal} = [solid, ultra thick, ->, >=stealth];
 
   \begin{tikzpicture}
     %\draw[help lines] (-6, -12) grid (12,1);
-    \node (circuitbreaker) [block, align=center] {Circuit\\Breaker};
-    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {Boost\\Converter};
-    \node (buck) [block, align=center, right of=boost, xshift=7cm] {Buck\\Converter};
-    \node (mcu) [block, below of=buck, yshift=-1.25cm] {MCU};
-    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {Trigger\\Solenoid};
-    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {Pressure\\Solenoid};
-    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {Encoders};
-    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {Pressure\\Sensor};
-    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {Camera\\Module};
-    \node (esc) [block, right of=camera, xshift=2cm] {ESC};
-    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {Motors};
+    \node (circuitbreaker) [block, align=center] {\textbf{Circuit}\\\textbf{Breaker}};
+    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {\textbf{Boost}\\\textbf{Converter}};
+    \node (buck) [block, align=center, right of=boost, xshift=7cm] {\textbf{Buck}\\\textbf{Converter}};
+    \node (mcu) [block, below of=buck, yshift=-1.25cm] {\textbf{MCU}};
+    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {\textbf{Trigger}\\\textbf{Solenoid}};
+    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {\textbf{Pressure}\\\textbf{Solenoid}};
+    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {\textbf{Encoders}};
+    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {\textbf{Pressure}\\\textbf{Sensor}};
+    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {\textbf{Camera}\\\textbf{Module}};
+    \node (esc) [block, right of=camera, xshift=2cm] {\textbf{ESC}};
+    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {\textbf{Motors}};
 
     \draw [dcvolt] (circuitbreaker.north) -- +(0,0.5) node[anchor=south] {\textbf{+12V}};
     \draw [dcvolt] (circuitbreaker.south) -- +(0,-0.9) node[anchor=west, yshift=0.5cm] {\textbf{+12V}};
