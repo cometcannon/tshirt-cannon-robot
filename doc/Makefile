@@ -1,11 +1,18 @@
 LATEX = pdflatex
-FILENAME = overview
 
-all: ${FILENAME}.pdf
-${FILENAME}.pdf:
-	$(LATEX) ${FILENAME}.tex
-	$(LATEX) ${FILENAME}.tex
-	$(LATEX) ${FILENAME}.tex
+DOCS = overview sd1report
+
+all: ${DOCS}
+
+overview:
+	$(LATEX) overview.tex
+	$(LATEX) overview.tex
+	$(LATEX) overview.tex
+
+sd1report:
+	$(LATEX) sd1report.tex
+	$(LATEX) sd1report.tex
+	$(LATEX) sd1report.tex
 
 clean:
-	rm -f ${FILENAME}.pdf ${FILENAME}.log ${FILENAME}.aux
+	rm -f *.pdf *.log *.aux
