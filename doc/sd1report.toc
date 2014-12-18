@@ -7,8 +7,8 @@
 \contentsline {section}{\numberline {3}Conceptual and Preliminary Design}{3}
 \contentsline {subsection}{\numberline {3.1}Problem Analysis}{3}
 \contentsline {subsection}{\numberline {3.2}Decision Analysis}{3}
-\contentsline {section}{\numberline {4}Description of Solution}{3}
-\contentsline {section}{\numberline {5}System Components}{3}
+\contentsline {section}{\numberline {4}Description of Solution}{4}
+\contentsline {section}{\numberline {5}System Components}{4}
 \contentsline {section}{\numberline {6}Project Implementation and Assessment}{4}
 \contentsline {section}{\numberline {7}Scope of Work}{4}
 \contentsline {section}{\numberline {8}Ethics}{4}
