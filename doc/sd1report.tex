@@ -230,7 +230,17 @@ In the interest of safety, we have included in the power distribution system a k
 \end{figure}
 
 
-\section{Project Implementation and Assessment}
+\section{Project Implementation and Future Work}
+
+\subsection{T-Shirt Cannon
+The cannon we purchased has been tested manually and can achieve the desired range of 20 to 150 feet with a capacity of at least 20 shots. The electronic triggering and pressure regulation components have yet to be assembled and tested. This will be a priority task for next semester. Once this is completed we will mount the cannon onto the chassis.\\
+
+\subsection{Chassis, Control Electronics, and Power Distribution System}
+The chassis and the power distribution system have been assembled. The control electronics have been connected to the motors and encoder. The drive system has yet to be tested due to either defects in the motor controllers or bugs in the micro controller code. Next semester we hope to fix this issue and test our maximum velocity. The closed loop control, battery monitoring, and other software will be implemented next semester.\\
+
+\subsection{User Interface}
+The current user interface is text based, keyboard controlled, and runs through an wireless SSH connection to the Atheros. We are able to establish communication between the Atheros and the ATmega and send commands to change desired motor velocities. Video streaming has been achieved and can be viewed through the browser on a computer connected to the same network as the Raspberry Pi. Next semester we will create the user application on a personal computer and display the video stream through that application’s graphical user interface. We will write the server application on the Atheros that receives messages from the user application and implement a full message protocol for the communication between the Atheros and the ATmega and the user application and the Atheros. \\
+
 \section{Scope of Work}
 \section{Ethics}
 \noindent The intent of the t-shirt cannon robot is to aid in the distribution of t-shirt during public events like basketball games and pep rallies in a gym setting. To prevent harm, there will be several precautions that will be taken. Firstly, there will be a hard and soft master kill switch to shut down the robot in case of an emergency. Secondly, the network in which the Raspberry Pi, Arduino Yun, and the laptop are communicating will be password protected, so no one can simply hack into the system. Thirdly, the user who will be manually driving the robot wirelessly will be trained and be monitoring the vehicle in his/her line of sight. Finally, the robot will be decorated so that it will not intimidate or be invisible to the public. 
