@@ -18,16 +18,34 @@
 \noindent This project is focused on the design and implementation of a teleoperated, wheeled mobile robot that is capable of launching a t-shirt projectile. The robot will be holonomic and will consist of a rigid, rectangular chassis and a mounted cannon powered by $\textrm{CO}_2$. A human user will control all robot related tasks, including remotely driving, aiming, and launching the cannon. Both low-level motor controls and high-level coordination of motor speeds will be designed for controlled locomotion. Two on-board microcontrollers will be networked to the operator's computer, and video captured from a robot-mounted camera will be streamed to a heads-up display, which will allow for real-time control and monitoring of the robot. We will demonstrate the constructed chassis design as well as some prototypical control tasks and video streaming.
 
 \section{Introduction}
+
 \subsection{Subject and Purpose}
-\subsection{Problem Statement and Design Objectives}
+\noindent Our task was to design a teleoperated, wheeled mobile robot that can launch t-shirts safely at university events. The primary purpose of the robot will be to promote the Erik Jonsson School of Engineering and inspire undergraduates engineering students to gain hands-on experience with university-sponsered engineering projects.
+
+\subsection{Design Objectives}
+\noindent The design will meet the following objects:
+\begin{itemize}
+    \item Operation time > 10 minutes
+    \item Remote Control for up to 50 feet
+    \item User Control of Robot Velocities and Cannon Triggering Mechanism
+    \item Fire t-shirts between 20 and 150 feet
+    \item Send live video stream of the robot's First Person View back to the user
+\end{itemize}
+
 \subsection{Design Process}
+\noindent We began designing our robot by determining that the drive system would be a 4-wheel omnidirectional drive with a t-shirt launching mechanism attached rigidly to the robot's chassis. Then, a t-shirt launching mechanism was chosen. An electrical system for wirelessly recieving and transmitting commands and controlling the robot's movements and t-shirt launching mechanism was designed. Finally, a software system for handling the robot-user interface was designed. 
+
 \subsection{Final Results}
+\noindent We were able to assemble the robot chassis and demonstrate video streaming using a Raspberry Pi and camera module. We also determined and purchased the necessary components for our robot to operate. Finally, we've nearly completed remote control of robot velocities. 
 
 \section{Conceptual and Preliminary Design}
+
 \subsection{Problem Analysis}
+
 \subsection{Decision Analysis}
 
 \section{Description of Solution}
+
 
 \section{System Components}
 \begin{figure}[h!]
