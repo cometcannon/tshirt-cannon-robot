@@ -41,22 +41,23 @@
 \section{Conceptual and Preliminary Design}
 
 \subsection{Problem Analysis}
-
-\noindent The robot must wirelessly receive and perform velocity and t-shirt launching commands. To perform the commands, the robot must first have a mechanism by which to control its velocity and also a triggering mechanism for the t-shirt launcher. The robot must have a wireless receiver on-board and a camera for first person view streaming. A central controller should coordinate all robot tasks on-board and a power source for both the t-shirt launching mechanism as well as the components dedicated to maneuvering the robot.
+\noindent The robot must wirelessly receive and perform velocity and t-shirt launching commands. To perform the commands, the robot must first have a mechanism by which to control its velocity and also a triggering mechanism for the t-shirt launcher. The robot must have a wireless receiver on-board and a camera for first person view streaming. A central controller should coordinate all robot tasks on-board and a power source for both the t-shirt launching mechanism as well as the components dedicated to maneuvering the robot. Following specifications will solve the problem as thus described:
+\begin{itemize}
+    \item 4-wheel omnidirectional drive
+    \item Pneumatic t-shirt Launcher with a shot range between 20 and 150 feet
+    \item Single power source for all electrical components
+    \item Single microcontroller board that includes a microcontroller and a microprocessor for embedded linux and wireless communication
+    \item Highly reconfigurable IP camera
+\end{itemize}
 
 \subsection{Decision Analysis}
+\noindent We decided for the robot to have 4-wheel omnidirectional drive to allow the user ease of control over the robot's pose. In this configuration, the user will be able to separately control the robot's angular velocity and translational velocity to achieve the desired pose. We chose this configuration over others because it is simpler to implement and pre-existing solutions are readily available at certain vendors. \\
 
-\noindent Based on the specifications above, the robot will need the following components: Chassis with actuation mechanism for movement, t-shirt launching mechanism, wireless transceiver, microcontroller, battery, and camera. \\
+\noindent The robot's original application is to be used during the halftime of basketball games to entertain the crowd. Given the size of UTD's basketball court and bleachers, a shot range between 20 and 150 feet is reasonable for this application. For convenience, a pneumatic cannon capable of firing single shots is a widely available commodity that can be retrofitted for our purposes. \\
 
-\noindent The chassis itself can be composed of many different components, depending on the type of chassis that is chosen, along with the movement actuation mechanism. For simplicity and consistency we chose a 4-wheel tank-like drive for the robot. Other options, which included leg actuation or 3-wheel drive, would have been overly complicated or outside of our project's aim. There are many options for chassis kits at online vendors that would allow us to focus more on the electrical and software aspects of the project, and so after comparing multiple 4-wheel drive chassis, we decided to go with an AndyMark Mechanum-Wheel Chassis. It gave us enough room to put our cannon and electronics and allowed us omnidirectional drive because of its Mechanum wheels at the cost of efficiency when moving forwards or backwards. \\ 
+\noindent A single power source would be ideal for powering the robot's 4 motors, microcontroller, and other electronic devices. We decided to go with a single power source rather and use up-conversion and down-conversion voltage regulators rather than using multiple power sources. \\ 
 
-\noindent For the t-shirt launching mechanism, we decided to buy a cheap, pneumatic t-shirt cannon. Other options include a mechanical throwing mechanism or building the cannon ourselves, but again those options would take too much time away from designing the entire system. After considering our options, we decided to go with a plain, single-shot cannon with a simple mechanical trigger and pressure control at its tank. Based on its current design, we can easily replace the trigger with a solenoid for electronic triggering from the microcontroller and replace the pressure control with electronic pressure control using a pressure sensor as well as a solenoid. \\
-
-\noindent Both the wireless transceiver and microcontroller were chosen by picking the Arduino Yun microcontroller, which has both a atmega microcontroller chip as well as an atheros linux chip that runs openWRT, which allows the microcontroller to act as a router. Other options included Texas Instruments based microcontrollers, but because we wanted simplicity of programming, we went with the arduino. \\
-
-\noindent The battery was chosen based on the expected current draw of the robot during normal operation. The robot will have a 12V, lead-acid battery that will be able to source up to 300A at any time and can source 60A for 10 minutes straight before discharging. Since our motors will draw at least 2A at free current, we expect that once the robot achieves a constant velocity, each motor will draw around 10A. Thus, we expect our battery to give us enough power to allow the robot to operate for at least 10 minutes at a time. \\
-
-\noindent An IP camera is necessary for video streaming. To save money, however, we've chosen a Raspberry Pi microcontroller with a camera module. We decided upon this solution after discovering the many libraries used to implement video streaming with the RPi. Thus the solution is cheaper than most other IP cameras on the market and the RPi will allow us greater control over the camera system and video streaming.
+\noindent A central microcontroller is needed to control the robot's motion and triggering mechanism. Furthermore, since the robot will need to take wireless commands as input, it would be ideal to wirelessly program the robot's microcontroller as well. We chose this solution over using separate microcontrollers for high and low level commands. \\
 
 \section{Description of Solution}
 

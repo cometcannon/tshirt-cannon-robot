@@ -9,9 +9,9 @@
 \contentsline {subsection}{\numberline {3.2}Decision Analysis}{3}
 \contentsline {section}{\numberline {4}Description of Solution}{4}
 \contentsline {section}{\numberline {5}System Components}{4}
-\contentsline {section}{\numberline {6}Project Implementation and Assessment}{4}
-\contentsline {section}{\numberline {7}Scope of Work}{4}
-\contentsline {section}{\numberline {8}Ethics}{4}
-\contentsline {section}{\numberline {9}Cost Estimation}{5}
-\contentsline {section}{\numberline {10}Project Management Summary}{5}
-\contentsline {section}{\numberline {11}Conclusion}{5}
+\contentsline {section}{\numberline {6}Project Implementation and Assessment}{5}
+\contentsline {section}{\numberline {7}Scope of Work}{5}
+\contentsline {section}{\numberline {8}Ethics}{5}
+\contentsline {section}{\numberline {9}Cost Estimation}{6}
+\contentsline {section}{\numberline {10}Project Management Summary}{6}
+\contentsline {section}{\numberline {11}Conclusion}{6}
