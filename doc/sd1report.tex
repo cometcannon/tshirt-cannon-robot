@@ -199,11 +199,86 @@ following specifications will solve the problem as thus described:
 \noindent The current user interface is text based, keyboard controlled, and runs through a wireless SSH connection to the Atheros chip. We are able to establish communication between the Atheros and the ATmega and send commands to change desired motor velocities. Video streaming has been achieved and can be viewed through the browser on a computer connected to the same network as the Raspberry Pi. Next semester we will create the user application on a personal computer and display the video stream through that application’s graphical user interface. We will write the server application on the Atheros that receives messages from the user application and implement a full message protocol for the communication between the Atheros and the ATmega and the user application and the Atheros. \\
 
 \section{Scope of Work}
+\noindent What we have accomplished thus far in senior design is as follows: 
+\begin{itemize}
+    \item Familiarity with mecanum kinematics
+    \item Ad hoc network set up as basis for software architecture
+    \item Assembly of the mecanum Chassis including frame and gearboxes
+    \item Pneumatics to allow for remote firing and controlled range of shot range
+    \item Set up of Power distribution board to power motors, microcontrollers, and pneumatics
+    \item Video Streaming of the first person view of the robot
+\end{itemize}
+
+\noindent For senior design two, we are looking forward to testing and driving our robot for a smooth, safe experience for a non-technical user.
+\begin{itemize}
+    \item Drive the robot at a desired speed using speed controllers
+    \item Fire t-shirts variables distances ranging 20 to 150 feet
+    \item Install the t-shirt cannon on the chassis
+    \item Design a user interface in which the user can see the first person view of the robot, fire a t-shirt, and give velocity commands
+    \item Implement emergency kill switches
+\end{itemize}
+
 \section{Ethics}
 \noindent The intent of the t-shirt cannon robot is to aid in the distribution of t-shirt during public events like basketball games and pep rallies in a gym setting. To prevent harm, there will be several precautions that will be taken. Firstly, there will be a hard and soft master kill switch to shut down the robot in case of an emergency. Secondly, the network in which the Raspberry Pi, Arduino Yun, and the laptop are communicating will be password protected, so no one can simply hack into the system. Thirdly, the user who will be manually driving the robot wirelessly will be trained and be monitoring the vehicle in his/her line of sight. Finally, the robot will be decorated so that it will not intimidate or be invisible to the public. 
 
 \section{Cost Estimation}
+1x Arduino Yun MCU: \$65.75 \\
+1x Mecanum chassis: \$1012 \\
+1x T-shirt cannon: \$365 \\
+2x Lead Acid Battery: \$84 \\
+1x Electronic Speed Controller: \$45 \\
+1x Battery Fuse: \$50 \\
+1x Power Converter: \$15 \\
+1x Assorted 30A Fuses: \$5.99 \\ 
+1x Power Distribution Board: \$38.69 \\
+1x Pi Camera Module: \$26.72 \\  
+4x Churro Tubes: \$20 \\
+4x L Brackets: \$24 \\
+1x Raspberry Pi Clear Camera Case: \$8.99 \\
+1x CO2 Tank: \$20.99 \\
+1x 2-Way 2-pos 1/4in solenoid valve: \$56 \\
+1x 150W Boost Converter: \$6.10 \\
+1x 200psi Pressure Transducer: \$26 \\
+25x 1n4001 diode: \$3.70 \\
+10x MOSFET: \$9.14 \\
+
+Miscellaneous (Wire, nuts, bolts, etc): \$15.37 \\
+
+Total Cost: \$1898.44
+
 \section{Project Management Summary}
+
+\subsection{Tasks}
+\noindent Completed:
+\begin{itemize}
+    \item Pressure sensing and control of the cannon's air tank
+    \item Software development on the Arduino Yun
+    \item Chassis Assembly
+    \item Video streaming
+    \item Solenoid as triggering mechanism
+\end{itemize} 
+
+\noindent Ongoing:
+\begin{itemize}
+    \item Speed controller testing
+    \item Driving the robot remotely using velocity commands
+    \item Mounting the t-shirt cannon to the chassis
+    \item Implementing the final version of the user interface
+\end{itemize}
+
+\subsection{Time}
+\noindent Two Semesters:
+\begin{itemize}
+    \item Weekly meetings with Dr. Gans
+    \item Weekly meetings among group to organize and assign tasks
+\end{itemize}
+
+\subsection{Budget}
+\noindent Our total available budget is \$3,000. Thus far we have spent \$1898.4 on a microcontrollers, chassis, t-shirt cannon, power distribution essentials, and pneumatics.
+
+\subsection{Facilities}
+\noindent We conducted our work in the Robot Chess Lab and the UTDesign Lab in SPN.
+
 \section{Conclusion}
 \noindent The Teleoperated Mobile Garment Accelerator is designed to promote and bring awareness to the engineering field. The décor and first person vision of the robot will engage the audience in public events.\newline
 
