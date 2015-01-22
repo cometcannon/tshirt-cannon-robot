@@ -1,6 +1,6 @@
 LATEX = pdflatex
 
-DOCS = overview sd1report
+DOCS = overview sd1report proposal
 
 all: ${DOCS}
 
@@ -13,6 +13,12 @@ sd1report:
 	$(LATEX) sd1report.tex
 	$(LATEX) sd1report.tex
 	$(LATEX) sd1report.tex
+
+proposal:
+	$(LATEX) proposal.tex
+	$(LATEX) proposal.tex
+	$(LATEX) proposal.tex
+
 
 clean:
 	rm -f *.pdf *.log *.aux

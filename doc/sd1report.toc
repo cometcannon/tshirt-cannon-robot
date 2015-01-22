@@ -1,28 +1,27 @@
-\contentsline {section}{\numberline {1}Abstract}{3}
-\contentsline {section}{\numberline {2}Introduction}{3}
-\contentsline {subsection}{\numberline {2.1}Subject and Purpose}{3}
-\contentsline {subsection}{\numberline {2.2}Design Objectives}{3}
-\contentsline {subsection}{\numberline {2.3}Design Process}{3}
-\contentsline {subsection}{\numberline {2.4}Final Results}{4}
-\contentsline {section}{\numberline {3}Conceptual and Preliminary Design}{4}
-\contentsline {subsection}{\numberline {3.1}Problem Analysis}{4}
-\contentsline {subsection}{\numberline {3.2}Decision Analysis}{4}
-\contentsline {subsection}{\numberline {3.3}T-Shirt Cannon}{5}
-\contentsline {subsection}{\numberline {3.4}Chassis}{5}
-\contentsline {subsection}{\numberline {3.5}Control Electronics}{5}
-\contentsline {subsection}{\numberline {3.6}User Interface}{7}
-\contentsline {subsection}{\numberline {3.7}Power Distribution System}{7}
-\contentsline {section}{\numberline {4}System Components}{7}
-\contentsline {section}{\numberline {5}Project Implementation and Future Work}{7}
-\contentsline {subsection}{\numberline {5.1}T-Shirt Cannon}{7}
-\contentsline {subsection}{\numberline {5.2}Chassis, Control Electronics, and Power Distribution System}{7}
-\contentsline {subsection}{\numberline {5.3}User Interface}{8}
-\contentsline {section}{\numberline {6}Scope of Work}{9}
-\contentsline {section}{\numberline {7}Ethics}{9}
-\contentsline {section}{\numberline {8}Cost Estimation}{9}
-\contentsline {section}{\numberline {9}Project Management Summary}{10}
-\contentsline {subsection}{\numberline {9.1}Tasks}{10}
-\contentsline {subsection}{\numberline {9.2}Time}{11}
-\contentsline {subsection}{\numberline {9.3}Budget}{11}
-\contentsline {subsection}{\numberline {9.4}Facilities}{11}
-\contentsline {section}{\numberline {10}Conclusion}{11}
+\contentsline {chapter}{\numberline {1}Abstract}{2}
+\contentsline {chapter}{\numberline {2}Introduction}{3}
+\contentsline {section}{\numberline {2.1}Subject and Purpose}{3}
+\contentsline {section}{\numberline {2.2}Design Objectives}{3}
+\contentsline {section}{\numberline {2.3}Design Process}{3}
+\contentsline {section}{\numberline {2.4}Final Results}{4}
+\contentsline {chapter}{\numberline {3}Conceptual and Preliminary Design}{5}
+\contentsline {section}{\numberline {3.1}Problem Analysis}{5}
+\contentsline {section}{\numberline {3.2}Decision Analysis}{5}
+\contentsline {section}{\numberline {3.3}T-Shirt Cannon}{6}
+\contentsline {section}{\numberline {3.4}Chassis}{6}
+\contentsline {section}{\numberline {3.5}Control Electronics}{7}
+\contentsline {section}{\numberline {3.6}User Interface}{8}
+\contentsline {section}{\numberline {3.7}Power Distribution System}{8}
+\contentsline {chapter}{\numberline {4}Project Implementation and Future Work}{10}
+\contentsline {section}{\numberline {4.1}T-Shirt Cannon}{10}
+\contentsline {section}{\numberline {4.2}Chassis, Control Electronics, and Power Distribution System}{10}
+\contentsline {section}{\numberline {4.3}User Interface}{10}
+\contentsline {chapter}{\numberline {5}Scope of Work}{12}
+\contentsline {chapter}{\numberline {6}Ethics}{13}
+\contentsline {chapter}{\numberline {7}Cost Estimation}{14}
+\contentsline {chapter}{\numberline {8}Project Management Summary}{15}
+\contentsline {section}{\numberline {8.1}Tasks}{15}
+\contentsline {section}{\numberline {8.2}Time}{15}
+\contentsline {section}{\numberline {8.3}Budget}{15}
+\contentsline {section}{\numberline {8.4}Facilities}{16}
+\contentsline {chapter}{\numberline {9}Conclusion}{17}
