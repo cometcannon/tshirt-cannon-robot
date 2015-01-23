@@ -1,25 +1,33 @@
-\documentclass[letterpaper,12pt]{report}
+\documentclass[letterpaper,12pt]{article}
 
 \usepackage[margin=1in]{geometry}
 \usepackage{tikz}
 
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
-\newcommand{\AxisRotator}[1][rotate=0]{\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
-
 \begin{document}
-\title{EE 4388 Senior Design II\\Proposal}
+\title{\textbf{Mobile Teleoperated Garment Accelerator}\\EE 4388 Senior Design II\\Proposal}
 \author{Hazen Eckert \and Omar Hasan \and Ryan Marcotte \and Ridhwaan Rahman}
 \maketitle
 \newpage
 
 \section{Introduction}
-
-\section{Subject and Purpose}
 \subsection{Brief Problem Description}
+This project is focused on the design and implementation of a teleoperated, wheeled mobile robot that is capable of launching a t-shirt projectile. The robot will be holonomic and will consist of a rigid, rectangular chassis and a mounted cannon powered by $\textrm{CO}_2$. A human user will control all robot related tasks, including remotely driving, aiming, and launching the cannon. Both low-level motor controls and high-level coordination of motor speeds will be designed for controlled locomotion. Two on-board microcontrollers will be networked to the operator's computer, and video captured from a robot-mounted camera will be streamed to a heads-up display, which will allow for real-time control and monitoring of the robot. 
+
 \subsection{Project Background and Application}
+The Erik Jonsson School of Engineering often hosts events and sponsors collaborative projects amongst its students to promote engineering. Often, the school has used robotics based projects as a platform for these inspirational and educational events. Our project is an extension of these efforts as its product will be used by the robotics faculty to draw attention to the school of engineering at university events, which include basketball games, engineering week, freshman orientation, and the like.
 
 \section{Problem Analysis}
+The robot must wirelessly receive and perform velocity and t-shirt launching commands. To perform the commands, the robot must first have a mechanism by which to control its velocity and also a triggering mechanism for the t-shirt launcher. It must have a wireless receiver on-board and a camera for first person view streaming. A central controller should coordinate all robot tasks on-board and a power source for both the t-shirt launching mechanism as well as the components dedicated to maneuvering the robot. The following specifications will solve the problem as thus described:
+\begin{itemize}
+    \item 4-wheel omnidirectional drive
+    \item Pneumatic t-shirt launcher with a shot range between 20 and 150 feet
+    \item Single power source for all electrical components
+    \item Single microcontroller board that includes a microcontroller and a microprocessor for embedded linux and wireless communication
+    \item Highly reconfigurable IP camera
+\end{itemize}
+
 \section{Objectives and Deliverables}
 \subsection{Scope of Work}
 \subsection{Work Completed}
