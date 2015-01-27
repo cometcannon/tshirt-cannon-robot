@@ -32,18 +32,59 @@ The Erik Jonsson School of Engineering often hosts events and sponsors collabora
 \section{Problem Analysis}
 The robot must wirelessly receive and perform velocity and t-shirt launching commands. To perform the commands, the robot must first have a mechanism by which to control its velocity and also a triggering mechanism for the t-shirt launcher. It must have a wireless receiver on-board and a camera for first person view streaming. A central controller should coordinate all robot tasks on-board and a power source for both the t-shirt launching mechanism as well as the components dedicated to maneuvering the robot. The following specifications will solve the problem as thus described:
 \begin{itemize}
-    \item 4-wheel omnidirectional drive
-    \item Pneumatic t-shirt launcher with a shot range between 20 and 150 feet
-    \item Single power source for all electrical components
-    \item Single microcontroller board that includes a microcontroller and a microprocessor for embedded linux and wireless communication
-    \item Highly reconfigurable IP camera
+\item 4-wheel omnidirectional drive
+\item Pneumatic t-shirt launcher with a shot range between 20 and 150 feet
+\item Single power source for all electrical components
+\item Single microcontroller board that includes a microcontroller and a microprocessor for embedded linux and wireless communication
+\item Highly reconfigurable IP camera
 \end{itemize}
 
 \section{Objectives and Deliverables}
 \subsection{Scope of Work}
+\begin{itemize}
+\item Design a robotic system capable of accomplishing tasks as described in the problem analysis.
+\item Research, select, and obtain all components necessary for building the system.
+\item Assemble all components and test to ensure proper functionality.
+\item Develop software to enable user to interface with and control the system.
+\end{itemize}
+
 \subsection{Work Completed}
+During Senior Design I, we accomplished the following:
+\begin{itemize}
+\item Researched necessary components to design an efficient system.
+\item Selected and purchased required materials.
+\item Assembled the mecanum chassis, including frame and gearboxes.
+\item Designed and built pneumatics to allow for remote firing and controlled range.
+\item Designed and assembled power distribution board prototype to power motors, microcontrollers, and pneumatics.
+\item Demonstrated video streaming for remote viewing of the robot's point-of-view.
+\end{itemize}
+
 \subsection{Semester Goals}
+During Senior Design II, we seek to accomplish the following:
+\begin{itemize}
+\item Drive the robot at a desired speed using speed controllers.
+\item Fire t-shirts variable distances ranging from 20 to 150 feet.
+\item Mount the t-shirt cannon on the robot chassis.
+\item Design a user interface which allows for viewing the video stream from the robot, as well as issuing commands for movement and cannon firing.
+\item Implement emergency kill switches to improve the safety of the robot.
+\end{itemize}
+
 \subsection{Deliverables}
+By the end of this semester, we will produce the following deliverables:
+\begin{itemize}
+\item The assembled robot, with the following functionality:
+  \begin{itemize}
+  \item Capability to move laterally in response to remotely issued input commands.
+  \item Fixed-position cannon capable of being triggered remotely.
+  \item Emergency kill switch mechanism to manually disconnect power to the robot's motors.
+  \end{itemize}
+\item The accompanying software package, which will include:
+  \begin{itemize}
+  \item Graphical user interface with embedded video stream from robot and ability to issue remote commands.
+  \item Network setup to allow for communication between user's computer and the robot.
+  \item Utilities for user to monitor low-level robot activities.
+  \end{itemize}
+\end{itemize}
 
 \section{Engineering Approach}
 \subsection{} %add whatever section names you need to describe each aspect of the project. Sensors, Microcontrollers, Software are examples. 
