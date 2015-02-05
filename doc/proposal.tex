@@ -87,9 +87,27 @@ By the end of this semester, we will produce the following deliverables:
 \end{itemize}
 
 \section{Engineering Approach}
-\subsection{} %add whatever section names you need to describe each aspect of the project. Sensors, Microcontrollers, Software are examples. 
-\subsection{}
-\subsection{}
+\subsection{Chassis}
+The robot has a 30" x 30" steel frame to which is attached four motor/wheel/gearbox assemblies. The motors and gearboxes we chose provide the robot with enough power to achieve a velocity of at least nine feet per second. We chose to use mecanum wheels to make our robot more maneuverable. The steel frame provides a sturdy mounting place for our cannon and our electronics.
+\subsection{Cannon}
+The cannon subsystem consists of the actual pneumatic cannon, the electronics triggering assembly, and the pressure regulation assembly. The pneumatic cannon is a commercial t-shirt cannon that triggers pneumatically and has a mechanically adjustable pressure. To trigger the cannon we replaced the mechanical pneumatic trigger with an electronic solenoid. To regulate the pressure the mechanical pressure regulator is set to the maximum pressure and that is supplied to the reservoir through an electronic solenoid. A pressure sensor monitors the pressure within the reservoir and once it reaches the desired pressure the solenoid will close, stopping the increase in pressure. This allows us to electronically set a desired pressure within the reservoir.
+\subsection{Power}
+To power our many components a 12VDC battery is used. A power distribution board provides the robot with up to twelve fuse protected circuits. The Raspberry Pi, the Arduino Yun and their associated sensors are powered by a 5V DC-to-DC buck converter that provides up to 5A. To power the solenoids a 24V DC-to-DC boost converter was utilized. Each of the 4 motors require their own speed controller. Our power distribution board provides 30A to each of these speed controllers. 
+\subsection{Computation}
+To manage all our sensors, motors, and the cannon we will use an Arduino Yun. This device was chosen because it has an integrated WiFi module. This allows us to more easily program the device and our control commands will be received over WiFi. This device will execute the commands given by the user as well as run a closed loop control over wheel velocities. This allows the user to set a desired speed and the controller will accelerate the wheel to match that velocity. We decided to do this so that we could regulate the speed for safety as well as to keep the controls consistent as the battery drained. \\
+
+To manage the video stream we used a Raspberry Pi with its associated camera. We decided to use a Raspberry Pi over an wireless camera because it provides the opportunity for future engineers to implement higher level and more computationally expensive algorithms on board the robot. We chose it over other Linux based microprocessors because of its low cost and its large community support. 
+\subsection{Sensors}
+Two sensors are required for our robot. First, quadrature encoders provide information on wheel rotation to provide feedback for the velocity control algorithm. This sensor provides a signal when the wheel rotates a certain amount and indicates which direction. By aggregating these signals we can tell the number of rotations each wheel has made over time. Taking the first derivative of that value provides us with the angular velocity of each wheel. From this value we can derive an estimate of the robot's velocity.\\
+
+ A pressure transducer provides our pressure regulation system the current pressure in the cannon's reservoir. When the pressure in the reservoir reaches the desired pressure set by the user, the flow of CO2 into the reservoir will be shut off. 
+\subsection{Communication}
+There are will be two communication pathways for this robot. First, the raspberry pi will be wirelessly transmitting the video stream over WiFi to the base station. This is accomplished through a password protected ad-hoc network. This solution was chosen because it requires less hardware than a traditional network as a router is not necessary. 
+Second, the Arduino Yun will receive control commands from and send status/diagnostic information to the base station. This will also be implemented as an ad-hoc network. The linux-based Atheros chip on the Yun will be responsible for relaying the network commands to the ATmega over serial.
+\subsection{Control}
+The robot is controlled through a graphical user interface and a hand-held gaming controller. The graphical user interface presents the user with the video feed, speed of the robot, cannon status, and any diagnostic/warning messages.  The game pad's joysticks will be used to control the velocity and rotation of the chassis. The trigger buttons will fire the pneumatic cannon.
+\subsection{Safety Requirements}
+The robot and cannon must be safe to operate at a public event. There will be software and hardware safety components. The robot will automatically stop when the connection with the base station is lost. There will be a software defined limit to the speed and acceleration of the wheels. An emergency power switch will be easily accessible and cut off all power to the motors when activated. The pneumatic cannon will have electronic pressure sensing and if the pressure withing the reservoir is out of a desired range the air supply will be cut off and a warning will be displayed to the user. A pressure release valve will prevent the pressure from exceeding the rating of any components.
 
 \section{Team Roles}
 \subsection{Roles}
