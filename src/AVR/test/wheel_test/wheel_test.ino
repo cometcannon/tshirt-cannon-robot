@@ -107,9 +107,14 @@ void getNextCommand()
     {
         Serial1.readBytes(_buffer, Serial1.available());
 
-        if(_buffer[0] == 2)
+        if(_buffer[0] == 1)
         {
-           float command = ((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
+          float command;
+           if(_buffer[1] == 1 || _buffer[1] == 2)
+               command = -((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
+           
+           else
+               command = ((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
 
             switch(_buffer[1])
             {
@@ -134,34 +139,18 @@ void getNextCommand()
             }
         }
 
-        if(_buffer[0] == 1)
+        if(_buffer[0] == 2)
         {
-            float command1 = ((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
-            float command2 = ((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
-            float command3 = ((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
-            float command4 = ((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
+            float command1 = ((int8_t)(_buffer[1]))*(1000.0/255.0) + 1502.0;
+            float command2 = -((int8_t)(_buffer[2]))*(1000.0/255.0) + 1502.0;
+            float command3 = -((int8_t)(_buffer[3]))*(1000.0/255.0) + 1502.0;
+            float command4 = ((int8_t)(_buffer[4]))*(1000.0/255.0) + 1502.0;
 
-            switch(_buffer[1])
-            {
-                case 0:
-                esc1.writeMicroseconds(command1);
-                break;
-
-                case 1:
-                esc2.writeMicroseconds(command2);
-                break;
-
-                case 2:
-                esc3.writeMicroseconds(command3);
-                break;
-
-                case 3:
-                esc4.writeMicroseconds(command4);
-                break;
-
-                default:
-                break;
-            }
+            esc1.writeMicroseconds(command1);
+            esc2.writeMicroseconds(command2);
+            esc3.writeMicroseconds(command3);
+            esc4.writeMicroseconds(command4);
+            
         }
 
 
