@@ -6,9 +6,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define HALF_WIDTH	1
-#define HALF_LENGTH	1
-#define MAX_COMPUTED_VEL (4*127)
+#define HALF_WIDTH	30
+#define HALF_LENGTH	28
+#define WHEEL_RADIUS 8
+#define MAX_COMPUTED_VEL 330
 #define MAX_COMMAND 127
 
 struct vel_profile {
@@ -18,21 +19,23 @@ struct vel_profile {
     int8_t rev_right;
 };
 
+// v_x, v_y: measured in cm/s
+// w: measured in rad/(100*s) - hundredths of a radian per second
 struct vel_profile inverse_kinematics(int8_t v_x, int8_t v_y, int8_t w)
 {
     struct vel_profile vels;
-    int velocity;
+    int velocity; // measured in cm/s
 
-    velocity = v_x - v_y - (HALF_WIDTH + HALF_LENGTH) * w;
+    velocity = v_x - v_y - (HALF_WIDTH + HALF_LENGTH) * w / 100;
     vels.for_left = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
 
-    velocity = v_x + v_y + (HALF_WIDTH + HALF_LENGTH) * w;
+    velocity = v_x + v_y + (HALF_WIDTH + HALF_LENGTH) * w / 100;
     vels.for_right = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
 
-    velocity = v_x + v_y - (HALF_WIDTH + HALF_LENGTH) * w;
+    velocity = v_x - v_y + (HALF_WIDTH + HALF_LENGTH) * w / 100;
     vels.rev_right = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
 
-    velocity = v_x - v_y + (HALF_WIDTH + HALF_LENGTH) * w;
+    velocity = v_x + v_y - (HALF_WIDTH + HALF_LENGTH) * w / 100;
     vels.rev_left = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
 
     return vels;
