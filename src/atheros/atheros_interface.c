@@ -11,6 +11,9 @@
 #define WHEEL_RADIUS 8
 #define MAX_COMPUTED_VEL 330
 #define MAX_COMMAND 127
+#define MAX_BUFFER 1024
+
+#define MAGIC 0x47414e53
 
 struct vel_profile {
     int8_t for_left;
@@ -45,36 +48,35 @@ int process_message(int atmegafd, int8_t *msg)
 {
     int8_t msg_type = msg[0];
     struct vel_profile vels;
-    int8_t *buffer;
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >> 8 & 0xff;
+    buffer[3] = MAGIC >> 0 & 0xff;
 
     switch (msg_type) {
         case 0:
-            buffer = calloc(1, sizeof msg_type);
-            buffer[0] = 0;
-            write(atmegafd, buffer, 1);
-            free(buffer);
+            buffer[4] = 0;
+            write(atmegafd, buffer, 5);
 
             return -1;
         case 1:
             vels = inverse_kinematics(msg[1], msg[2], msg[3]);
 
-            buffer = calloc(5, sizeof msg_type);
-            buffer[0] = 2;
-            buffer[1] = vels.for_left;
-            buffer[2] = vels.for_right;
-            buffer[3] = vels.rev_right;
-            buffer[4] = vels.rev_left;
-            write(atmegafd, buffer, 5);
-            free(buffer);
+            buffer[4] = 2;
+            buffer[5] = vels.for_left;
+            buffer[6] = vels.for_right;
+            buffer[7] = vels.rev_right;
+            buffer[8] = vels.rev_left;
+            write(atmegafd, buffer, 9);
 
             break;
         case 2:
-            buffer = calloc(3, sizeof msg_type);
-            buffer[0] = 1;
-            buffer[1] = msg[1];
-            buffer[2] = msg[2];
-            write(atmegafd, buffer, 3);
-            free(buffer);
+            buffer[4] = 1;
+            buffer[5] = msg[1];
+            buffer[6] = msg[2];
+            write(atmegafd, buffer, 7);
 
             break;
     }
