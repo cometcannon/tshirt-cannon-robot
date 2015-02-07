@@ -14,18 +14,19 @@ class Wheel
 {     
 public:
     Wheel();
-    explicit Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController);
-    int ReturnThrottle();
+    Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController);
+    int ReturnCurrentThrottle();
+    char ReturnESCPin();
     void SetThrottle(float throttle);
     void ControlAngularVelocity(float angularVelocitySetpoint);
-    
-    char ESCPin;
-    int currentThrottle;
     
 private:
     Encoder* encoder;
     PIDController* angularVelocityController;
     Servo* esc;
+    
+    int currentThrottle;
+    char ESCPin;
 };
 
 #endif
