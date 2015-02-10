@@ -161,11 +161,11 @@
   \label{eq:v_wheel_2}
 \end{equation}
 \begin{equation}
-  v_{wheel\,2}=v_x+v_y-(l_1+l_2)\omega_z
+  v_{wheel\,2}=v_x-v_y+(l_1+l_2)\omega_z
   \label{eq:v_wheel_3}
 \end{equation}
 \begin{equation}
-  v_{wheel\,3}=v_x-v_y+(l_1+l_2)\omega_z
+  v_{wheel\,3}=v_x+v_y-(l_1+l_2)\omega_z
   \label{eq:v_wheel_4}
 \end{equation}
 
@@ -179,9 +179,9 @@
     \hline
     1 & Forward Right \\
     \hline
-    2 & Reverse Right \\
+    2 & Rear Right \\
     \hline
-    3 & Reverse Left \\
+    3 & Rear Left \\
     \hline
   \end{tabular}
   \caption{Motor Numbers}
@@ -210,28 +210,58 @@
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c |}
+  \begin{tabular}{| c | c | c |}
     \hline
-    \textbf{Byte} & 0 \\
+    \textbf{Byte} & 0-3 & 4 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} \\
     \hline
-    \textbf{Value} & 0 \\
+    \textbf{Value} & 0x47414e53 & 0 \\
     \hline
   \end{tabular}
-  \caption{Kill Command Message Format}
-  \label{tab:comp_kill_cmd_msg}
+  \caption{Kill Robot Command Message Format}
+  \label{tab:comp_kill_robot_cmd_msg}
 \end{table}
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c | c | c | c |}
+  \begin{tabular}{| c | c | c |}
     \hline
-    \textbf{Byte} & 0 & 1 & 2 & 3 \\
+    \textbf{Byte} & 0-3 & 4 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Linear\\Velocity\\X} & \specialcell{Linear\\Velocity\\Y} & \specialcell{Angular\\Velocity} \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} \\
     \hline
-    \textbf{Value} & 1 & -128 to 127 & -128 to 127 & -128 to 127 \\
+    \textbf{Value} & 0x47414e53 & 1 \\
+    \hline
+  \end{tabular}
+  \caption{Kill Daemon Command Message Format}
+  \label{tab:comp_kill_daemon_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c |}
+    \hline
+    \textbf{Byte} & 0-3 & 4 \\
+    \hline
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} \\
+    \hline
+    \textbf{Value} & 0x47414e53 & 2 \\
+    \hline
+  \end{tabular}
+  \caption{Keep Alive Command Message Format}
+  \label{tab:comp_keep_alive_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0-3 & 4 & 5 & 6 & 7\\
+    \hline
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Linear\\Velocity\\X} & \specialcell{Linear\\Velocity\\Y} & \specialcell{Angular\\Velocity} \\
+    \hline
+    \textbf{Value} & 0x47414e53 & 3 & -128 to 127 & -128 to 127 & -128 to 127 \\
     \hline
   \end{tabular}
   \caption{Velocity Command Message Format}
@@ -240,13 +270,13 @@
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c | c | c |}
+  \begin{tabular}{| c | c | c | c | c |}
     \hline
-    \textbf{Byte} & 0 & 1 & 2 \\
+    \textbf{Byte} & 0-3 & 4 & 5 & 6 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type}& \specialcell{Motor\\Number} & Value \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type}& \specialcell{Motor\\Number} & Value \\
     \hline
-    \textbf{Value} & 2 & 0-3 & -128 to 127 \\
+    \textbf{Value} & 0x47414e53 & 4 & 0-3 & -128 to 127 \\
     \hline
   \end{tabular}
   \caption{Individual Motor Command Message Format}
@@ -255,13 +285,13 @@
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c |}
+  \begin{tabular}{| c | c | c |}
     \hline
-    \textbf{Byte} & 0 \\
+    \textbf{Byte} & 0-3 & 4 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} \\
     \hline
-    \textbf{Value} & 3 \\
+    \textbf{Value} & 0x47414e53 & 5 \\
     \hline
   \end{tabular}
   \caption{Fire Command Message Format}
@@ -280,13 +310,13 @@
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c |}
+  \begin{tabular}{| c | c | c|}
     \hline
-    \textbf{Byte} & 0 \\
+    \textbf{Byte} & 0-3 & 4 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} \\
     \hline
-    \textbf{Value} & 0 \\
+    \textbf{Value} & 0x47414e53 & 0 \\
     \hline
   \end{tabular}
   \caption{Kill Command Message Format}
@@ -295,13 +325,28 @@
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c | c | c |}
+  \begin{tabular}{| c | c | c|}
     \hline
-    \textbf{Byte} & 0 & 1 & 2 \\
+    \textbf{Byte} & 0-3 & 4 \\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Motor\\Number} & Value \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} \\
     \hline
-    \textbf{Value} & 1 & 0-3 & -128 to 127 \\
+    \textbf{Value} & 0x47414e53 & 1 \\
+    \hline
+  \end{tabular}
+  \caption{Keep Alive Command Message Format}
+  \label{tab:ath_keep_alive_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0-3 & 4 & 5 & 6 \\
+    \hline
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Motor\\Number} & Value \\
+    \hline
+    \textbf{Value} & 0x47414e53 & 2 & 0-3 & -128 to 127 \\
     \hline
   \end{tabular}
   \caption{Individual Motor Command Message Format}
@@ -310,13 +355,13 @@
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{| c | c | c | c | c | c | c | c | c |}
+  \begin{tabular}{| c | c | c | c | c | c | c |}
     \hline
-    \textbf{Byte} & 0 & 1 & 2 & 3 & 4 \\
+    \textbf{Byte} & 0-3 & 4 & 5 & 6 & 7 & 8\\
     \hline
-    \textbf{Description} & \specialcell{Command\\Type} & \specialcell{Motor 0\\Value} & \specialcell{Motor 1\\Value} & \specialcell{Motor 2\\Value} & \specialcell{Motor 3\\Value} \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Motor 0\\Value} & \specialcell{Motor 1\\Value} & \specialcell{Motor 2\\Value} & \specialcell{Motor 3\\Value} \\
     \hline
-    \textbf{Value} & 2 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
+    \textbf{Value} & 0x47414e53 & 2 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
     \hline
   \end{tabular}
   \caption{All Motor Command Message Format}
