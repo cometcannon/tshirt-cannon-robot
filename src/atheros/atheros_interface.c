@@ -49,7 +49,6 @@ int process_message(int atmegafd, int8_t *msg)
     int8_t msg_type = msg[0];
     struct vel_profile vels;
     int8_t buffer[MAX_BUFFER];
-    int i;
 
     buffer[0] = MAGIC >> 24 & 0xff;
     buffer[1] = MAGIC >> 16 & 0xff;
@@ -60,7 +59,7 @@ int process_message(int atmegafd, int8_t *msg)
         case 0:
             buffer[4] = 0;
             write(atmegafd, buffer, 5);
-            
+
             return -1;
         case 1:
             vels = inverse_kinematics(msg[1], msg[2], msg[3]);
