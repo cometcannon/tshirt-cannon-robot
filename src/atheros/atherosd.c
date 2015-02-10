@@ -18,8 +18,8 @@
 struct vel_profile {
     int8_t for_left;
     int8_t for_right;
-    int8_t rev_left;
-    int8_t rev_right;
+    int8_t rear_left;
+    int8_t rear_right;
 };
 
 // v_x, v_y: measured in cm/s
@@ -36,10 +36,10 @@ struct vel_profile inverse_kinematics(int8_t v_x, int8_t v_y, int8_t w)
     vels.for_right = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
 
     velocity = v_x - v_y + (HALF_WIDTH + HALF_LENGTH) * w / 100;
-    vels.rev_right = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
+    vels.rear_right = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
 
     velocity = v_x + v_y - (HALF_WIDTH + HALF_LENGTH) * w / 100;
-    vels.rev_left = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
+    vels.rear_left = MAX_COMMAND * velocity / MAX_COMPUTED_VEL;
 
     return vels;
 }
@@ -67,8 +67,8 @@ int process_message(int atmegafd, int8_t *msg)
             buffer[4] = 2;
             buffer[5] = vels.for_left;
             buffer[6] = vels.for_right;
-            buffer[7] = vels.rev_right;
-            buffer[8] = vels.rev_left;
+            buffer[7] = vels.rear_right;
+            buffer[8] = vels.rear_left;
             write(atmegafd, buffer, 9);
 
             break;
