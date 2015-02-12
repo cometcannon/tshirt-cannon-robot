@@ -35,6 +35,7 @@ float wheel_vel_setpoint3 = 0;
 
 byte _buffer[10];
 unsigned long timer;
+byte heartbeatCount = 0;
 
 void setup()
 {
@@ -93,6 +94,11 @@ void loop()
 
     timer = millis();
     getNextCommand();
+    
+    heartbeatCount++;
+    
+    if(heartbeatCount > 2)
+        kill_motors();
 }
 
 void kill_motors()
@@ -196,7 +202,7 @@ void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t 
 
 float print_motor_ang_vel(int8_t motor)
 {
-    switch (motor) 
+    switch(motor) 
     {
         case 0:
             Serial1.println(encoder0.ReturnAngularVelocity());
@@ -215,7 +221,7 @@ float print_motor_ang_vel(int8_t motor)
 
 void getNextCommand()
 {
-    if(Serial1.available()) 
+    if(Serial1.available() > 3)
     {
         Serial1.readBytes(_buffer, Serial1.available());
         
@@ -224,30 +230,34 @@ void getNextCommand()
             _buffer[2] == 0x4e &&
             _buffer[3] == 0x53) 
         {
-            
+            heartbeatCount = 0;
             switch (_buffer[4]) 
             {
                 case 0:
                     kill_motors();
                     break;
                 case 1:
-                    cmd_single_motor(_buffer[5], _buffer[6]);
                     break;
                 case 2:
-                    cmd_all_motors(_buffer[5], _buffer[6], _buffer[7], _buffer[8]);
+                    cmd_single_motor(_buffer[5], _buffer[6]);
                     break;
                 case 3:
-                    print_motor_ang_vel(_buffer[5]);
+                    cmd_all_motors(_buffer[5], _buffer[6], _buffer[7], _buffer[8]);
                     break;
                 case 4:
-                    cmd_single_motor_ang_vel(_buffer[5], _buffer[6]);
+                    print_motor_ang_vel(_buffer[5]);
                     break;
                 case 5:
+                    cmd_single_motor_ang_vel(_buffer[5], _buffer[6]);
+                    break;
+                case 6:
                     cmd_all_motors_ang_vel(_buffer[5], _buffer[6], _buffer[7], _buffer[8]);
                     break;
-            }
+            }   
         }
     }
+    else
+        heartbeatCount++;
 }
 
 void HandleEncoderPinAInterrupt0()
