@@ -12,7 +12,7 @@ simple_ui: $(SIMPLE_UI_OBJS)
 	$(CC) -o $@ $(SIMPLE_UI_OBJS) $(CFLAGS)
 
 atherosd: $(ATHEROSD_OBJS)
-	$(CC) -o $@ $(ATHEROSD_OBJS) $(CFLAGS)
+	$(CC) -o $@ $(ATHEROSD_OBJS) $(CFLAGS) -lpthread
 
 clean:
 	@rm -f *.o $(APPS) *~
