@@ -10,16 +10,21 @@ class Encoder
     
 public:
     Encoder();
-    explicit Encoder(int pinA, int pinB, int interruptPinRef);
+    Encoder(int pinA, int pinB, int interruptPinRef);
     int ReturnEncoderInterruptPinRef();
+    int ReturnEncoderPinA();
+    int ReturnEncoderPinB();
     long ReturnEncoderTickCount();
     void ZeroEncoderTickCount();
     void HandleEncoderPinAInterrupt();
     float MeasureAngularVelocity();
+    float ReturnAngularVelocity();
     
 private:
     int encoderInterruptPinRef;
+    int encoderPinA;
     int encoderPinB;
+    float angularVelocity;
     
     long previousEncoderTickCount;
     volatile long encoderTickCount;

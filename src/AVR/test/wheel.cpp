@@ -38,5 +38,5 @@ void Wheel::SetThrottle(float throttle)
 void Wheel::ControlAngularVelocity(float angularVelocitySetpoint)
 {
     if(angularVelocityController != NULL && encoder != NULL)
-        SetThrottle((int)angularVelocityController->ComputeOutput(encoder->MeasureAngularVelocity(), angularVelocitySetpoint));
+        SetThrottle((int)angularVelocityController->ComputeOutput(encoder->MeasureAngularVelocity(), angularVelocitySetpoint) + 1500);
 }

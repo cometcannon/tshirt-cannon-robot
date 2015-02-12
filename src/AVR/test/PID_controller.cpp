@@ -11,8 +11,7 @@ PIDController::PIDController(int samplePeriod, double _kp, double _ki, double _k
 }
 
 double PIDController::ComputeOutput(double input, double setPoint)
-{
-    
+{  
     int currentSampleTime = millis();
     
     if(previousSampleTime > currentSampleTime)
@@ -38,7 +37,6 @@ double PIDController::ComputeOutput(double input, double setPoint)
         
         previousInput = input;
         previousSampleTime = currentSampleTime;
-    
     }
     
     return controllerOutput;
@@ -64,6 +62,11 @@ void PIDController::SetOutputLimits(double _maxOutput, double _minOutput)
 {
     maxOutput = _maxOutput;
     minOutput = _minOutput;
+}
+
+double PIDController::ReturnControllerOutput()
+{
+    return controllerOutput;
 }
 
 void PIDController::ResetMemory()
