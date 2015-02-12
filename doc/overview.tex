@@ -361,11 +361,26 @@
     \hline
     \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Motor 0\\Value} & \specialcell{Motor 1\\Value} & \specialcell{Motor 2\\Value} & \specialcell{Motor 3\\Value} \\
     \hline
-    \textbf{Value} & 0x47414e53 & 2 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
+    \textbf{Value} & 0x47414e53 & 3 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
     \hline
   \end{tabular}
   \caption{All Motor Command Message Format}
   \label{tab:ath_all_motor_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0-3 & 4 & 5 \\
+    \hline
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Motor\\Number} \\
+    \hline
+    \textbf{Value} & 0x47414e53 & 4 & 0-3 \\
+    \hline
+  \end{tabular}
+  \caption{Individual Motor Command for Returning Measured Angular Velocity}
+  \label{tab:ath_ind_motor_cmd_msg}
 \end{table}
 
 \subsubsection{ATmega32u4 to AR9331}
