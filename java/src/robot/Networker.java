@@ -19,7 +19,7 @@ public class Networker
         Socket client;
 
         try {
-            client = new Socket("yun", YUN_PORT);
+            client = new Socket("192.168.240.1", YUN_PORT);
         } catch (IOException e) {
             System.out.println(e);
         }

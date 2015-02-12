@@ -2,7 +2,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/socket.h>
-#include <sys/un.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 
@@ -14,6 +16,8 @@
 #define MAX_BUFFER 1024
 
 #define MAGIC 0x47414e53
+
+#define LISTEN_PORT 12313
 
 struct vel_profile {
     int8_t for_left;
@@ -86,38 +90,52 @@ int process_message(int atmegafd, int8_t *msg)
 
 int main(int argc, char *argv[])
 {
+    char buffer[1000];
     char sock_name[] = "socket";
-    int sockfd, atmegafd;
-    struct sockaddr_un name;
+    int sockfd, atmegafd, sd_current;
+    socklen_t addrlen;
+    struct sockaddr_in sin;
+    struct sockaddr_in pin;
 
     atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY | O_NDELAY);
 
-    sockfd = socket(PF_LOCAL, SOCK_STREAM, 0);
-    name.sun_family = AF_LOCAL;
-    strcpy(name.sun_path, sock_name);
-    bind(sockfd, &name, SUN_LEN(&name));
-    listen(sockfd, 5);
-
-    struct sockaddr_un client_name;
-    socklen_t client_name_len;
-    int client_sockfd;
-
-    client_sockfd = accept(sockfd, &client_name, &client_name_len);
-
-    while (1) {
-        int len;
-        int8_t buffer[100];
-
-        if (read(client_sockfd, buffer, 100) < 0)
-            return 1;
-
-        if (process_message(atmegafd, buffer) < 0)
-            break;
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("socket");
+        exit(1);
+    }
+        
+    memset(&sin, 0, sizeof(sin));
+    sin.sin_family = AF_INET;
+    sin.sin_addr.s_addr = INADDR_ANY;
+    sin.sin_port = htons(LISTEN_PORT);
+    
+    if (bind(sockfd, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
+        perror("bind");
+        exit(1);
     }
 
-    close(client_sockfd);
+    if (listen(sockfd, 5) < 0) {
+        perror("listen");
+        exit(1);
+    }
+
+    addrlen = sizeof(pin);
+    if ((sd_current = accept(sockfd, (struct sockaddr *) &pin, &addrlen)) == -1) {
+        perror("accept");
+        exit(1);
+    }
+
+    if (recv(sd_current, buffer, sizeof(buffer), 0) < 0) {
+        perror("recv");
+        exit(1);
+    }
+
+    printf("got it\n", buffer);
+
+    close(sd_current);
     close(sockfd);
-    unlink(sock_name);
+
+    sleep(1);
 
     return 0;
 }
