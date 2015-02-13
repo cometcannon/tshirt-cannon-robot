@@ -16,6 +16,11 @@ public class RobotManager
         this.robotState = robotState;
         this.uiState = uiState;
 
-        Networker networker = new Networker(robotState);
+        robotState.setNetworker(new Networker(robotState));
+
+        CommandObserver observer = new CommandObserver(robotState, uiState.getCurrentCommand());
+        uiState.getCurrentCommand().addObserver(observer);
+
+//        Networker networker = new Networker(robotState);
     }
 }
