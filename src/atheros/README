@@ -59,3 +59,7 @@ $ scp hello root@192.168.240.1:/usr/bin/
 Step 9: test everything by logging in to yun and executing your program
 $ ssh root@192.168.240.1
 $ /usr/bin/hello
+
+
+In case the Atheros chip does not boot up:
+http://forum.arduino.cc/index.php?topic=295642.0
