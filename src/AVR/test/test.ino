@@ -33,8 +33,10 @@ float wheel_vel_setpoint1 = 0;
 float wheel_vel_setpoint2 = 0;
 float wheel_vel_setpoint3 = 0;
 
+const float MAX_WHEEL_SPEED = 9.0;
+
 int cannonTriggerPin = A1;
-int pressureRegulatorPin = A2
+int pressureRegulatorPin = A2;
 int pressureSensorPin = A3;
 float desiredPressure = 0;
 
@@ -100,7 +102,7 @@ void loop()
     if(desiredPressure < analogRead(pressureSensorPin))
         digitalWrite(pressureRegulatorPin, HIGH);
     else
-        digitalWrite(pressureRegulatorPin, LOW;
+        digitalWrite(pressureRegulatorPin, LOW);
     
     timer = millis();
     getNextCommand();    
@@ -124,13 +126,6 @@ void kill_motors()
     ang_vel_switch1 = false;
     ang_vel_switch2 = false;
     ang_vel_switch3 = false;
-}
-
-void fire_cannon()
-{
-    digitalWrite(cannonTriggerPin, HIGH);
-    delay(1000);
-    digitalWrite(cannonTriggerPin, LOW);
 }
 
 void cmd_single_motor(int8_t motor, int8_t value)
@@ -181,42 +176,6 @@ void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
     ang_vel_switch3 = false;
 }
 
-void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
-{
-    switch (motor) 
-    {
-        case 0:
-            wheel_vel_setpoint0 = value;
-            ang_vel_switch0 = true;
-            break;
-        case 1:
-            wheel_vel_setpoint1 = -value;
-            ang_vel_switch1 = true;
-            break;
-        case 2:
-            wheel_vel_setpoint2 = -value;
-            ang_vel_switch2 = true;
-            break;
-        case 3:
-            wheel_vel_setpoint3 = value;
-            ang_vel_switch3 = true;
-            break;
-    }
-}
-
-void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
-{
-    wheel_vel_setpoint0 = value1;
-    wheel_vel_setpoint1 = -value2;
-    wheel_vel_setpoint2 = -value3;
-    wheel_vel_setpoint3 = value4;
-    
-    ang_vel_switch0 = true;
-    ang_vel_switch1 = true;
-    ang_vel_switch2 = true;
-    ang_vel_switch3 = true;
-}
-
 float print_motor_ang_vel(int8_t motor)
 {
     switch(motor) 
@@ -236,9 +195,52 @@ float print_motor_ang_vel(int8_t motor)
     }
 }
 
+void fire_cannon()
+{
+    digitalWrite(cannonTriggerPin, HIGH);
+    delay(1000);
+    digitalWrite(cannonTriggerPin, LOW);
+}
+
+void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
+{
+    switch (motor) 
+    {
+        case 0:
+            wheel_vel_setpoint0 = (value + 0.5) * MAX_WHEEL_SPEED/127.5;
+            ang_vel_switch0 = true;
+            break;
+        case 1:
+            wheel_vel_setpoint1 = -(value + 0.5) * MAX_WHEEL_SPEED/127.5;
+            ang_vel_switch1 = true;
+            break;
+        case 2:
+            wheel_vel_setpoint2 = -(value + 0.5) * MAX_WHEEL_SPEED/127.5;
+            ang_vel_switch2 = true;
+            break;
+        case 3:
+            wheel_vel_setpoint3 = (value + 0.5) * MAX_WHEEL_SPEED/127.5;
+            ang_vel_switch3 = true;
+            break;
+    }
+}
+
+void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
+{
+    wheel_vel_setpoint0 = (value1 + 0.5) * MAX_WHEEL_SPEED/127.5;
+    wheel_vel_setpoint1 = -(value2 + 0.5) * MAX_WHEEL_SPEED/127.5;
+    wheel_vel_setpoint2 = -(value3 + 0.5) * MAX_WHEEL_SPEED/127.5;
+    wheel_vel_setpoint3 = (value4 + 0.5) * MAX_WHEEL_SPEED/127.5;
+    
+    ang_vel_switch0 = true;
+    ang_vel_switch1 = true;
+    ang_vel_switch2 = true;
+    ang_vel_switch3 = true;
+}
+
 void set_desired_pressure(float _desiredPressure)
 {
-    desiredPressure = _desiredPressure
+    desiredPressure = _desiredPressure;
     
     if(desiredPressure > 1023)
         desiredPressure = 1023;
@@ -256,7 +258,7 @@ void getNextCommand()
             _buffer[3] == 0x53) 
         {
             //digitalWrite(13, HIGH);
-            
+
             heartbeatCount = 0;
             switch (_buffer[4]) 
             {
@@ -264,7 +266,6 @@ void getNextCommand()
                     kill_motors();
                     break;
                 case 1:
-                    fire_cannon();
                     break;
                 case 2:
                     cmd_single_motor(_buffer[5], _buffer[6]);
@@ -276,16 +277,19 @@ void getNextCommand()
                     print_motor_ang_vel(_buffer[5]);
                     break;
                 case 5:
-                    cmd_single_motor_ang_vel(_buffer[5], _buffer[6]);
+                    fire_cannon();
                     break;
                 case 6:
-                    cmd_all_motors_ang_vel(_buffer[5], _buffer[6], _buffer[7], _buffer[8]);
+                    cmd_single_motor_ang_vel(_buffer[5], _buffer[6]);
                     break;
                 case 7:
-                    desiredPressure = (_buffer[5] << 8) | _buffer[6];
+                    cmd_all_motors_ang_vel(_buffer[5], _buffer[6], _buffer[7], _buffer[8]);
+                    break;
+                case 8:
+                    set_desired_pressure((_buffer[5] << 8) | _buffer[6]);
                     break;
             }   
-            
+
             //digitalWrite(13, LOW);
         }
     }

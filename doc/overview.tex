@@ -385,13 +385,58 @@
 
 \begin{table}[h!]
   \centering
+  \begin{tabular}{| c | c | c |}
+    \hline
+    \textbf{Byte} & 0-3 & 4 \\
+    \hline
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} \\
+    \hline
+    \textbf{Value} & 0x47414e53 & 5 \\
+    \hline
+  \end{tabular}
+  \caption{Fire Command Message Format}
+  \label{tab:comp_fire_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0-3 & 4 & 5 & 6 \\
+    \hline
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Motor\\Number} & Value \\
+    \hline
+    \textbf{Value} & 0x47414e53 & 6 & 0-3 & -128 to 127 \\
+    \hline
+  \end{tabular}
+  \caption{Individual Motor Velocity Command Message Format}
+  \label{tab:ath_ind_motor_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c | c |}
+    \hline
+    \textbf{Byte} & 0-3 & 4 & 5 & 6 & 7 & 8\\
+    \hline
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Motor 0\\Value} & \specialcell{Motor 1\\Value} & \specialcell{Motor 2\\Value} & \specialcell{Motor 3\\Value} \\
+    \hline
+    \textbf{Value} & 0x47414e53 & 7 & -128 to 127 & -128 to 127 & -128 to 127 & -128 to 127 \\
+    \hline
+  \end{tabular}
+  \caption{All Motor Velocity Command Message Format}
+  \label{tab:ath_all_motor_cmd_msg}
+\end{table}
+
+\begin{table}[h!]
+  \centering
   \begin{tabular}{| c | c | c | c | c | c |}
     \hline
-    \textbf{Byte} & 0-3 & 4 & 5 & 6\\
+    \textbf{Byte} & 0-3 & 4 & 5-6 \\
     \hline
-    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Pressure\\MSB} & \specialcell{Pressure\\LSB} \\
+    \textbf{Description} & \specialcell{Magic\\Bytes} & \specialcell{Command\\Type} & \specialcell{Pressure\\(Big Endian)} \\
     \hline
-    \textbf{Value} & 0x47414e53 & 8 & 0-255 & 0-255 \\
+    \textbf{Value} & 0x47414e53 & 8 & 0-1023 \\
     \hline
   \end{tabular}
   \caption{Set Pressure Regulation Command}
@@ -399,7 +444,6 @@
 \end{table}
 \subsubsection{ATmega32u4 to AR9331}
 \label{sec:mega_ath_msg}
-
 
 \section{Chassis}
 \begin{center}
