@@ -1,6 +1,7 @@
 package manager;
 
 import robot.Networker;
+import robot.KeepAliveThread;
 
 public class RobotManager
 {
@@ -21,6 +22,8 @@ public class RobotManager
         CommandObserver observer = new CommandObserver(robotState, uiState.getCurrentCommand());
         uiState.getCurrentCommand().addObserver(observer);
 
-//        Networker networker = new Networker(robotState);
+        Networker networker = new Networker(robotState);
+        KeepAliveThread keepAliveThread = new KeepAliveThread(robotState);
+//        keepAliveThread.start();
     }
 }
