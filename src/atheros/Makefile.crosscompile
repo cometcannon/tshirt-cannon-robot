@@ -7,7 +7,7 @@ CC := $(CROSS_STAGING)/bin/mips-openwrt-linux-uclibc-gcc -std=gnu99 -Wall -Wno-u
 SIMPLE_UI_OBJS = simple_ui.o
 ATHEROS_INTERFACE_OBJS = atheros_interface.o
 
-APPS = simple_ui atheros_interface
+APPS = simple_ui atherosd
 
 all: $(APPS)
 
