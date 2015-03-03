@@ -31,7 +31,7 @@ public class Networker
         }
     }
 
-    public void sendCommand(String type, byte magnitude)
+    public synchronized void sendCommand(String type, byte magnitude)
     {
         byte buffer[] = new byte[100];
 
@@ -90,10 +90,14 @@ public class Networker
             buffer[length++] = magnitude;
         } else if (type.equals("KILL")) {
             buffer[length++] = 0;
+        } else if (type.equals("KEEP ALIVE")) {
+            buffer[length++] = 2;
         }
 
-        System.out.println(buffer);
-
-        //output.print(buffer)
+        try {
+            output.write(buffer);
+        } catch (IOException ex) {
+            System.out.println("send failed");
+        }
     }
 }
