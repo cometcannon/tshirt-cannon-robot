@@ -16,6 +16,10 @@ public class KeepAliveThread extends Thread
     @Override
     public void run()
     {
-        
+        while (true) {
+            robotState.getNetworker().sendCommand("KEEP ALIVE", (byte) 0);
+
+            try { Thread.sleep(100); } catch (InterruptedException ex) { }
+        }
     }
 }
