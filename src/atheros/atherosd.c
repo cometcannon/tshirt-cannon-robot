@@ -85,7 +85,7 @@ void kill_robot(state_t *state)
     buffer[4] = 0;
 
     pthread_mutex_lock(&state->mutex);
-    write(state->atmegafd, buffer, 5);
+    printf("%d", write(state->atmegafd, buffer, 5));
     pthread_mutex_unlock(&state->mutex);
 }
 
@@ -127,7 +127,6 @@ void command_motor(state_t *state, int motor, int8_t value)
     buffer[6] = value;
 
     pthread_mutex_lock(&state->mutex);
-    write(state->atmegafd, buffer, 7);
     pthread_mutex_unlock(&state->mutex);
 }
 
@@ -210,6 +209,7 @@ void network_connect(state_t *state)
 void *pulse_monitor(void *arg)
 {
     state_t *state = (state_t *) arg;
+    int kill = 0;
     
     while (1) {
         int64_t now = utime_now();
@@ -218,10 +218,16 @@ void *pulse_monitor(void *arg)
 
         if (state->last_utime > 0 && now - state->last_utime > UTIMEOUT) {
             printf("timeout exceeded\n");
-            kill_robot(state);
+            kill = 1;
         }
 
         pthread_mutex_unlock(&state->mutex);
+
+        if(kill)
+        {
+            kill_robot(state);
+            kill = 0;
+        }
         
         usleep(10);
     }
@@ -253,13 +259,15 @@ int main(int argc, char *argv[])
     int sd, atmegafd, sd_current;
     int8_t buffer[MAX_PACKET];
     pthread_t pulse_thread;
+    pthread_t atmega_thread;
     state_t *state = calloc(1, sizeof(state_t));
 
     state->atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY | O_NDELAY);
     network_connect(state);
 
     pthread_mutex_init(&state->mutex, NULL);
-    pthread_create(&pulse_thread, NULL, pulse_monitor, state);
+//    pthread_create(&pulse_thread, NULL, pulse_monitor, state);
+    pthread_create(&atmega_thread, NULL, atmega_keep_alive, state);
        
     while (1) {
         int len;
@@ -268,7 +276,7 @@ int main(int argc, char *argv[])
             perror("recv");
             break;
         }
-        
+
         pthread_mutex_lock(&state->mutex);
         state->last_utime = utime_now();
         pthread_mutex_unlock(&state->mutex);
