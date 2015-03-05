@@ -14,6 +14,8 @@ import robot.command.MotorCommand;
 import robot.command.KillRobotCommand;
 import robot.command.MoveDirectionCommand;
 import robot.command.RotateCommand;
+import robot.command.FireCannonCommand;
+import robot.command.SetPressureCommand;
 
 public class DebugPanel extends JPanel
 {
@@ -72,6 +74,12 @@ public class DebugPanel extends JPanel
             
             if (commandType.equalsIgnoreCase("ROTATE CW"))
                 robotState.addNewCommand(new RotateCommand("CW", magnitude));
+            
+            if (commandType.equalsIgnoreCase("FIRE"))
+                robotState.addNewCommand(new FireCannonCommand());
+            
+            if (commandType.equalsIgnoreCase("PRESSURE"))
+                robotState.addNewCommand(new SetPressureCommand(magnitude));
         }
     }
 

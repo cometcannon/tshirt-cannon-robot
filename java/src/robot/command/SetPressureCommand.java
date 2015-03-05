@@ -1,16 +1,18 @@
 package robot.command;
 
-public class KeepAliveCommand implements Command
+public class SetPressureCommand implements Command
 {
-    public KeepAliveCommand()
-    {
+    private byte pressure;
 
+    public SetPressureCommand(int pressure)
+    {
+        this.pressure = (byte) pressure;
     }
     
     @Override
     public byte[] generatePayload()
     {
-        byte buffer[] = new byte[5];
+        byte buffer[] = new byte[6];
 
         //////////////////////////////////////// 
         // magic bytes
@@ -21,7 +23,11 @@ public class KeepAliveCommand implements Command
         
         //////////////////////////////////////// 
         // command type
-        buffer[4] = 2; 
+        buffer[4] = 6; 
+        
+        //////////////////////////////////////// 
+        // pressure value
+        buffer[5] = pressure;
 
         return buffer;
     }

@@ -1,16 +1,11 @@
 package robot.command;
 
-public class KeepAliveCommand implements Command
+public class FireCannonCommand implements Command
 {
-    public KeepAliveCommand()
-    {
-
-    }
-    
     @Override
     public byte[] generatePayload()
     {
-        byte buffer[] = new byte[5];
+        byte buffer[] = new byte[8];
 
         //////////////////////////////////////// 
         // magic bytes
@@ -21,7 +16,7 @@ public class KeepAliveCommand implements Command
         
         //////////////////////////////////////// 
         // command type
-        buffer[4] = 2; 
+        buffer[4] = 5; 
 
         return buffer;
     }
