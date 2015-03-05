@@ -3,3 +3,7 @@
 *.log
 *.pdf
 *.o
+/doc/auto/
+/java/build/
+/src/atheros/atherosd
+/src/atheros/simple_ui

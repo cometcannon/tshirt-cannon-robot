@@ -5,17 +5,17 @@ CROSS_PATH := $(CROSS_STAGING)/bin/
 CC := $(CROSS_STAGING)/bin/mips-openwrt-linux-uclibc-gcc -std=gnu99 -Wall -Wno-unused-variable
 
 SIMPLE_UI_OBJS = simple_ui.o
-ATHEROS_INTERFACE_OBJS = atheros_interface.o
+ATHEROSD_OBJS = atherosd.o
 
-APPS = simple_ui atherosd
+APPS = simple_ui_x atherosd_x
 
 all: $(APPS)
 
-simple_ui: $(SIMPLE_UI_OBJS)
+simple_ui_x: $(SIMPLE_UI_OBJS)
 	$(CC) -o $@ $(SIMPLE_UI_OBJS)
 
-atheros_interface: $(ATHEROS_INTERFACE_OBJS)
-	$(CC) -o $@ $(ATHEROS_INTERFACE_OBJS)
+atherosd_x: $(ATHEROSD_OBJS)
+	$(CC) -o $@ $(ATHEROSD_OBJS) -lpthread
 
 clean:
 	@rm -f *.o $(APPS) *~

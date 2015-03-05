@@ -47,19 +47,19 @@ byte heartbeatCount = 0;
 void setup()
 {
     Serial1.begin(250000);
-    
-    pinMode(2, INPUT);       
-    digitalWrite(2, LOW);  
+
+    pinMode(2, INPUT);
+    digitalWrite(2, LOW);
     pinMode(4, INPUT);
     digitalWrite(4, LOW);
-    
-    pinMode(3, INPUT);       
-    digitalWrite(3, LOW);  
+
+    pinMode(3, INPUT);
+    digitalWrite(3, LOW);
     pinMode(8, INPUT);
     digitalWrite(8, LOW);
-    
-    pinMode(7, INPUT);       
-    digitalWrite(7, LOW);  
+
+    pinMode(7, INPUT);
+    digitalWrite(7, LOW);
     pinMode(11, INPUT);
     digitalWrite(11, LOW);
     
@@ -68,17 +68,17 @@ void setup()
     digitalWrite(13, LOW);
 
     attachInterrupt(encoder0.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt0, RISING);
-    attachInterrupt(encoder1.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt1, RISING);  
-    attachInterrupt(encoder2.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt2, RISING);  
-    attachPinChangeInterrupt(encoder3.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt3, RISING);  
+    attachInterrupt(encoder1.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt1, RISING);
+    attachInterrupt(encoder2.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt2, RISING);
+    attachPinChangeInterrupt(encoder3.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt3, RISING);
 
     esc0.attach(5);
     esc1.attach(6);
     esc2.attach(9);
     esc3.attach(10);
-    
+
     kill_motors();
-    
+
     timer = millis();
 }
 
@@ -88,13 +88,13 @@ void loop()
     {
         if(ang_vel_switch0)
             wheel0.ControlAngularVelocity(wheel_vel_setpoint0);
-        
+
         if(ang_vel_switch1)
             wheel1.ControlAngularVelocity(wheel_vel_setpoint1);
-            
+
         if(ang_vel_switch2)
             wheel2.ControlAngularVelocity(wheel_vel_setpoint2);
-            
+
         if(ang_vel_switch3)
             wheel3.ControlAngularVelocity(wheel_vel_setpoint3);
     }
@@ -105,10 +105,10 @@ void loop()
         digitalWrite(pressureRegulatorPin, LOW);
     
     timer = millis();
-    getNextCommand();    
-    
+    getNextCommand();
+
     heartbeatCount++;
-    
+
     if(heartbeatCount > 2)
         kill_motors();
 }
@@ -121,7 +121,7 @@ void kill_motors()
     wheel1.SetThrottle(neutral);
     wheel2.SetThrottle(neutral);
     wheel3.SetThrottle(neutral);
-    
+
     ang_vel_switch0 = false;
     ang_vel_switch1 = false;
     ang_vel_switch2 = false;
@@ -137,7 +137,7 @@ void cmd_single_motor(int8_t motor, int8_t value)
     else
         command = ((int8_t) value) * (1000.0 / 255.0) + 1502.0;
 
-    switch (motor) 
+    switch (motor)
     {
         case 0:
             wheel0.SetThrottle(command);
@@ -169,7 +169,7 @@ void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
     wheel1.SetThrottle(command2);
     wheel2.SetThrottle(command2);
     wheel3.SetThrottle(command2);
-    
+
     ang_vel_switch0 = false;
     ang_vel_switch1 = false;
     ang_vel_switch2 = false;
@@ -204,7 +204,7 @@ void fire_cannon()
 
 void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
 {
-    switch (motor) 
+    switch (motor)
     {
         case 0:
             wheel_vel_setpoint0 = (value + 0.5) * MAX_WHEEL_SPEED/127.5;
@@ -231,7 +231,7 @@ void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t 
     wheel_vel_setpoint1 = -(value2 + 0.5) * MAX_WHEEL_SPEED/127.5;
     wheel_vel_setpoint2 = -(value3 + 0.5) * MAX_WHEEL_SPEED/127.5;
     wheel_vel_setpoint3 = (value4 + 0.5) * MAX_WHEEL_SPEED/127.5;
-    
+
     ang_vel_switch0 = true;
     ang_vel_switch1 = true;
     ang_vel_switch2 = true;
@@ -251,16 +251,19 @@ void getNextCommand()
     if(Serial1.available() > 3 )
     {
         Serial1.readBytes(_buffer, Serial1.available());
-        
+
         if (_buffer[0] == 0x47 &&
             _buffer[1] == 0x41 &&
             _buffer[2] == 0x4e &&
-            _buffer[3] == 0x53) 
+            _buffer[3] == 0x53)
         {
             //digitalWrite(13, HIGH);
 
             heartbeatCount = 0;
-            switch (_buffer[4]) 
+
+            digitalWrite(13, HIGH);
+            
+            switch (_buffer[4])
             {
                 case 0:
                     kill_motors();
@@ -295,6 +298,8 @@ void getNextCommand()
     }
     else
         heartbeatCount++;
+
+    digitalWrite(13, LOW);
 }
 
 void HandleEncoderPinAInterrupt0()

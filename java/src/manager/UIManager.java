@@ -1,5 +1,7 @@
 package manager;
 
+import gui.MainFrame;
+
 public class UIManager
 {
     ApplicationState applicationState;
@@ -13,5 +15,7 @@ public class UIManager
         this.applicationState = applicationState;
         this.robotState = robotState;
         this.uiState = uiState;
+
+        MainFrame frame = new MainFrame(uiState);
     }
 }
