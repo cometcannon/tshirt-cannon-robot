@@ -3,27 +3,27 @@ package manager;
 import robot.Networker;
 import robot.KeepAliveThread;
 
-public class RobotManager
+public class RobotManager implements Runnable
 {
     ApplicationState applicationState;
     RobotState robotState;
-    UIState uiState;
 
     protected RobotManager(ApplicationState applicationState,
-                           RobotState robotState,
-                           UIState uiState)
+                           RobotState robotState)
     {
         this.applicationState = applicationState;
         this.robotState = robotState;
-        this.uiState = uiState;
+    }
 
-        robotState.setNetworker(new Networker(robotState));
-
-        CommandObserver observer = new CommandObserver(robotState, uiState.getCurrentCommand());
-        uiState.getCurrentCommand().addObserver(observer);
-
+    @Override
+    public void run()
+    {
         Networker networker = new Networker(robotState);
+        Thread networkerThread = new Thread(networker);
+        networkerThread.start();
+        
         KeepAliveThread keepAliveThread = new KeepAliveThread(robotState);
-//        keepAliveThread.start();
+        Thread keepAlive = new Thread(keepAliveThread);
+        keepAlive.start();
     }
 }

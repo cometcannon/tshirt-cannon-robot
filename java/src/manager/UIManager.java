@@ -2,20 +2,21 @@ package manager;
 
 import gui.MainFrame;
 
-public class UIManager
+public class UIManager implements Runnable
 {
     ApplicationState applicationState;
     RobotState robotState;
-    UIState uiState;
 
     protected UIManager(ApplicationState applicationState,
-                        RobotState robotState,
-                        UIState uiState)
+                        RobotState robotState)
     {
         this.applicationState = applicationState;
         this.robotState = robotState;
-        this.uiState = uiState;
-
-        MainFrame frame = new MainFrame(uiState);
+    }
+    
+    @Override
+    public void run()
+    {
+        MainFrame frame = new MainFrame(robotState);
     }
 }

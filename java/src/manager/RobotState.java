@@ -1,23 +1,31 @@
 package manager;
 
-import robot.Networker;
+import robot.command.Command;
+
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class RobotState
 {
-    Networker networker;
+    private Queue<Command> commandQueue;
     
     protected RobotState()
     {
-
+        commandQueue = new LinkedList<>();
     }
 
-    public Networker getNetworker()
+    public synchronized void addNewCommand(Command newCommand)
     {
-        return networker;
+        commandQueue.offer(newCommand);
     }
-
-    public void setNetworker(Networker networker)
+    
+    public synchronized boolean isCommandAvailable()
     {
-        this.networker = networker;
+        return !commandQueue.isEmpty();
+    }
+    
+    public synchronized Command pollNextCommand()
+    {
+        return commandQueue.poll();
     }
 }
