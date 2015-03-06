@@ -125,12 +125,17 @@ void loop()
         digitalWrite(pressureRegulatorPin, LOW);
 
     if(millis() - keepAliveTimer > keepAliveTimeout)
-    {
-        kill_motors();
-        desiredPressure = 0;
-        digitalWrite(cannonTriggerPin, LOW);
-        cannonTriggered = false;
-    }
+        kill_robot();
+    
+    checkForCommand();
+}
+
+void kill_robot()
+{
+    kill_motors();
+    desiredPressure = 0;
+    digitalWrite(cannonTriggerPin, LOW);
+    cannonTriggered = false;
 }
 
 void kill_motors()
@@ -268,12 +273,10 @@ void set_desired_pressure(float _desiredPressure)
 
 void processCommand()
 {
-    keepAliveTimer = millis();
-
     switch (commandBuffer[4])
     {
         case 0:
-            kill_motors();
+            kill_robot();
             break;
         case 1:
             break;
@@ -299,28 +302,34 @@ void processCommand()
             set_desired_pressure(commandBuffer[5]);
             break;
     }
+    
+    keepAliveTimer = millis();
 
 }
 
-void serial1Event()
+void checkForCommand()
 {
-    commandBuffer[commandBufferIndex] = Serial1.read();
-
-    if(commandBufferIndex <= 3 && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
+    int data = Serial1.read();
+    if(data > -1)
     {
-        memset(commandBuffer, 0, commandBufferIndex + 1);
-        commandBufferIndex = 0;
+      commandBuffer[commandBufferIndex] = data;
+  
+      if(commandBufferIndex <= 3 && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
+      {
+          memset(commandBuffer, 0, commandBufferIndex + 1);
+          commandBufferIndex = 0;
+      }
+  
+      else if(commandLengthArray[ commandBuffer[4] ] <= commandBufferIndex + 1)
+      {
+          processCommand();
+          memset(commandBuffer, 0, commandBufferIndex + 1);
+          commandBufferIndex = 0;
+      }
+      
+      else
+        commandBufferIndex++;
     }
-
-    else if(commandLengthArray[ commandBuffer[4] ] <= commandBufferIndex + 1)
-    {
-        processCommand();
-        memset(commandBuffer, 0, commandBufferIndex + 1);
-        commandBufferIndex = 0;
-    }
-    
-    else
-      commandBufferIndex++;
 
 }
 
