@@ -2,6 +2,7 @@
 #include <Servo.h>
 #include "wheel.h"
 #include "PinChangeInt.h"
+#include "Streaming.h"
 
 Servo esc0;
 Servo esc1;
@@ -34,11 +35,12 @@ float wheel_vel_setpoint2 = 0;
 float wheel_vel_setpoint3 = 0;
 
 const float MAX_WHEEL_SPEED = 9.0;
+const int MIN_PRESSURE = 200;
 
 int cannonTriggerPin = A0;
 int pressureRegulatorPin = A1;
 int pressureSensorPin = A2;
-float desiredPressure = 0;
+float desiredPressure = MIN_PRESSURE;
 
 byte commandBuffer[64];
 byte commandBufferIndex = 0;
@@ -117,6 +119,7 @@ void loop()
     {
         digitalWrite(cannonTriggerPin, LOW);
         cannonTriggered = false;
+        Serial1 << "Trigger closed\n";
     }
 
     if(desiredPressure < analogRead(pressureSensorPin) && !cannonTriggered)
@@ -133,7 +136,7 @@ void loop()
 void kill_robot()
 {
     kill_motors();
-    desiredPressure = 0;
+    desiredPressure = MIN_PRESSURE;
     digitalWrite(cannonTriggerPin, LOW);
     cannonTriggered = false;
 }
@@ -181,6 +184,8 @@ void cmd_single_motor(int8_t motor, int8_t value)
             ang_vel_switch3 = false;
             break;
     }
+    
+    Serial1 << "Command Single Motor " << motor << ": " << value << "\n";
 }
 
 void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
@@ -199,6 +204,8 @@ void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
     ang_vel_switch1 = false;
     ang_vel_switch2 = false;
     ang_vel_switch3 = false;
+    
+    Serial1 << "Command All Motors: " << command1 << " " << command2 << " " << command3 << " " << command4 << "\n";
 }
 
 float print_motor_ang_vel(int8_t motor)
@@ -225,6 +232,8 @@ void fire_cannon()
     digitalWrite(cannonTriggerPin, HIGH);
     cannonTriggerTime = millis();
     cannonTriggered = true;
+    
+    Serial1 << "Trigger Pulled\n";
 }
 
 void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
@@ -248,6 +257,8 @@ void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
             ang_vel_switch3 = true;
             break;
     }
+    
+    Serial1 << "Command Single Motor Vel" << motor << ": " << value << "\n";
 }
 
 void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
@@ -261,6 +272,8 @@ void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t 
     ang_vel_switch1 = true;
     ang_vel_switch2 = true;
     ang_vel_switch3 = true;
+    
+    Serial1 << "Command All Motor Vels: " << value1 << " " << value2 << " " << value3 << " " << value4 << "\n";
 }
 
 void set_desired_pressure(float _desiredPressure)
@@ -269,6 +282,11 @@ void set_desired_pressure(float _desiredPressure)
 
     if(desiredPressure > 1023)
         desiredPressure = 1023;
+        
+    if(desiredPressure < MIN_PRESSURE)
+        desiredPressure = MIN_PRESSURE;
+        
+    Serial1 << "Set Desired Pressure to " << desiredPressure << "\n";
 }
 
 void processCommand()
@@ -303,7 +321,7 @@ void processCommand()
             break;
     }
     
-    keepAliveTimer = millis();
+      keepAliveTimer = millis();
 
 }
 
