@@ -24,7 +24,7 @@
 #define MAX_PACKET 1500
 
 #define UTIMEOUT 300e3
-#define ATMEGA_INTERVAL 100e3
+#define ATMEGA_INTERVAL 300e3
 
 typedef struct state state_t;
 struct state {
@@ -90,6 +90,42 @@ void kill_robot(state_t *state)
 
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 5);
+    printf("killed the robot\n");
+    pthread_mutex_unlock(&state->atmegafd_mutex);
+}
+
+void fire_cannon(state_t *state)
+{
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    buffer[4] = 5;
+
+    pthread_mutex_lock(&state->atmegafd_mutex);
+    write(state->atmegafd, buffer, 5);
+    printf("fired the cannon\n");
+    pthread_mutex_unlock(&state->atmegafd_mutex);
+}
+
+void set_pressure(state_t *state, int8_t pressure)
+{
+     int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    buffer[4] = 8;
+    buffer[5] = pressure;
+
+    pthread_mutex_lock(&state->atmegafd_mutex);
+    write(state->atmegafd, buffer, 6);
+    printf("set the pressure\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
@@ -113,6 +149,7 @@ void command_velocity(state_t *state, int8_t v_x, int8_t v_y, int8_t w)
 
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 9);
+    printf("commanded a velocity\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
@@ -132,6 +169,7 @@ void command_motor(state_t *state, int motor, int8_t value)
 
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 7);
+    printf("commanded a motor\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
@@ -166,6 +204,12 @@ int process_message(state_t *state, int8_t *msg, int len)
             break;
         case 4: // individual motor command
             command_motor(state, msg[5], msg[6]);
+            break;
+        case 5:
+            fire_cannon(state);
+            break;
+        case 8:
+            set_pressure(state, msg[5]);
             break;
     }
 
@@ -298,7 +342,7 @@ int main(int argc, char *argv[])
             perror("recv");
             break;
         }
-
+        
         pthread_mutex_lock(&state->last_utime_mutex);
         state->last_utime = utime_now();
         pthread_mutex_unlock(&state->last_utime_mutex);

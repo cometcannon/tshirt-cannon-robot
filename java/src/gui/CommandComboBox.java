@@ -5,7 +5,7 @@ import javax.swing.JComboBox;
 public class CommandComboBox extends JComboBox
 {
     final String[] commands = {"FORWARD", "BACKWARD", "LEFT", "RIGHT", "ROTATE CW",
-                               "ROTATE CCW", "MOTOR 0", "MOTOR 1", "MOTOR 2", "MOTOR 3"};
+                               "ROTATE CCW", "MOTOR 0", "MOTOR 1", "MOTOR 2", "MOTOR 3", "FIRE", "PRESSURE"};
 
     protected CommandComboBox()
     {

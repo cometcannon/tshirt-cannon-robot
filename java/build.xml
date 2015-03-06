@@ -3,26 +3,25 @@
   <!-- set global properties for this build -->
   <property name="src.dir" value="src" />
   <property name="build.dir" value="build" />
-  <property name="classes.dir" value="${build.dir}/classes" />
-  <property name="jar.dir" value="${build.dir}/jar" />
+  <property name="jar.dir" value="dist" />
   <property name="main-class" value="manager.ApplicationManager" />
 
   <!-- initialize the environment -->
   <target name="init">
     <tstamp/>
-    <mkdir dir="${classes.dir}"/>
+    <mkdir dir="${build.dir}"/>
   </target>
 
   <!-- compile the source code -->
   <target name="compile" depends="init" description="compile the source">
-    <javac destdir="${classes.dir}" includeantruntime="false">
+    <javac destdir="${build.dir}" includeantruntime="false">
       <src path="${src.dir}"/>
     </javac>
   </target>
 
   <!-- compile the source code with debug turned on -->
   <target name="compile.debug" depends="init" description="compile the source with debug">
-    <javac debug="on" destdir="${classes.dir}" includeantruntime="false">
+    <javac debug="on" destdir="${build.dir}" includeantruntime="false">
       <src path="${src.dir}"/>
     </javac>
   </target>
@@ -30,7 +29,7 @@
   <!-- jar the application -->
   <target name="jar" depends="compile" description="create executable jar of application">
     <mkdir dir="${jar.dir}" />
-    <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+    <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${build.dir}">
       <manifest>
 	<attribute name="Main-Class" value="${main-class}" />
       </manifest>
@@ -44,7 +43,8 @@
 
   <!-- clean up the environment -->
   <target name="clean" description="clean up">
-    <delete dir="${build}"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${jar.dir}" />
   </target>
 
 </project>

@@ -1,10 +1,9 @@
 package robot;
 
-import java.lang.Thread;
-
 import manager.RobotState;
+import robot.command.KeepAliveCommand;
 
-public class KeepAliveThread extends Thread
+public class KeepAliveThread implements Runnable
 {
     RobotState robotState;
     
@@ -16,8 +15,9 @@ public class KeepAliveThread extends Thread
     @Override
     public void run()
     {
+        System.out.println("started the keep alive");
         while (true) {
-            robotState.getNetworker().sendCommand("KEEP ALIVE", (byte) 0);
+            robotState.addNewCommand(new KeepAliveCommand());
 
             try { Thread.sleep(100); } catch (InterruptedException ex) { }
         }

@@ -7,16 +7,17 @@ public class ApplicationManager
     
     ApplicationState applicationState;
     RobotState robotState;
-    UIState uiState;
-    
+
     private ApplicationManager()
     {
         applicationState = new ApplicationState();
         robotState = new RobotState();
-        uiState = new UIState();
         
-        robotManager = new RobotManager(applicationState, robotState, uiState);
-        uiManager = new UIManager(applicationState, robotState, uiState);
+        robotManager = new RobotManager(applicationState, robotState);
+        uiManager = new UIManager(applicationState, robotState);
+        
+        uiManager.run();
+        robotManager.run();
     }
     
     public static void main(String[] args)

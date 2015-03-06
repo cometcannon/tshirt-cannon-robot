@@ -8,20 +8,27 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import manager.UIState;
+import manager.RobotState;
+
+import robot.command.MotorCommand;
+import robot.command.KillRobotCommand;
+import robot.command.MoveDirectionCommand;
+import robot.command.RotateCommand;
+import robot.command.FireCannonCommand;
+import robot.command.SetPressureCommand;
 
 public class DebugPanel extends JPanel
 {
-    UIState uiState;
+    RobotState robotState;
 
     JSlider slider;
     JComboBox comboBox;
     JButton sendButton;
     JButton killButton;
     
-    protected DebugPanel(UIState uiState)
+    protected DebugPanel(RobotState robotState)
     {
-        this.uiState = uiState;
+        this.robotState = robotState;
 
         slider = new MagnitudeSlider();
         comboBox = new CommandComboBox();
@@ -44,7 +51,35 @@ public class DebugPanel extends JPanel
             String commandType = (String) comboBox.getSelectedItem();
             int magnitude = slider.getValue();
 
-            uiState.addCommand(commandType, magnitude);
+            if (commandType.equalsIgnoreCase("MOTOR 0"))
+                robotState.addNewCommand(new MotorCommand(0, magnitude));
+            
+            if (commandType.equalsIgnoreCase("MOTOR 1"))
+                robotState.addNewCommand(new MotorCommand(1, magnitude));
+            
+            if (commandType.equalsIgnoreCase("MOTOR 2"))
+                robotState.addNewCommand(new MotorCommand(2, magnitude));
+            
+            if (commandType.equalsIgnoreCase("MOTOR 3"))
+                robotState.addNewCommand(new MotorCommand(3, magnitude));
+            
+            if (commandType.equalsIgnoreCase("FORWARD") ||
+                commandType.equalsIgnoreCase("BACKWARD") ||
+                commandType.equalsIgnoreCase("RIGHT") ||
+                commandType.equalsIgnoreCase("LEFT"))
+                robotState.addNewCommand(new MoveDirectionCommand(commandType, magnitude));
+            
+            if (commandType.equalsIgnoreCase("ROTATE CCW"))
+                robotState.addNewCommand(new RotateCommand("CCW", magnitude));
+            
+            if (commandType.equalsIgnoreCase("ROTATE CW"))
+                robotState.addNewCommand(new RotateCommand("CW", magnitude));
+            
+            if (commandType.equalsIgnoreCase("FIRE"))
+                robotState.addNewCommand(new FireCannonCommand());
+            
+            if (commandType.equalsIgnoreCase("PRESSURE"))
+                robotState.addNewCommand(new SetPressureCommand(magnitude));
         }
     }
 
@@ -52,7 +87,7 @@ public class DebugPanel extends JPanel
     {
         public void actionPerformed(ActionEvent e)
         {
-            uiState.addCommand("KILL");
+            robotState.addNewCommand(new KillRobotCommand());
         }
     }
 }

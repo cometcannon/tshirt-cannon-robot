@@ -2,17 +2,17 @@ package gui;
 
 import javax.swing.JFrame;
 
-import manager.UIState;
+import manager.RobotState;
 
 public class MainFrame extends JFrame
 {
-    UIState uiState;
+    RobotState robotState;
     
-    public MainFrame(UIState uiState)
+    public MainFrame(RobotState robotState)
     {
-        this.uiState = uiState;
+        this.robotState = robotState;
 
-        DebugPanel debug = new DebugPanel(uiState);
+        DebugPanel debug = new DebugPanel(robotState);
         add(debug);
         
         setSize(400, 250);
