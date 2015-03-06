@@ -35,18 +35,37 @@ float wheel_vel_setpoint3 = 0;
 
 const float MAX_WHEEL_SPEED = 9.0;
 
-int cannonTriggerPin = A1;
-int pressureRegulatorPin = A2;
-int pressureSensorPin = A3;
+int cannonTriggerPin = A0;
+int pressureRegulatorPin = A1;
+int pressureSensorPin = A2;
 float desiredPressure = 0;
 
-byte _buffer[10];
-unsigned long timer;
-byte heartbeatCount = 0;
+byte commandBuffer[64];
+byte commandBufferIndex = 0;
+
+unsigned long keepAliveTimer;
+unsigned long keepAliveTimeout = 1000;
+
+bool cannonTriggered = false;
+unsigned long cannonTriggerTime;
+unsigned long cannonTriggerTimeout = 1000;
+
+byte magicBytes[] = {0x47, 0x41, 0x4e, 0x53};
+byte commandLengthArray[] = {5, 5, 7, 9, 6, 5, 7, 9, 6};
 
 void setup()
 {
+    Serial.begin(57600);
     Serial1.begin(250000);
+
+    pinMode(cannonTriggerPin, OUTPUT);
+    digitalWrite(cannonTriggerPin, LOW);
+
+    pinMode(pressureRegulatorPin, OUTPUT);
+    digitalWrite(pressureRegulatorPin, LOW);
+
+    pinMode(pressureSensorPin, INPUT);
+    digitalWrite(pressureSensorPin, LOW);
 
     pinMode(2, INPUT);
     digitalWrite(2, LOW);
@@ -62,8 +81,8 @@ void setup()
     digitalWrite(7, LOW);
     pinMode(11, INPUT);
     digitalWrite(11, LOW);
-    
-    pinMode(12, INPUT_PULLUP); 
+
+    pinMode(12, INPUT_PULLUP);
     pinMode(13, OUTPUT);
     digitalWrite(13, LOW);
 
@@ -78,39 +97,40 @@ void setup()
     esc3.attach(10);
 
     kill_motors();
-
-    timer = millis();
 }
 
 void loop()
 {
-    while(millis() - timer < 1000)
+    if(ang_vel_switch0)
+        wheel0.ControlAngularVelocity(wheel_vel_setpoint0);
+
+    if(ang_vel_switch1)
+        wheel1.ControlAngularVelocity(wheel_vel_setpoint1);
+
+    if(ang_vel_switch2)
+        wheel2.ControlAngularVelocity(wheel_vel_setpoint2);
+
+    if(ang_vel_switch3)
+        wheel3.ControlAngularVelocity(wheel_vel_setpoint3);
+
+    if(cannonTriggered && millis() - cannonTriggerTime > cannonTriggerTimeout)
     {
-        if(ang_vel_switch0)
-            wheel0.ControlAngularVelocity(wheel_vel_setpoint0);
-
-        if(ang_vel_switch1)
-            wheel1.ControlAngularVelocity(wheel_vel_setpoint1);
-
-        if(ang_vel_switch2)
-            wheel2.ControlAngularVelocity(wheel_vel_setpoint2);
-
-        if(ang_vel_switch3)
-            wheel3.ControlAngularVelocity(wheel_vel_setpoint3);
+        digitalWrite(cannonTriggerPin, LOW);
+        cannonTriggered = false;
     }
 
-    if(desiredPressure < analogRead(pressureSensorPin))
+    if(desiredPressure < analogRead(pressureSensorPin) && !cannonTriggered)
         digitalWrite(pressureRegulatorPin, HIGH);
     else
         digitalWrite(pressureRegulatorPin, LOW);
-    
-    timer = millis();
-    getNextCommand();
 
-    heartbeatCount++;
-
-    if(heartbeatCount > 2)
+    if(millis() - keepAliveTimer > keepAliveTimeout)
+    {
         kill_motors();
+        desiredPressure = 0;
+        digitalWrite(cannonTriggerPin, LOW);
+        cannonTriggered = false;
+    }
 }
 
 void kill_motors()
@@ -178,7 +198,7 @@ void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
 
 float print_motor_ang_vel(int8_t motor)
 {
-    switch(motor) 
+    switch(motor)
     {
         case 0:
             Serial1.println(encoder0.ReturnAngularVelocity());
@@ -198,8 +218,8 @@ float print_motor_ang_vel(int8_t motor)
 void fire_cannon()
 {
     digitalWrite(cannonTriggerPin, HIGH);
-    delay(1000);
-    digitalWrite(cannonTriggerPin, LOW);
+    cannonTriggerTime = millis();
+    cannonTriggered = true;
 }
 
 void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
@@ -240,66 +260,68 @@ void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t 
 
 void set_desired_pressure(float _desiredPressure)
 {
-    desiredPressure = _desiredPressure;
-    
+    desiredPressure = map(_desiredPressure, 0, 255, 0, 1023);
+
     if(desiredPressure > 1023)
         desiredPressure = 1023;
 }
 
-void getNextCommand()
+void processCommand()
 {
-    if(Serial1.available() > 3 )
+    keepAliveTimer = millis();
+
+    switch (commandBuffer[4])
     {
-        Serial1.readBytes(_buffer, Serial1.available());
-
-        if (_buffer[0] == 0x47 &&
-            _buffer[1] == 0x41 &&
-            _buffer[2] == 0x4e &&
-            _buffer[3] == 0x53)
-        {
-            //digitalWrite(13, HIGH);
-
-            heartbeatCount = 0;
-
-            digitalWrite(13, HIGH);
-            
-            switch (_buffer[4])
-            {
-                case 0:
-                    kill_motors();
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    cmd_single_motor(_buffer[5], _buffer[6]);
-                    break;
-                case 3:
-                    cmd_all_motors(_buffer[5], _buffer[6], _buffer[7], _buffer[8]);
-                    break;
-                case 4:
-                    print_motor_ang_vel(_buffer[5]);
-                    break;
-                case 5:
-                    fire_cannon();
-                    break;
-                case 6:
-                    cmd_single_motor_ang_vel(_buffer[5], _buffer[6]);
-                    break;
-                case 7:
-                    cmd_all_motors_ang_vel(_buffer[5], _buffer[6], _buffer[7], _buffer[8]);
-                    break;
-                case 8:
-                    set_desired_pressure((_buffer[5] << 8) | _buffer[6]);
-                    break;
-            }   
-
-            //digitalWrite(13, LOW);
-        }
+        case 0:
+            kill_motors();
+            break;
+        case 1:
+            break;
+        case 2:
+            cmd_single_motor(commandBuffer[5], commandBuffer[6]);
+            break;
+        case 3:
+            cmd_all_motors(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
+            break;
+        case 4:
+            print_motor_ang_vel(commandBuffer[5]);
+            break;
+        case 5:
+            fire_cannon();
+            break;
+        case 6:
+            cmd_single_motor_ang_vel(commandBuffer[5], commandBuffer[6]);
+            break;
+        case 7:
+            cmd_all_motors_ang_vel(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
+            break;
+        case 8:
+            set_desired_pressure(commandBuffer[5]);
+            break;
     }
-    else
-        heartbeatCount++;
 
-    digitalWrite(13, LOW);
+}
+
+void serial1Event()
+{
+    commandBuffer[commandBufferIndex] = Serial1.read();
+
+    if(commandBufferIndex <= 3 && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
+    {
+        memset(commandBuffer, 0, commandBufferIndex + 1);
+        commandBufferIndex = 0;
+    }
+
+    else if(commandLengthArray[ commandBuffer[4] ] <= commandBufferIndex + 1)
+    {
+        processCommand();
+        memset(commandBuffer, 0, commandBufferIndex + 1);
+        commandBufferIndex = 0;
+    }
+    
+    else
+      commandBufferIndex++;
+
 }
 
 void HandleEncoderPinAInterrupt0()
