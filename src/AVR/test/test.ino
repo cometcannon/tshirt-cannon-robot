@@ -190,10 +190,10 @@ void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
     float command3 = -((int8_t) value3) * (1000.0 / 255.0) + 1502.0;
     float command4 = ((int8_t) value4) * (1000.0 / 255.0) + 1502.0;
 
-    wheel0.SetThrottle(command2);
+    wheel0.SetThrottle(command1);
     wheel1.SetThrottle(command2);
-    wheel2.SetThrottle(command2);
-    wheel3.SetThrottle(command2);
+    wheel2.SetThrottle(command3);
+    wheel3.SetThrottle(command4);
 
     ang_vel_switch0 = false;
     ang_vel_switch1 = false;
