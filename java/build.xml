@@ -4,7 +4,13 @@
   <property name="src.dir" value="src" />
   <property name="build.dir" value="build" />
   <property name="jar.dir" value="dist" />
+  <property name="lib.dir" value="lib" />
   <property name="main-class" value="manager.ApplicationManager" />
+
+  <!-- build the classpath -->
+  <path id="classpath">
+    <fileset dir="${lib.dir}" includes="*.jar" />
+  </path>
 
   <!-- initialize the environment -->
   <target name="init">
@@ -16,6 +22,7 @@
   <target name="compile" depends="init" description="compile the source">
     <javac destdir="${build.dir}" includeantruntime="false">
       <src path="${src.dir}"/>
+      <classpath refid="classpath" />
     </javac>
   </target>
 
@@ -23,6 +30,7 @@
   <target name="compile.debug" depends="init" description="compile the source with debug">
     <javac debug="on" destdir="${build.dir}" includeantruntime="false">
       <src path="${src.dir}"/>
+      <classpath refid="classpath" />
     </javac>
   </target>
 
@@ -30,6 +38,8 @@
   <target name="jar" depends="compile" description="create executable jar of application">
     <mkdir dir="${jar.dir}" />
     <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${build.dir}">
+      <fileset dir="${build.dir}" includes="**/*.class" />
+      <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
       <manifest>
 	<attribute name="Main-Class" value="${main-class}" />
       </manifest>
@@ -38,7 +48,9 @@
 
   <!-- run the application -->
   <target name="run" depends="jar" description="run the application">
-    <java jar="${jar.dir}/${ant.project.name}.jar" fork="true" />
+    <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+      <sysproperty key="java.library.path" value="lib" />
+    </java>
   </target>
 
   <!-- clean up the environment -->
