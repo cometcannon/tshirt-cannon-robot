@@ -5,7 +5,7 @@ public class FireCannonCommand implements Command
     @Override
     public byte[] generatePayload()
     {
-        byte buffer[] = new byte[8];
+        byte buffer[] = new byte[5];
 
         //////////////////////////////////////// 
         // magic bytes

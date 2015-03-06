@@ -2,6 +2,7 @@ package manager;
 
 import robot.Networker;
 import robot.KeepAliveThread;
+import robot.RemoteController;
 
 public class RobotManager implements Runnable
 {
@@ -25,5 +26,9 @@ public class RobotManager implements Runnable
         KeepAliveThread keepAliveThread = new KeepAliveThread(robotState);
         Thread keepAlive = new Thread(keepAliveThread);
         keepAlive.start();
+        
+        RemoteController controller = new RemoteController(robotState);
+        Thread controllerThread = new Thread(controller);
+        controllerThread.start();
     }
 }

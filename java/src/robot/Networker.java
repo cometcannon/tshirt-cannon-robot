@@ -39,7 +39,7 @@ public class Networker implements Runnable
             if (robotState.isCommandAvailable()) {
                 Command cmd = robotState.pollNextCommand();
                 byte payload[] = cmd.generatePayload();
-
+                
                 try {
                     output.write(payload); 
                 } catch (IOException ex) {
