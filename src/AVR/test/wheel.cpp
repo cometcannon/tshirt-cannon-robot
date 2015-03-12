@@ -25,6 +25,9 @@ char Wheel::ReturnESCPin()
 
 void Wheel::SetThrottle(float throttle)
 {
+    if (throttle = currentThrottle)
+        return;
+
     if(throttle > 2000)
         throttle = 2000;
     else if (throttle < 1000)
