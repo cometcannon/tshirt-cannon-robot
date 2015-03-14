@@ -129,7 +129,7 @@ void loop()
 
     if(millis() - keepAliveTimer > keepAliveTimeout)
         kill_robot();
-    
+
     checkForCommand();
 }
 
@@ -184,7 +184,7 @@ void cmd_single_motor(int8_t motor, int8_t value)
             ang_vel_switch3 = false;
             break;
     }
-    
+
     Serial1 << "Command Single Motor " << motor << ": " << value << "\n";
 }
 
@@ -204,7 +204,7 @@ void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
     ang_vel_switch1 = false;
     ang_vel_switch2 = false;
     ang_vel_switch3 = false;
-    
+
     Serial1 << "Command All Motors: " << command1 << " " << command2 << " " << command3 << " " << command4 << "\n";
 }
 
@@ -232,7 +232,7 @@ void fire_cannon()
     digitalWrite(cannonTriggerPin, HIGH);
     cannonTriggerTime = millis();
     cannonTriggered = true;
-    
+
     Serial1 << "Trigger Pulled\n";
 }
 
@@ -257,7 +257,7 @@ void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
             ang_vel_switch3 = true;
             break;
     }
-    
+
     Serial1 << "Command Single Motor Vel" << motor << ": " << value << "\n";
 }
 
@@ -272,7 +272,7 @@ void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t 
     ang_vel_switch1 = true;
     ang_vel_switch2 = true;
     ang_vel_switch3 = true;
-    
+
     Serial1 << "Command All Motor Vels: " << value1 << " " << value2 << " " << value3 << " " << value4 << "\n";
 }
 
@@ -282,10 +282,10 @@ void set_desired_pressure(float _desiredPressure)
 
     if(desiredPressure > 1023)
         desiredPressure = 1023;
-        
+
     if(desiredPressure < MIN_PRESSURE)
         desiredPressure = MIN_PRESSURE;
-        
+
     Serial1 << "Set Desired Pressure to " << desiredPressure << "\n";
 }
 
@@ -296,31 +296,44 @@ void processCommand()
         case 0:
             kill_robot();
             break;
+
         case 1:
             break;
+
         case 2:
             cmd_single_motor(commandBuffer[5], commandBuffer[6]);
             break;
+
         case 3:
             cmd_all_motors(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
             break;
+
         case 4:
             print_motor_ang_vel(commandBuffer[5]);
             break;
+
         case 5:
             fire_cannon();
             break;
+
         case 6:
             cmd_single_motor_ang_vel(commandBuffer[5], commandBuffer[6]);
             break;
+
         case 7:
             cmd_all_motors_ang_vel(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
             break;
+
         case 8:
             set_desired_pressure(commandBuffer[5]);
             break;
+
+        case 9:
+            debug = true;
+            break;
+
     }
-    
+
       keepAliveTimer = millis();
 
 }
@@ -331,20 +344,20 @@ void checkForCommand()
     if(data > -1)
     {
       commandBuffer[commandBufferIndex] = data;
-  
+
       if(commandBufferIndex <= 3 && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
       {
           memset(commandBuffer, 0, commandBufferIndex + 1);
           commandBufferIndex = 0;
       }
-  
+
       else if(commandLengthArray[ commandBuffer[4] ] <= commandBufferIndex + 1)
       {
           processCommand();
           memset(commandBuffer, 0, commandBufferIndex + 1);
           commandBufferIndex = 0;
       }
-      
+
       else
         commandBufferIndex++;
     }

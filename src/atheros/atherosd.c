@@ -80,7 +80,7 @@ struct vel_profile inverse_kinematics(int8_t v_x, int8_t v_y, int8_t w)
 void kill_robot(state_t *state)
 {
     int8_t buffer[MAX_BUFFER];
-    
+
     buffer[0] = MAGIC >> 24 & 0xff;
     buffer[1] = MAGIC >> 16 & 0xff;
     buffer[2] = MAGIC >>  8 & 0xff;
@@ -150,6 +150,23 @@ void command_velocity(state_t *state, int8_t v_x, int8_t v_y, int8_t w)
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 9);
     printf("commanded a velocity\n");
+    pthread_mutex_unlock(&state->atmegafd_mutex);
+}
+
+void command_debug(state_t *state)
+{
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    buffer[5] = 9;
+
+    pthread_mutex_lock(&state->atmegafd_mutex);
+    write(state->atmegafd, buffer, 6);
+    printf("commanded debug mode\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
@@ -232,7 +249,7 @@ void network_connect(state_t *state)
     sin.sin_family = AF_INET;
     sin.sin_addr.s_addr = INADDR_ANY;
     sin.sin_port = htons(LISTEN_PORT);
-    
+
     if (bind(orig_sock, (struct sockaddr *) &sin, sizeof(sin)) < 0) {
         perror("bind");
         exit(1);
@@ -262,10 +279,10 @@ void *pulse_monitor(void *arg)
 {
     state_t *state = (state_t *) arg;
     int kill = 0;
-    
+
     while (1) {
         int64_t now = utime_now();
-        
+
         pthread_mutex_lock(&state->last_utime_mutex);
 
         if (state->last_utime > 0 && now - state->last_utime > UTIMEOUT) {
@@ -300,6 +317,28 @@ void *atmega_keep_alive(void *arg)
     }
 }
 
+void *atmega_poll_wheel_vel(void *arg)
+{
+    state_t *state = (state_t *) arg;
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    buffer[4] = 4;
+    buffer[5] = 0;
+
+    while (1) {
+        pthread_mutex_lock(&state->atmegafd_mutex);
+        write(state->atmegafd, buffer, 6);
+        pthread_mutex_unlock(&state->atmegafd_mutex);
+
+        usleep(ATMEGA_INTERVAL);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     int sd, atmegafd, sd_current;
@@ -307,15 +346,16 @@ int main(int argc, char *argv[])
     pthread_t pulse_thread;
     pthread_t atmega_thread;
     state_t *state = calloc(1, sizeof(state_t));
+    char *poll_wheel = "poll_wheel";
     char *comp = "from-comp";
     char *atmega = "to-atmega";
     char *help = "help";
-    
+
     if (argc > 1 && !strcmp(argv[1], help)) {
         printf("usage: %s from-comp to-atmega\n\nBy default, neither thread is initialized. Add \"from-comp\" and/or \"to-atmega\" to enable the threads.", argv[0]);
         exit(0);
     }
-    
+
     state->atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY | O_NDELAY);
 
     network_connect(state);
@@ -324,25 +364,40 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&state->clientfd_mutex, NULL);
     pthread_mutex_init(&state->sockfd_mutex, NULL);
     pthread_mutex_init(&state->last_utime_mutex, NULL);
-    
-    if ((argc > 1 && !strcmp(argv[1], comp)) || (argc > 2 && !strcmp(argv[2], comp))) {
-        printf("starting from-comp thread...\n");
-        pthread_create(&pulse_thread, NULL, pulse_monitor, state);
+
+    for(int i = 0; i < argc; i++)
+    {
+
+        if (!strcmp(argv[i], comp)) {
+            printf("starting from-comp thread...\n");
+            pthread_create(&pulse_thread, NULL, pulse_monitor, state);
+        }
+
+        if (!strcmp(argv[i], atmega)) {
+            printf("starting to-atmega thread...\n");
+            pthread_create(&atmega_thread, NULL, atmega_keep_alive, state);
+        }
+
+        if (!strcmp(argv[i], poll_wheel)) {
+            printf("starting poll-wheel-vel thread...\n");
+            pthread_create(&atmega_thread, NULL, atmega_poll_wheel_vel, state);
+        }
+
+        if (!strcmp(argv[i], "debug")){
+            printf("starting debug mode...\n");
+            command_debug(); 
+        }
+
     }
-    
-    if ((argc > 1 && !strcmp(argv[1], atmega)) || (argc > 2 && !strcmp(argv[2], atmega))) {
-        printf("starting to-atmega thread...\n");
-        pthread_create(&atmega_thread, NULL, atmega_keep_alive, state);
-    }
-       
+
     while (1) {
         int len;
-        
+
         if ((len = recv(state->sockfd, buffer, sizeof(buffer), 0)) < 0) {
             perror("recv");
             break;
         }
-        
+
         pthread_mutex_lock(&state->last_utime_mutex);
         state->last_utime = utime_now();
         pthread_mutex_unlock(&state->last_utime_mutex);
