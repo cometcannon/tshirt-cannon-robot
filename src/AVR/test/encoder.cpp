@@ -10,6 +10,7 @@ Encoder::Encoder(int pinA, int pinB, int interruptPinRef)
     encoderPinA = pinA;
     encoderPinB = pinB;
     angularVelocity = 0;
+    timeOfLastUpdate = micros();
 }
 
 void Encoder::ZeroEncoderTickCount()
@@ -42,20 +43,30 @@ void Encoder::HandleEncoderPinAInterrupt()
     encoderTickCount += digitalRead(encoderPinB) ? -1 : +1; //Will want to replace this with our own version of digitalReadFast()
 }
 
-float Encoder::MeasureAngularVelocity() 
+float Encoder::MeasureAngularVelocity()
 {
-    now = micros();
-    
-    if(now > timeOfLastUpdate)
+    unsigned long now = micros();
+
+    float dt = now - timeOfLastUpdate;
+
+    if(dt < 0)
     {
-        float dt = (now - timeOfLastUpdate)/1000000.0;
+        timeOfLastUpdate = now;
+        return angularVelocity;
+    }
+
+    if(dt < 100)
+        return angularVelocity;
+    else
+    {
+        dt = dt/1000000.0;
         angularVelocity = (encoderTickCount - previousEncoderTickCount)/(TICKS_PER_MOTOR_REV * dt);
     }
 
     timeOfLastUpdate = now;
-    
+
     previousEncoderTickCount = encoderTickCount;
-    
+
     return angularVelocity;
 }
 

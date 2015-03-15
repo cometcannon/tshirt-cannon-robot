@@ -11,34 +11,34 @@ PIDController::PIDController(int samplePeriod, double _kp, double _ki, double _k
 }
 
 double PIDController::ComputeOutput(double input, double setPoint)
-{  
+{
     int currentSampleTime = millis();
-    
+
     if(previousSampleTime > currentSampleTime)
         previousSampleTime = millis();
-    
+
     if((currentSampleTime - previousSampleTime) > currentSamplingPeriodInMS)
     {
         proportionalOutput = kp * (setPoint - input);
         integralOutput += ki * (setPoint - input);
         derivativeOutput = kd * (previousInput - input);
-        
+
         if(integralOutput > maxOutput)
             integralOutput = maxOutput;
         else if(integralOutput < minOutput)
             integralOutput = minOutput;
-        
+
         controllerOutput = proportionalOutput + integralOutput + derivativeOutput;
-        
+
         if(controllerOutput > maxOutput)
             controllerOutput = maxOutput;
         else if(controllerOutput < minOutput)
             controllerOutput = minOutput;
-        
+
         previousInput = input;
         previousSampleTime = currentSampleTime;
     }
-    
+
     return controllerOutput;
 }
 
@@ -51,11 +51,11 @@ void PIDController::SetGains(double _kp, double _ki, double _kd)
 
 void PIDController::SetSamplingPeriod(int newSamplePeriod)
 {
-    
+
     ki /= (double)newSamplePeriod/(double)currentSamplingPeriodInMS;
     kd *= (double)newSamplePeriod/(double)currentSamplingPeriodInMS;
-    
-    currentSamplingPeriodInMS = newSamplePeriod; 
+
+    currentSamplingPeriodInMS = newSamplePeriod;
 }
 
 void PIDController::SetOutputLimits(double _maxOutput, double _minOutput)

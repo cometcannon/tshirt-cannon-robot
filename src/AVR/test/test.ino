@@ -9,7 +9,7 @@ Servo esc1;
 Servo esc2;
 Servo esc3;
 
-PIDController angularVelocityController0(10, 0, 0, 0, 500, -500);
+PIDController angularVelocityController0(10, 100, 1, 0, 500, -500);
 PIDController angularVelocityController1(10, 1, 1, 1, 500, -500);
 PIDController angularVelocityController2(10, 0, 0.5, 0, 500, -500);
 PIDController angularVelocityController3(10, 0, 0, 0, 500, -500);
@@ -24,17 +24,9 @@ Wheel wheel1(6,  &esc1, &encoder1, &angularVelocityController1);
 Wheel wheel2(9,  &esc2, &encoder2, &angularVelocityController2);
 Wheel wheel3(10, &esc3, &encoder3, &angularVelocityController3);
 
-bool ang_vel_switch0 = false;
-bool ang_vel_switch1 = false;
-bool ang_vel_switch2 = false;
-bool ang_vel_switch3 = false;
+bool debug = false;
 
-float wheel_vel_setpoint0 = 0;
-float wheel_vel_setpoint1 = 0;
-float wheel_vel_setpoint2 = 0;
-float wheel_vel_setpoint3 = 0;
-
-const float MAX_WHEEL_SPEED = 9.0;
+const float MAX_WHEEL_SPEED = 6.0;
 const int MIN_PRESSURE = 200;
 
 int cannonTriggerPin = A0;
@@ -70,7 +62,7 @@ void setup()
     digitalWrite(pressureSensorPin, LOW);
 
     pinMode(2, INPUT);
-    digitalWrite(2, LOW);
+    digitalWrite(7, LOW);
     pinMode(4, INPUT);
     digitalWrite(4, LOW);
 
@@ -103,17 +95,10 @@ void setup()
 
 void loop()
 {
-    if(ang_vel_switch0)
-        wheel0.ControlAngularVelocity(wheel_vel_setpoint0);
-
-    if(ang_vel_switch1)
-        wheel1.ControlAngularVelocity(wheel_vel_setpoint1);
-
-    if(ang_vel_switch2)
-        wheel2.ControlAngularVelocity(wheel_vel_setpoint2);
-
-    if(ang_vel_switch3)
-        wheel3.ControlAngularVelocity(wheel_vel_setpoint3);
+    encoder0.MeasureAngularVelocity();
+    encoder1.MeasureAngularVelocity();
+    encoder2.MeasureAngularVelocity();
+    encoder3.MeasureAngularVelocity();
 
     if(cannonTriggered && millis() - cannonTriggerTime > cannonTriggerTimeout)
     {
@@ -143,17 +128,7 @@ void kill_robot()
 
 void kill_motors()
 {
-    float neutral = 1502.0;
-
-    wheel0.SetThrottle(neutral);
-    wheel1.SetThrottle(neutral);
-    wheel2.SetThrottle(neutral);
-    wheel3.SetThrottle(neutral);
-
-    ang_vel_switch0 = false;
-    ang_vel_switch1 = false;
-    ang_vel_switch2 = false;
-    ang_vel_switch3 = false;
+    cmd_all_motors(0, 0, 0, 0);
 }
 
 void cmd_single_motor(int8_t motor, int8_t value)
@@ -161,51 +136,48 @@ void cmd_single_motor(int8_t motor, int8_t value)
     float command;
 
     if (motor == 1 || motor == 2)
-        command = -((int8_t) value) * (1000.0 / 255.0) + 1502.0;
+        command = -value * (1000.0 / 255.0) + 1502.0;
     else
-        command = ((int8_t) value) * (1000.0 / 255.0) + 1502.0;
+        command = value * (1000.0 / 255.0) + 1502.0;
 
     switch (motor)
     {
         case 0:
             wheel0.SetThrottle(command);
-            ang_vel_switch0 = false;
             break;
+
         case 1:
             wheel1.SetThrottle(command);
-            ang_vel_switch1 = false;
             break;
+
         case 2:
             wheel2.SetThrottle(command);
-            ang_vel_switch2 = false;
             break;
+
         case 3:
             wheel3.SetThrottle(command);
-            ang_vel_switch3 = false;
             break;
+
     }
 
-    Serial1 << "Command Single Motor " << motor << ": " << value << "\n";
+    if(debug)
+        Serial1 << "Command Single Motor " << motor << ": " << value << "\n";
 }
 
 void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
 {
-    float command1 = ((int8_t) value1) * (1000.0 / 255.0) + 1502.0;
-    float command2 = -((int8_t) value2) * (1000.0 / 255.0) + 1502.0;
-    float command3 = -((int8_t) value3) * (1000.0 / 255.0) + 1502.0;
-    float command4 = ((int8_t) value4) * (1000.0 / 255.0) + 1502.0;
+    float command1 = value1 * (1000.0 / 255.0) + 1502.0;
+    float command2 = -value2 * (1000.0 / 255.0) + 1502.0;
+    float command3 = -value3 * (1000.0 / 255.0) + 1502.0;
+    float command4 = value4 * (1000.0 / 255.0) + 1502.0;
 
     wheel0.SetThrottle(command1);
     wheel1.SetThrottle(command2);
     wheel2.SetThrottle(command3);
     wheel3.SetThrottle(command4);
 
-    ang_vel_switch0 = false;
-    ang_vel_switch1 = false;
-    ang_vel_switch2 = false;
-    ang_vel_switch3 = false;
-
-    Serial1 << "Command All Motors: " << command1 << " " << command2 << " " << command3 << " " << command4 << "\n";
+    if(debug)
+        Serial1 << "Command All Motors: " << command1 << " " << command2 << " " << command3 << " " << command4 << "\n";
 }
 
 float print_motor_ang_vel(int8_t motor)
@@ -213,17 +185,33 @@ float print_motor_ang_vel(int8_t motor)
     switch(motor)
     {
         case 0:
-            Serial1.println(encoder0.ReturnAngularVelocity());
+            Serial1 << digitalRead(encoder0.ReturnEncoderPinA()) << "\t" << 
+                digitalRead(encoder0.ReturnEncoderPinB()) << "\t" <<
+                encoder0.ReturnEncoderTickCount() << "\t" <<
+                encoder0.ReturnAngularVelocity() << "\n";
             break;
+
         case 1:
-            Serial1.println(encoder1.ReturnAngularVelocity());
+            Serial1 << digitalRead(encoder1.ReturnEncoderPinA()) << "\t" << 
+                digitalRead(encoder1.ReturnEncoderPinB()) << "\t" <<
+                encoder1.ReturnEncoderTickCount() << "\t" <<
+                encoder1.ReturnAngularVelocity() << "\n";
             break;
+
         case 2:
-            Serial1.println(encoder2.ReturnAngularVelocity());
+            Serial1 << digitalRead(encoder2.ReturnEncoderPinA()) << "\t" << 
+                digitalRead(encoder2.ReturnEncoderPinB()) << "\t" <<
+                encoder2.ReturnEncoderTickCount() << "\t" <<
+                encoder2.ReturnAngularVelocity() << "\n";
             break;
+
         case 3:
-            Serial1.println(encoder3.ReturnAngularVelocity());
+            Serial1 << digitalRead(encoder3.ReturnEncoderPinA()) << "\t" << 
+                digitalRead(encoder3.ReturnEncoderPinB()) << "\t" <<
+                encoder3.ReturnEncoderTickCount() << "\t" <<
+                encoder3.ReturnAngularVelocity() << "\n";
             break;
+
     }
 }
 
@@ -233,47 +221,58 @@ void fire_cannon()
     cannonTriggerTime = millis();
     cannonTriggered = true;
 
-    Serial1 << "Trigger Pulled\n";
+    if(debug)
+        Serial1 << "Trigger Pulled\n";
 }
 
 void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
 {
+    float command;
+
+    if (motor == 1 || motor == 2)
+        command = -(((float)value + 0.5)) * MAX_WHEEL_SPEED/127.5;
+    else
+        command = ((float)value + 0.5) * MAX_WHEEL_SPEED/127.5;
+
     switch (motor)
     {
         case 0:
-            wheel_vel_setpoint0 = (value + 0.5) * MAX_WHEEL_SPEED/127.5;
-            ang_vel_switch0 = true;
+            wheel0.ControlAngularVelocity(command);
             break;
+
         case 1:
-            wheel_vel_setpoint1 = -(value + 0.5) * MAX_WHEEL_SPEED/127.5;
-            ang_vel_switch1 = true;
+            wheel1.ControlAngularVelocity(command);
             break;
+
         case 2:
-            wheel_vel_setpoint2 = -(value + 0.5) * MAX_WHEEL_SPEED/127.5;
-            ang_vel_switch2 = true;
+            wheel2.ControlAngularVelocity(command);
             break;
+
         case 3:
-            wheel_vel_setpoint3 = (value + 0.5) * MAX_WHEEL_SPEED/127.5;
-            ang_vel_switch3 = true;
+            wheel3.ControlAngularVelocity(command);
             break;
+
     }
 
-    Serial1 << "Command Single Motor Vel" << motor << ": " << value << "\n";
+    if(debug)
+        Serial1 << "Command Single Motor Vel" << motor << ": " << command << "\n";
 }
 
 void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
 {
-    wheel_vel_setpoint0 = (value1 + 0.5) * MAX_WHEEL_SPEED/127.5;
-    wheel_vel_setpoint1 = -(value2 + 0.5) * MAX_WHEEL_SPEED/127.5;
-    wheel_vel_setpoint2 = -(value3 + 0.5) * MAX_WHEEL_SPEED/127.5;
-    wheel_vel_setpoint3 = (value4 + 0.5) * MAX_WHEEL_SPEED/127.5;
+    float command0 = ((float)value1 + 0.5) * MAX_WHEEL_SPEED/127.5;
+    float command1 = -(((float)value2 + 0.5)) * MAX_WHEEL_SPEED/127.5;
+    float command2 = -(((float)value3 + 0.5)) * MAX_WHEEL_SPEED/127.5;
+    float command3 = ((float)value4 + 0.5) * MAX_WHEEL_SPEED/127.5;
 
-    ang_vel_switch0 = true;
-    ang_vel_switch1 = true;
-    ang_vel_switch2 = true;
-    ang_vel_switch3 = true;
+    wheel0.ControlAngularVelocity(command0);
+    wheel1.ControlAngularVelocity(command1);
+    wheel2.ControlAngularVelocity(command2);
+    wheel3.ControlAngularVelocity(command3);
 
-    Serial1 << "Command All Motor Vels: " << value1 << " " << value2 << " " << value3 << " " << value4 << "\n";
+    if(debug)
+        Serial1 << "Command All Motor Vels: " << command0 << " " << command1 <<
+        " " << command2 << " " << command3 << "\n";
 }
 
 void set_desired_pressure(float _desiredPressure)
@@ -286,7 +285,8 @@ void set_desired_pressure(float _desiredPressure)
     if(desiredPressure < MIN_PRESSURE)
         desiredPressure = MIN_PRESSURE;
 
-    Serial1 << "Set Desired Pressure to " << desiredPressure << "\n";
+    if(debug)
+        Serial1 << "Set Desired Pressure to " << desiredPressure << "\n";
 }
 
 void processCommand()
@@ -298,6 +298,7 @@ void processCommand()
             break;
 
         case 1:
+            print_motor_ang_vel(2);
             break;
 
         case 2:

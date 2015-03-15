@@ -12,21 +12,21 @@ import robot.command.VelocityVectorCommand;
 
 public class RemoteController implements Runnable
 {
-    //////////////////////////////////////// 
+    ////////////////////////////////////////
     //   Axes
     // 1) x (left stick) (inverted)
-    // 2) y (left stick)
-    // 4) x (right stick)
-    // 5) y (right stick) (inverted)
-    private final int axes[] = {1, 2, 4, 5};
-    
-    //////////////////////////////////////// 
+    // 0) y (left stick) (inverted)
+    // 2) x (right stick) (inverted)
+    // 3) y (right stick)
+    private final int axes[] = {1, 0, 2, 5};
+
+    ////////////////////////////////////////
     //   Axes
-    // 3) left trigger
-    // 6) right trigger
-    private final int triggers[] = {3, 6};
-    
-    //////////////////////////////////////// 
+    // 4) left trigger
+    // 5) right trigger
+    private final int triggers[] = {4, 5};
+
+    ////////////////////////////////////////
     //   Buttons
     // 0) A
     // 1) B
@@ -38,27 +38,27 @@ public class RemoteController implements Runnable
     // 7) mode
     // 8) left stick (press)
     // 9) right stick (press)
-    
+
     long lastButtonCommandTime = 0;
     long lastTriggerCommandTime = 0;
     long lastVelocityCommandTime = 0;
 
     public static Controller controller;
     RobotState robotState;
-    
+
     public RemoteController(RobotState robotState)
     {
         this.robotState = robotState;
-        
+
         try {
             Controllers.create();
         } catch (LWJGLException ex) {
             ex.printStackTrace();
             System.exit(0); // XXX we probably need to handle this more gracefully
         }
-        
+
         Controllers.poll();
-        
+
         if (Controllers.getControllerCount() > 0) {
             controller = Controllers.getController(0);
             System.out.println("Found controller");
@@ -66,23 +66,34 @@ public class RemoteController implements Runnable
             System.out.println("Could not find any controllers");
         }
     }
-    
+
     @Override
     public void run()
     {
         calibrate();
 
         while (true) {
+
+            Controllers.poll();
+
+            if(Controllers.getControllerCount() == 0)
+            {
+                robotState.addNewCommand(new KillRobotCommand());
+                continue;
+            }
+
             controller.poll();
-            
+
             for (int i = 0; i < controller.getButtonCount(); i++)
                 if (controller.isButtonPressed(i))
                     handleButtonPress(i);
-            
+
             for (int i = 0; i < triggers.length; i++)
                 if (controller.getAxisValue(triggers[i]) > 0.9)
                     handleTriggerPress();
-            
+
+            //System.out.printf("%d\n", (int)controller.getAxisValue(triggers[1]));
+
             boolean kill = true;
             for (int i = 0; i < axes.length; i++) {
                 double axisValue = controller.getAxisValue(axes[i]);
@@ -92,42 +103,45 @@ public class RemoteController implements Runnable
                     kill = false;
                 }
             }
-            
-            if (kill) 
+
+            if (kill)
                 robotState.addNewCommand(new KillRobotCommand());
 
             try { Thread.sleep(100); } catch (InterruptedException ex) { }
         }
     }
-    
+
     private void handleButtonPress(int button)
     {
+        //System.out.printf("%d\n", controller.isButtonPressed(button));
     }
-    
+
     private void handleTriggerPress()
     {
         if (System.currentTimeMillis() - lastTriggerCommandTime < 1000)
             return;
-        
+
         lastTriggerCommandTime = System.currentTimeMillis();
 
         robotState.addNewCommand(new FireCannonCommand());
     }
-    
+
     private void handleAxisMovement()
     {
         if (System.currentTimeMillis() - lastVelocityCommandTime < 50)
             return;
-        
+
         lastVelocityCommandTime = System.currentTimeMillis();
-        
-        int v_x = (int) (-1 * controller.getAxisValue(2) * 127);
-        int v_y = (int) (controller.getAxisValue(1) * 127);
-        int w_z = (int) (controller.getAxisValue(4) * 127);
-        
+
+        int v_x = (int) (-1 * controller.getAxisValue(1) * 127);
+        int v_y = (int) (-1 * controller.getAxisValue(0) * 127);
+        int w_z = (int) (-1 * controller.getAxisValue(2) * 127);
+
+        System.out.printf("%d, %d, %d\n", v_x, v_y, w_z);
+
         robotState.addNewCommand(new VelocityVectorCommand(v_x, v_y, w_z));
     }
-    
+
     private void calibrate()
     {
         for (int i = 1; i < controller.getAxisCount(); i++) {

@@ -4,7 +4,7 @@ Wheel::Wheel(){}
 
 Wheel::Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController)
 {
-    SetThrottle(0);
+    SetThrottle(1500);
 
     encoder = _encoder;
     angularVelocityController = _angularVelocityController;
@@ -25,7 +25,7 @@ char Wheel::ReturnESCPin()
 
 void Wheel::SetThrottle(float throttle)
 {
-    if (throttle = currentThrottle)
+    if (throttle == currentThrottle)
         return;
 
     if(throttle > 2000)
@@ -41,5 +41,5 @@ void Wheel::SetThrottle(float throttle)
 void Wheel::ControlAngularVelocity(float angularVelocitySetpoint)
 {
     if(angularVelocityController != NULL && encoder != NULL)
-        SetThrottle((int)angularVelocityController->ComputeOutput(encoder->MeasureAngularVelocity(), angularVelocitySetpoint) + 1500);
+        SetThrottle((int)angularVelocityController->ComputeOutput(encoder->ReturnAngularVelocity(), angularVelocitySetpoint) + 1500);
 }

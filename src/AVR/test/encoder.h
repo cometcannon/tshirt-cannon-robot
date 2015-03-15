@@ -30,7 +30,7 @@ private:
     volatile long encoderTickCount;
     volatile bool encoderPinBState;
 
-    unsigned long timeOfLastUpdate, now; 
+    unsigned long timeOfLastUpdate; 
     
 };
 
