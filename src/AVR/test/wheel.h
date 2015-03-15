@@ -6,25 +6,55 @@
 #include "PID_controller.h"
 #include "encoder.h"
 
-/* Constants */
 #define WHEEL_DIAMETER              0.1524 //Meters
 #define GEAR_RATIO                  12.75
 
 class Wheel
-{     
-public:
-    Wheel();
-    Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController);
-    int ReturnCurrentThrottle();
-    char ReturnESCPin();
-    void SetThrottle(float throttle);
-    void ControlAngularVelocity(float angularVelocitySetpoint);
-    
-private:
+{
+    public:
+    Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController)
+    {
+        SetThrottle(1500);
+
+        encoder = _encoder;
+        angularVelocityController = _angularVelocityController;
+        esc = _esc;
+
+        ESCPin = _ESCPin;
+    }
+
+    int ReturnCurrentThrottle()
+    { return currentThrottle; }
+
+    char ReturnESCPin()
+    { return ESCPin; }
+
+    void SetThrottle(float throttle)
+    {
+        if (throttle == currentThrottle)
+            return;
+
+        if(throttle > 2000)
+            throttle = 2000;
+        else if (throttle < 1000)
+            throttle = 1000;
+
+        esc->writeMicroseconds(throttle);
+
+        currentThrottle = throttle;
+    }
+
+    void ControlAngularVelocity(float angularVelocitySetpoint)
+    {
+        if(angularVelocityController != NULL && encoder != NULL)
+            SetThrottle((int)angularVelocityController->ComputeOutput(encoder->ReturnAngularVelocity(), angularVelocitySetpoint) + 1500);
+    }
+
+    private:
     Encoder* encoder;
     PIDController* angularVelocityController;
     Servo* esc;
-    
+
     int currentThrottle;
     char ESCPin;
 };

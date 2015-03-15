@@ -26,7 +26,7 @@ Wheel wheel3(10, &esc3, &encoder3, &angularVelocityController3);
 
 bool debug = false;
 
-const float MAX_WHEEL_SPEED = 6.0;
+const float MAX_WHEEL_SPEED = 5.5; //m/s. Could be slightly higher
 const int MIN_PRESSURE = 200;
 
 int cannonTriggerPin = A0;
@@ -39,6 +39,9 @@ byte commandBufferIndex = 0;
 
 unsigned long keepAliveTimer;
 unsigned long keepAliveTimeout = 1000;
+
+unsigned long angVelTimer; 
+unsigned long angVelTimeout = 50;
 
 bool cannonTriggered = false;
 unsigned long cannonTriggerTime;
@@ -71,9 +74,9 @@ void setup()
     pinMode(8, INPUT);
     digitalWrite(8, LOW);
 
-    pinMode(7, INPUT);
+    pinMode(7, INPUT_PULLUP);
     digitalWrite(7, LOW);
-    pinMode(11, INPUT);
+    pinMode(11, INPUT_PULLUP);
     digitalWrite(11, LOW);
 
     pinMode(12, INPUT_PULLUP);
@@ -90,15 +93,24 @@ void setup()
     esc2.attach(9);
     esc3.attach(10);
 
+    keepAliveTimer = millis();
+    angVelTimer = millis(); 
+    cannonTriggerTime  = millis();
+
     kill_motors();
 }
 
 void loop()
 {
-    encoder0.MeasureAngularVelocity();
-    encoder1.MeasureAngularVelocity();
-    encoder2.MeasureAngularVelocity();
-    encoder3.MeasureAngularVelocity();
+    if(millis() - angVelTimer > angVelTimeout)
+    {
+        encoder0.MeasureAngularVelocity();
+        encoder1.MeasureAngularVelocity();
+        encoder2.MeasureAngularVelocity();
+        encoder3.MeasureAngularVelocity();
+
+        angVelTimer = millis();
+    }
 
     if(cannonTriggered && millis() - cannonTriggerTime > cannonTriggerTimeout)
     {
