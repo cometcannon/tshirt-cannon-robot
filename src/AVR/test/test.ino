@@ -64,14 +64,14 @@ void setup()
     pinMode(pressureSensorPin, INPUT);
     digitalWrite(pressureSensorPin, LOW);
 
-    pinMode(2, INPUT);
-    digitalWrite(7, LOW);
-    pinMode(4, INPUT);
+    pinMode(2, INPUT_PULLUP);
+    digitalWrite(2, LOW);
+    pinMode(4, INPUT_PULLUP);
     digitalWrite(4, LOW);
 
-    pinMode(3, INPUT);
+    pinMode(3, INPUT_PULLUP);
     digitalWrite(3, LOW);
-    pinMode(8, INPUT);
+    pinMode(8, INPUT_PULLUP);
     digitalWrite(8, LOW);
 
     pinMode(7, INPUT_PULLUP);
