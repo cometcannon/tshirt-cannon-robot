@@ -1,8 +1,8 @@
-package manager;
+package edu.utdallas.cometcannon.manager;
 
-import robot.Networker;
-import robot.KeepAliveThread;
-import robot.RemoteController;
+import edu.utdallas.cometcannon.robot.Networker;
+import edu.utdallas.cometcannon.robot.KeepAliveThread;
+import edu.utdallas.cometcannon.robot.RemoteController;
 
 public class RobotManager implements Runnable
 {
