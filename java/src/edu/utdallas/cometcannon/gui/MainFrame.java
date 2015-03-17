@@ -1,8 +1,8 @@
-package gui;
+package edu.utdallas.cometcannon.gui;
 
 import javax.swing.JFrame;
 
-import manager.RobotState;
+import edu.utdallas.cometcannon.manager.RobotState;
 
 public class MainFrame extends JFrame
 {

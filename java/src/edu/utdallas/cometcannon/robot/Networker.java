@@ -1,4 +1,4 @@
-package robot;
+package edu.utdallas.cometcannon.robot;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -6,8 +6,8 @@ import java.io.DataInputStream;
 
 import java.net.Socket;
 
-import manager.RobotState;
-import robot.command.Command;
+import edu.utdallas.cometcannon.manager.RobotState;
+import edu.utdallas.cometcannon.robot.command.Command;
 
 public class Networker implements Runnable
 {

@@ -1,6 +1,6 @@
-package manager;
+package edu.utdallas.cometcannon.manager;
 
-import robot.command.Command;
+import edu.utdallas.cometcannon.robot.command.Command;
 
 import java.util.Queue;
 import java.util.LinkedList;

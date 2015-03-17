@@ -1,7 +1,7 @@
-package robot;
+package edu.utdallas.cometcannon.robot;
 
-import manager.RobotState;
-import robot.command.KeepAliveCommand;
+import edu.utdallas.cometcannon.manager.RobotState;
+import edu.utdallas.cometcannon.robot.command.KeepAliveCommand;
 
 public class KeepAliveThread implements Runnable
 {

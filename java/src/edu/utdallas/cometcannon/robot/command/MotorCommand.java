@@ -1,4 +1,4 @@
-package robot.command;
+package edu.utdallas.cometcannon.robot.command;
 
 public class MotorCommand implements Command
 {

@@ -1,16 +1,16 @@
-package robot.command;
+package edu.utdallas.cometcannon.robot.command;
 
-public class MoveDirectionCommand implements Command
+public class RotateCommand implements Command
 {
     private String direction;
     private byte magnitude;
 
-    public MoveDirectionCommand(String direction, int magnitude)
+    public RotateCommand(String direction, int magnitude)
     {
         this.direction = direction;
         this.magnitude = (byte) magnitude;
     }
-
+    
     @Override
     public byte[] generatePayload()
     {
@@ -20,30 +20,24 @@ public class MoveDirectionCommand implements Command
         // magic bytes
         buffer[0] = 0x47;
         buffer[1] = 0x41;
-        buffer[2] = 0x4e;
+        buffer[2] = 0x43;
         buffer[3] = 0x53;
         
         //////////////////////////////////////// 
         // command type
-        buffer[4] = 3; 
-        
+        buffer[4] = 3;
+
         //////////////////////////////////////// 
         // velocity vector
-        buffer[5] = 0; // v_x
-        buffer[6] = 0; // v_y
-        buffer[7] = 0; // w_z
+        buffer[5] = 0;
+        buffer[6] = 0;
+        buffer[7] = 0;
         
-        if (direction.equalsIgnoreCase("FORWARD"))
-            buffer[5] = magnitude;
-        
-        if (direction.equalsIgnoreCase("BACKWARD"))
-            buffer[5] = (byte) -magnitude;
-        
-        if (direction.equalsIgnoreCase("LEFT"))
-            buffer[6] = magnitude;
-
-        if (direction.equalsIgnoreCase("RIGHT"))
+        if (direction.equalsIgnoreCase("CW") || direction.equalsIgnoreCase("RIGHT"))
             buffer[7] = (byte) -magnitude;
+
+        if (direction.equalsIgnoreCase("CCW") || direction.equalsIgnoreCase("LEFT"))
+            buffer[7] = magnitude;
         
         return buffer;
     }

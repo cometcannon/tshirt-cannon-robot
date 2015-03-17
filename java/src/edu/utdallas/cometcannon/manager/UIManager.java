@@ -1,6 +1,6 @@
-package manager;
+package edu.utdallas.cometcannon.manager;
 
-import gui.MainFrame;
+import edu.utdallas.cometcannon.gui.MainFrame;
 
 public class UIManager implements Runnable
 {
