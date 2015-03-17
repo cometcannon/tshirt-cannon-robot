@@ -1,4 +1,4 @@
-package manager;
+package edu.utdallas.cometcannon.manager;
 
 public class ApplicationManager
 {

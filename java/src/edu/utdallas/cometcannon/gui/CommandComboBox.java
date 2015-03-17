@@ -1,4 +1,4 @@
-package gui;
+package edu.utdallas.cometcannon.gui;
 
 import javax.swing.JComboBox;
 

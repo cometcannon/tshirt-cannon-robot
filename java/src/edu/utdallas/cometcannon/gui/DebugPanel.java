@@ -1,4 +1,4 @@
-package gui;
+package edu.utdallas.cometcannon.gui;
 
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -8,14 +8,14 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-import manager.RobotState;
+import edu.utdallas.cometcannon.manager.RobotState;
 
-import robot.command.MotorCommand;
-import robot.command.KillRobotCommand;
-import robot.command.MoveDirectionCommand;
-import robot.command.RotateCommand;
-import robot.command.FireCannonCommand;
-import robot.command.SetPressureCommand;
+import edu.utdallas.cometcannon.robot.command.MotorCommand;
+import edu.utdallas.cometcannon.robot.command.KillRobotCommand;
+import edu.utdallas.cometcannon.robot.command.MoveDirectionCommand;
+import edu.utdallas.cometcannon.robot.command.RotateCommand;
+import edu.utdallas.cometcannon.robot.command.FireCannonCommand;
+import edu.utdallas.cometcannon.robot.command.SetPressureCommand;
 
 public class DebugPanel extends JPanel
 {

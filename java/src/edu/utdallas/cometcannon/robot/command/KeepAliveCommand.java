@@ -1,7 +1,12 @@
-package robot.command;
+package edu.utdallas.cometcannon.robot.command;
 
-public class FireCannonCommand implements Command
+public class KeepAliveCommand implements Command
 {
+    public KeepAliveCommand()
+    {
+
+    }
+    
     @Override
     public byte[] generatePayload()
     {
@@ -16,7 +21,7 @@ public class FireCannonCommand implements Command
         
         //////////////////////////////////////// 
         // command type
-        buffer[4] = 5; 
+        buffer[4] = 2; 
 
         return buffer;
     }

@@ -1,14 +1,14 @@
-package robot;
+package edu.utdallas.cometcannon.robot;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
-import manager.RobotState;
+import edu.utdallas.cometcannon.manager.RobotState;
 
-import robot.command.KillRobotCommand;
-import robot.command.FireCannonCommand;
-import robot.command.VelocityVectorCommand;
+import edu.utdallas.cometcannon.robot.command.KillRobotCommand;
+import edu.utdallas.cometcannon.robot.command.FireCannonCommand;
+import edu.utdallas.cometcannon.robot.command.VelocityVectorCommand;
 
 public class RemoteController implements Runnable
 {
