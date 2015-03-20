@@ -385,7 +385,7 @@ int main(int argc, char *argv[])
 
         if (!strcmp(argv[i], "debug")){
             printf("starting debug mode...\n");
-            command_debug(); 
+            command_debug();
         }
 
     }
