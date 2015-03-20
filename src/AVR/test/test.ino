@@ -40,7 +40,7 @@ byte commandBufferIndex = 0;
 unsigned long keepAliveTimer;
 unsigned long keepAliveTimeout = 1000;
 
-unsigned long angVelTimer; 
+unsigned long angVelTimer;
 unsigned long angVelTimeout = 50;
 
 bool cannonTriggered = false;
@@ -94,7 +94,7 @@ void setup()
     esc3.attach(10);
 
     keepAliveTimer = millis();
-    angVelTimer = millis(); 
+    angVelTimer = millis();
     cannonTriggerTime  = millis();
 
     kill_motors();
@@ -197,28 +197,28 @@ float print_motor_ang_vel(int8_t motor)
     switch(motor)
     {
         case 0:
-            Serial1 << digitalRead(encoder0.ReturnEncoderPinA()) << "\t" << 
+            Serial1 << digitalRead(encoder0.ReturnEncoderPinA()) << "\t" <<
                 digitalRead(encoder0.ReturnEncoderPinB()) << "\t" <<
                 encoder0.ReturnEncoderTickCount() << "\t" <<
                 encoder0.ReturnAngularVelocity() << "\n";
             break;
 
         case 1:
-            Serial1 << digitalRead(encoder1.ReturnEncoderPinA()) << "\t" << 
+            Serial1 << digitalRead(encoder1.ReturnEncoderPinA()) << "\t" <<
                 digitalRead(encoder1.ReturnEncoderPinB()) << "\t" <<
                 encoder1.ReturnEncoderTickCount() << "\t" <<
                 encoder1.ReturnAngularVelocity() << "\n";
             break;
 
         case 2:
-            Serial1 << digitalRead(encoder2.ReturnEncoderPinA()) << "\t" << 
+            Serial1 << digitalRead(encoder2.ReturnEncoderPinA()) << "\t" <<
                 digitalRead(encoder2.ReturnEncoderPinB()) << "\t" <<
                 encoder2.ReturnEncoderTickCount() << "\t" <<
                 encoder2.ReturnAngularVelocity() << "\n";
             break;
 
         case 3:
-            Serial1 << digitalRead(encoder3.ReturnEncoderPinA()) << "\t" << 
+            Serial1 << digitalRead(encoder3.ReturnEncoderPinA()) << "\t" <<
                 digitalRead(encoder3.ReturnEncoderPinB()) << "\t" <<
                 encoder3.ReturnEncoderTickCount() << "\t" <<
                 encoder3.ReturnAngularVelocity() << "\n";
