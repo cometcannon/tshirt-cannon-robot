@@ -28,7 +28,7 @@ public class Networker implements Runnable
     public void run()
     {
         try {
-            client = new Socket("192.168.240.1", YUN_PORT);
+            client = new Socket("192.168.240.4", YUN_PORT);
             input = new DataInputStream(client.getInputStream());
             output = new PrintStream(client.getOutputStream());
         } catch (IOException e) {
