@@ -1,27 +1,37 @@
 package edu.utdallas.cometcannon.manager;
 
+import java.util.concurrent.*;
+
+import edu.utdallas.cometcannon.robot.command.*;
+import edu.utdallas.cometcannon.gui.*;
+
 public class ApplicationManager
 {
-    RobotManager robotManager;
-    UIManager uiManager;
+    private static ApplicationManager instance = null;
     
-    ApplicationState applicationState;
-    RobotState robotState;
+    private ArrayBlockingQueue<Command> robotCommandQueue;
 
+    private static ApplicationManager create()
+    {
+        if (instance == null)
+            instance = new ApplicationManager();
+        
+        return instance;
+    }
+    
     private ApplicationManager()
     {
-        applicationState = new ApplicationState();
-        robotState = new RobotState();
-        
-        robotManager = new RobotManager(applicationState, robotState);
-        uiManager = new UIManager(applicationState, robotState);
-        
-        uiManager.run();
-        robotManager.run();
+        robotCommandQueue = new ArrayBlockingQueue<Command>(100);
+    }
+    
+    private ArrayBlockingQueue<Command> getRobotCommandQueue()
+    {
+        return robotCommandQueue;
     }
     
     public static void main(String[] args)
     {
-        ApplicationManager manager = new ApplicationManager();
+        ApplicationManager manager = ApplicationManager.create();
+        MainFrame mainFrame = new MainFrame(manager.getRobotCommandQueue());
     }
 }

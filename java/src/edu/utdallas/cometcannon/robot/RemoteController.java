@@ -1,23 +1,18 @@
 package edu.utdallas.cometcannon.robot;
 
+import java.util.concurrent.*;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
-import edu.utdallas.cometcannon.manager.RobotState;
-
-import edu.utdallas.cometcannon.robot.command.KillRobotCommand;
-import edu.utdallas.cometcannon.robot.command.FireCannonCommand;
-import edu.utdallas.cometcannon.robot.command.VelocityVectorCommand;
+import edu.utdallas.cometcannon.robot.command.*;
 
 class Mapping
 {
     int[] axes = new int[4];
     int[] triggers = new int[2];
     int[] buttons = new int[10];
-
-    protected Mapping()
-    {}
 
     private void createMapping()
     {
@@ -52,7 +47,6 @@ class Mapping
     {
         return buttons;
     }
-
 }
 
 public class RemoteController implements Runnable
@@ -89,11 +83,11 @@ public class RemoteController implements Runnable
     long lastVelocityCommandTime = 0;
 
     public static Controller controller;
-    RobotState robotState;
+    private ArrayBlockingQueue<Command> robotCommandQueue;
 
-    public RemoteController(RobotState robotState)
+    public RemoteController(ArrayBlockingQueue<Command> robotCommandQueue)
     {
-        this.robotState = robotState;
+        this.robotCommandQueue = robotCommandQueue;
 
         try {
             Controllers.create();
@@ -107,13 +101,6 @@ public class RemoteController implements Runnable
         } else {
             System.out.println("Could not find any controllers");
         }
-
-        for(int i = 0; i < controller.getAxisCount(); i++)
-            System.out.println(i + ": " + controller.getAxisName(i));
-
-        for(int i = 0; i < controller.getButtonCount(); i++)
-            System.out.println(i + ": " + controller.getButtonName(i));
-
     }
 
     @Override
@@ -122,9 +109,7 @@ public class RemoteController implements Runnable
         calibrate();
 
         while (true) {
-
-            if(controller.poll())
-            {
+            if(controller.poll()) {
                 for (int i = 0; i < controller.getButtonCount(); i++)
                     if (controller.isButtonPressed(i))
                         handleButtonPress(i);
@@ -134,10 +119,7 @@ public class RemoteController implements Runnable
                         handleTriggerPress();
 
                 handleAxisMovement();
-
-            }
-            else
-            {
+            } else {
                 System.out.println("Controller Disconnected: Stopping the program");
                 System.exit(0);
             }
@@ -158,7 +140,7 @@ public class RemoteController implements Runnable
 
         lastTriggerCommandTime = System.currentTimeMillis();
 
-        robotState.addNewCommand(new FireCannonCommand());
+        robotCommandQueue.offer(new FireCannonCommand());
     }
 
     private void handleAxisMovement()
@@ -172,15 +154,12 @@ public class RemoteController implements Runnable
         int v_y = (int) (-1 * controller.getXAxisValue() * 127);
         int w_z = (int) (-1 * controller.getRXAxisValue() * 127);
 
-        System.out.printf("%d, %d, %d\n", v_x, v_y, w_z);
-
-        robotState.addNewCommand(new VelocityVectorCommand(v_x, v_y, w_z));
+        robotCommandQueue.offer(new VelocityVectorCommand(v_x, v_y, w_z));
     }
 
     private void calibrate()
     {
-        for (int i = 1; i < controller.getAxisCount(); i++) {
+        for (int i = 1; i < controller.getAxisCount(); i++)
             controller.setDeadZone(i, 0.2f);
-        }
     }
 }
