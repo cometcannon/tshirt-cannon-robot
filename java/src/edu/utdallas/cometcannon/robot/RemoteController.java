@@ -6,71 +6,11 @@ import org.lwjgl.input.Controllers;
 
 import edu.utdallas.cometcannon.manager.RobotState;
 
-import edu.utdallas.cometcannon.robot.command.KillRobotCommand;
 import edu.utdallas.cometcannon.robot.command.FireCannonCommand;
 import edu.utdallas.cometcannon.robot.command.VelocityVectorCommand;
 
 class Mapping
 {
-    int[] axes = new int[4];
-    int[] triggers = new int[2];
-    int[] buttons = new int[10];
-
-    protected Mapping()
-    {}
-
-    private void createMapping()
-    {
-
-        String osName = System.getProperty("os.name");
-
-        if (osName.equalsIgnoreCase("Mac OS X")) {
-            axes = new int[] {1, 0, 2, 5};
-            triggers = new int[] {4, 5};
-            buttons = new int[] {};
-        }
-
-        else if (osName.equalsIgnoreCase("Linux")) { //TODO: Need to populate these arrays
-            axes = new int[] {};
-            triggers = new int[] {};
-            buttons = new int[] {};
-        }
-
-    }
-
-    public int[] getAxes()
-    {
-        return axes;
-    }
-
-    public int[] getTriggers()
-    {
-        return triggers;
-    }
-
-    public int[] getButtons()
-    {
-        return buttons;
-    }
-
-}
-
-public class RemoteController implements Runnable
-{
-    ////////////////////////////////////////
-    //   Axes
-    // 1) x (left stick) (inverted)
-    // 0) y (left stick) (inverted)
-    // 2) x (right stick) (inverted)
-    // 3) y (right stick)
-    private final int axes[] = {1, 0, 2, 5};
-
-    ////////////////////////////////////////
-    //   Axes
-    // 4) left trigger
-    // 5) right trigger
-    private final int triggers[] = {4, 5};
-
     ////////////////////////////////////////
     //   Buttons
     // 0) A
@@ -79,17 +19,77 @@ public class RemoteController implements Runnable
     // 3) Y
     // 4) left bumper
     // 5) right bumper
-    // 6) select
-    // 7) mode
+    // 6) start
+    // 7) back
     // 8) left stick (press)
     // 9) right stick (press)
 
-    long lastButtonCommandTime = 0;
-    long lastTriggerCommandTime = 0;
-    long lastVelocityCommandTime = 0;
+    private int[] buttons = new int[10];
+    private Controller controller;
+    private boolean foundMapping = false; 
+
+    public Mapping(Controller controller)
+    {
+        this.controller = controller;
+        createMapping();
+    }
+
+    private void createMapping()
+    {
+        String osName = System.getProperty("os.name");
+        foundMapping = true;
+
+        if (osName.equalsIgnoreCase("Mac OS X")) {
+            buttons = new int[] {11, 12, 13, 14, 8, 9, 4, 5, 7, 6};
+        }
+
+        else if (osName.equalsIgnoreCase("Linux")) { //TODO: Need to populate button array
+            buttons = new int[] {};
+        }
+
+        else if (osName.equalsIgnoreCase("windows"))
+        {}
+
+        else
+            foundMapping = false;
+    }
+
+    public boolean isMappingFound()
+    {
+        return foundMapping;
+    }
+
+    public boolean isButtonAPressed()
+    {
+        return controller.isButtonPressed(buttons[0]);
+    }
+
+    public boolean isButtonBPressed()
+    {
+        return controller.isButtonPressed(buttons[1]);
+    }
+
+    public boolean isButtonXPressed()
+    {
+        return controller.isButtonPressed(buttons[2]);
+    }
+
+    public boolean isButtonYPressed()
+    {
+        return controller.isButtonPressed(buttons[3]);
+    }
+
+}
+
+public class RemoteController implements Runnable
+{
+    boolean keepAlive = true;
+
+    long lastTriggerCommandTime = System.currentTimeMillis();
 
     public static Controller controller;
     RobotState robotState;
+    Mapping buttonMap;
 
     public RemoteController(RobotState robotState)
     {
@@ -104,15 +104,10 @@ public class RemoteController implements Runnable
         if (Controllers.getControllerCount() > 0) {
             controller = Controllers.getController(0);
             System.out.println("Found controller");
-        } else {
-            System.out.println("Could not find any controllers");
+            buttonMap = new Mapping(controller);
         }
-
-        for(int i = 0; i < controller.getAxisCount(); i++)
-            System.out.println(i + ": " + controller.getAxisName(i));
-
-        for(int i = 0; i < controller.getButtonCount(); i++)
-            System.out.println(i + ": " + controller.getButtonName(i));
+        else
+            System.out.println("Could not find any controllers");
 
     }
 
@@ -121,34 +116,49 @@ public class RemoteController implements Runnable
     {
         calibrate();
 
-        while (true) {
+        while (keepAlive) {
 
             if(controller.poll())
             {
-                for (int i = 0; i < controller.getButtonCount(); i++)
-                    if (controller.isButtonPressed(i))
-                        handleButtonPress(i);
-
-                for (int i = 0; i < triggers.length; i++)
-                    if (controller.getAxisValue(triggers[i]) > 0.9)
-                        handleTriggerPress();
-
+                //checkButtons();
+                handleButtonPress(); 
+                handleTriggerPress();
                 handleAxisMovement();
-
             }
             else
             {
-                System.out.println("Controller Disconnected: Stopping the program");
-                System.exit(0);
+                System.out.println("Controller Disconnected: Stopping RemoteController Thread");
+                keepAlive = false;
             }
 
             try { Thread.sleep(100); } catch (InterruptedException ex) { }
         }
     }
 
-    private void handleButtonPress(int button)
+    private void checkButtons()
     {
-        //System.out.printf("%d\n", controller.isButtonPressed(button));
+        for (int i = 0; i < controller.getButtonCount(); i++)
+            if (controller.isButtonPressed(i))
+                System.out.println("Button " + i + " is pressed");
+    }
+
+    private void handleButtonPress()
+    {
+        if (buttonMap.isButtonAPressed()) {
+            System.out.println("A pressed");
+        }
+
+        if (buttonMap.isButtonBPressed()) {
+            System.out.println("B pressed");
+        }
+
+        if (buttonMap.isButtonXPressed()) {
+            System.out.println("X pressed");
+        }
+
+        if (buttonMap.isButtonYPressed()) {
+            System.out.println("Y pressed");
+        }
     }
 
     private void handleTriggerPress()
@@ -158,16 +168,19 @@ public class RemoteController implements Runnable
 
         lastTriggerCommandTime = System.currentTimeMillis();
 
+        int leftTrigger = (int)controller.getZAxisValue();
+        int rightTrigger = (int)controller.getRZAxisValue();
+
+        if(leftTrigger < 0.9 || rightTrigger < 0.9)
+            return;
+
+        System.out.println(leftTrigger + " " + rightTrigger ); //TODO: Start using logger
+
         robotState.addNewCommand(new FireCannonCommand());
     }
 
     private void handleAxisMovement()
     {
-        if (System.currentTimeMillis() - lastVelocityCommandTime < 50)
-            return;
-
-        lastVelocityCommandTime = System.currentTimeMillis();
-
         int v_x = (int) (-1 * controller.getYAxisValue() * 127);
         int v_y = (int) (-1 * controller.getXAxisValue() * 127);
         int w_z = (int) (-1 * controller.getRXAxisValue() * 127);
