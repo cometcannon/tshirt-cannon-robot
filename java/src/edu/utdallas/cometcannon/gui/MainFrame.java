@@ -14,6 +14,7 @@ public class MainFrame extends JFrame
 
     public MainFrame(ArrayBlockingQueue<Command> robotCommandQueue)
     {
+        this.robotCommandQueue = robotCommandQueue;
         JMenuBar menuBar = buildMenuBar(); 
         setJMenuBar(menuBar);
 

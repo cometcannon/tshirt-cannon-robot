@@ -34,14 +34,14 @@ public class Networker implements Runnable
         }
         
         while (true) {
-            Command nextCommand = robotCommandQueue.poll();
-            byte payload[] = nextCommand.generatePayload();
-                
             try {
+                Command nextCommand = robotCommandQueue.poll(1000, TimeUnit.DAYS);
+                byte payload[] = nextCommand.generatePayload();
                 output.write(payload); 
-            } catch (IOException e) {
-                System.out.println(e);
+            } catch(Exception e){
+                e.printStackTrace();
             }
+
         }
     }
 }

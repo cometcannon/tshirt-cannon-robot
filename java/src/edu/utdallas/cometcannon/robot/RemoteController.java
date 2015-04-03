@@ -118,7 +118,7 @@ public class RemoteController implements Runnable
 
             if(controller.poll())
             {
-                //checkButtons();
+                //checkButtons(); //Use this to check your system's button layout
                 handleButtonPress();
                 handleTriggerPress();
                 handleAxisMovement();
@@ -126,6 +126,7 @@ public class RemoteController implements Runnable
             else
             {
                 System.out.println("Controller Disconnected: Stopping RemoteController Thread");
+                robotCommandQueue.offer(new VelocityVectorCommand(0, 0, 0));
                 keepAlive = false;
             }
 
