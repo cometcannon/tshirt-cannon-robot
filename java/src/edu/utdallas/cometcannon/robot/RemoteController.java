@@ -10,6 +10,51 @@ import edu.utdallas.cometcannon.robot.command.KillRobotCommand;
 import edu.utdallas.cometcannon.robot.command.FireCannonCommand;
 import edu.utdallas.cometcannon.robot.command.VelocityVectorCommand;
 
+class Mapping
+{
+    int[] axes = new int[4];
+    int[] triggers = new int[2];
+    int[] buttons = new int[10];
+
+    protected Mapping()
+    {}
+
+    private void createMapping()
+    {
+
+        String osName = System.getProperty("os.name");
+
+        if (osName.equalsIgnoreCase("Mac OS X")) {
+            axes = new int[] {1, 0, 2, 5};
+            triggers = new int[] {4, 5};
+            buttons = new int[] {};
+        }
+
+        else if (osName.equalsIgnoreCase("Linux")) { //TODO: Need to populate these arrays
+            axes = new int[] {};
+            triggers = new int[] {};
+            buttons = new int[] {};
+        }
+
+    }
+
+    public int[] getAxes()
+    {
+        return axes;
+    }
+
+    public int[] getTriggers()
+    {
+        return triggers;
+    }
+
+    public int[] getButtons()
+    {
+        return buttons;
+    }
+
+}
+
 public class RemoteController implements Runnable
 {
     ////////////////////////////////////////
@@ -62,6 +107,13 @@ public class RemoteController implements Runnable
         } else {
             System.out.println("Could not find any controllers");
         }
+
+        for(int i = 0; i < controller.getAxisCount(); i++)
+            System.out.println(i + ": " + controller.getAxisName(i));
+
+        for(int i = 0; i < controller.getButtonCount(); i++)
+            System.out.println(i + ": " + controller.getButtonName(i));
+
     }
 
     @Override
@@ -70,7 +122,6 @@ public class RemoteController implements Runnable
         calibrate();
 
         while (true) {
-            boolean kill = true;
 
             if(controller.poll())
             {
@@ -82,23 +133,14 @@ public class RemoteController implements Runnable
                     if (controller.getAxisValue(triggers[i]) > 0.9)
                         handleTriggerPress();
 
-                for (int i = 0; i < axes.length; i++) {
-                    double axisValue = controller.getAxisValue(axes[i]);
+                handleAxisMovement();
 
-                    if (axisValue > 0.1 || axisValue < -0.1) {
-                        handleAxisMovement();
-                        kill = false;
-                    }
-                }
             }
             else
             {
                 System.out.println("Controller Disconnected: Stopping the program");
                 System.exit(0);
             }
-
-            if (kill)
-                robotState.addNewCommand(new KillRobotCommand());
 
             try { Thread.sleep(100); } catch (InterruptedException ex) { }
         }
@@ -126,9 +168,9 @@ public class RemoteController implements Runnable
 
         lastVelocityCommandTime = System.currentTimeMillis();
 
-        int v_x = (int) (-1 * controller.getAxisValue(1) * 127);
-        int v_y = (int) (-1 * controller.getAxisValue(0) * 127);
-        int w_z = (int) (-1 * controller.getAxisValue(2) * 127);
+        int v_x = (int) (-1 * controller.getYAxisValue() * 127);
+        int v_y = (int) (-1 * controller.getXAxisValue() * 127);
+        int w_z = (int) (-1 * controller.getRXAxisValue() * 127);
 
         System.out.printf("%d, %d, %d\n", v_x, v_y, w_z);
 
