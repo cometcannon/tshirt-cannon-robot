@@ -5,6 +5,7 @@ import java.util.concurrent.*;
 import java.awt.event.*;
 import java.io.*;
 
+import edu.utdallas.cometcannon.robot.*;
 import edu.utdallas.cometcannon.robot.command.*;
 
 public class MainFrame extends JFrame
@@ -81,10 +82,14 @@ public class MainFrame extends JFrame
             
             switch (sourceText) {
                 case "Connect to Robot":
-                    System.out.println("Start the networker here");
+                    Networker net = new Networker(robotCommandQueue);
+                    Thread netThread = new Thread(net);
+                    netThread.start();
                     break;
                 case "Connect to Controller":
-                    System.out.println("Start the controller thread here");
+                    RemoteController rc = new RemoteController(robotCommandQueue);
+                    Thread rcThread = new Thread(rc);
+                    rcThread.start();
                     break;
                 case "Exit":
                     System.exit(0);
@@ -101,9 +106,9 @@ public class MainFrame extends JFrame
         private void startVideoStream()
         {
             try {
-                String[] cmd = { "/bin/sh", 
-                                 "-c", 
-                                 "nc 192.168.240.3 5001 | mplayer -fps 31 -cache 1024 -"};
+                String[] cmd = {"/bin/sh", 
+                                "-c", 
+                                "nc 192.168.240.3 5001 | mplayer -gui -fps 31 -cache 1024"};
                 Runtime runtime = Runtime.getRuntime();
                 Process proc = runtime.exec(cmd);
             } catch (IOException ex) {
