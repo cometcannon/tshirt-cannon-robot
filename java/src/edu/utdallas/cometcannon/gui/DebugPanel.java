@@ -1,34 +1,23 @@
 package edu.utdallas.cometcannon.gui;
 
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.concurrent.*;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
-import edu.utdallas.cometcannon.manager.RobotState;
-
-import edu.utdallas.cometcannon.robot.command.MotorCommand;
-import edu.utdallas.cometcannon.robot.command.KillRobotCommand;
-import edu.utdallas.cometcannon.robot.command.MoveDirectionCommand;
-import edu.utdallas.cometcannon.robot.command.RotateCommand;
-import edu.utdallas.cometcannon.robot.command.FireCannonCommand;
-import edu.utdallas.cometcannon.robot.command.SetPressureCommand;
+import edu.utdallas.cometcannon.robot.command.*;
 
 public class DebugPanel extends JPanel
 {
-    RobotState robotState;
+    ArrayBlockingQueue<Command> robotCommandQueue;
 
-    JSlider slider;
-    JComboBox comboBox;
-    JButton sendButton;
-    JButton killButton;
+    private JSlider slider;
+    private JComboBox comboBox;
+    private JButton sendButton;
+    private JButton killButton;
     
-    protected DebugPanel(RobotState robotState)
+    protected DebugPanel(ArrayBlockingQueue<Command> robotCommandQueue)
     {
-        this.robotState = robotState;
+        this.robotCommandQueue = robotCommandQueue;
 
         slider = new MagnitudeSlider();
         comboBox = new CommandComboBox();
@@ -52,34 +41,34 @@ public class DebugPanel extends JPanel
             int magnitude = slider.getValue();
 
             if (commandType.equalsIgnoreCase("MOTOR 0"))
-                robotState.addNewCommand(new MotorCommand(0, magnitude));
+                robotCommandQueue.offer(new MotorCommand(0, magnitude));
             
             if (commandType.equalsIgnoreCase("MOTOR 1"))
-                robotState.addNewCommand(new MotorCommand(1, magnitude));
+                robotCommandQueue.offer(new MotorCommand(1, magnitude));
             
             if (commandType.equalsIgnoreCase("MOTOR 2"))
-                robotState.addNewCommand(new MotorCommand(2, magnitude));
+                robotCommandQueue.offer(new MotorCommand(2, magnitude));
             
             if (commandType.equalsIgnoreCase("MOTOR 3"))
-                robotState.addNewCommand(new MotorCommand(3, magnitude));
+                robotCommandQueue.offer(new MotorCommand(3, magnitude));
             
             if (commandType.equalsIgnoreCase("FORWARD") ||
                 commandType.equalsIgnoreCase("BACKWARD") ||
                 commandType.equalsIgnoreCase("RIGHT") ||
                 commandType.equalsIgnoreCase("LEFT"))
-                robotState.addNewCommand(new MoveDirectionCommand(commandType, magnitude));
+                robotCommandQueue.offer(new MoveDirectionCommand(commandType, magnitude));
             
             if (commandType.equalsIgnoreCase("ROTATE CCW"))
-                robotState.addNewCommand(new RotateCommand("CCW", magnitude));
+                robotCommandQueue.offer(new RotateCommand("CCW", magnitude));
             
             if (commandType.equalsIgnoreCase("ROTATE CW"))
-                robotState.addNewCommand(new RotateCommand("CW", magnitude));
+                robotCommandQueue.offer(new RotateCommand("CW", magnitude));
             
             if (commandType.equalsIgnoreCase("FIRE"))
-                robotState.addNewCommand(new FireCannonCommand());
+                robotCommandQueue.offer(new FireCannonCommand());
             
             if (commandType.equalsIgnoreCase("PRESSURE"))
-                robotState.addNewCommand(new SetPressureCommand(magnitude));
+                robotCommandQueue.offer(new SetPressureCommand(magnitude));
         }
     }
 
@@ -87,7 +76,7 @@ public class DebugPanel extends JPanel
     {
         public void actionPerformed(ActionEvent e)
         {
-            robotState.addNewCommand(new KillRobotCommand());
+            robotCommandQueue.offer(new KillRobotCommand());
         }
     }
 }

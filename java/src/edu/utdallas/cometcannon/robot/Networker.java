@@ -1,34 +1,32 @@
 package edu.utdallas.cometcannon.robot;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.DataInputStream;
+import java.io.*;
+import java.net.*;
+import java.util.concurrent.*;
 
-import java.net.Socket;
-
-import edu.utdallas.cometcannon.manager.RobotState;
-import edu.utdallas.cometcannon.robot.command.Command;
+import edu.utdallas.cometcannon.robot.command.*;
 
 public class Networker implements Runnable
 {
     final int YUN_PORT = 12313;
+    final String YUN_ADDRESS = "192.168.240.4";
 
-    RobotState robotState;
+    ArrayBlockingQueue<Command> robotCommandQueue;
 
     Socket client;
     PrintStream output;
     DataInputStream input;
 
-    public Networker(RobotState robotState)
+    public Networker(ArrayBlockingQueue<Command> robotCommandQueue)
     {
-        this.robotState = robotState;
+        this.robotCommandQueue = robotCommandQueue;
     }
     
     @Override
     public void run()
     {
         try {
-            client = new Socket("192.168.240.4", YUN_PORT);
+            client = new Socket(YUN_ADDRESS, YUN_PORT);
             input = new DataInputStream(client.getInputStream());
             output = new PrintStream(client.getOutputStream());
         } catch (IOException e) {
@@ -36,15 +34,13 @@ public class Networker implements Runnable
         }
         
         while (true) {
-            if (robotState.isCommandAvailable()) {
-                Command cmd = robotState.pollNextCommand();
-                byte payload[] = cmd.generatePayload();
+            Command nextCommand = robotCommandQueue.poll();
+            byte payload[] = nextCommand.generatePayload();
                 
-                try {
-                    output.write(payload); 
-                } catch (IOException ex) {
-                    System.out.println("send failed");
-                }
+            try {
+                output.write(payload); 
+            } catch (IOException e) {
+                System.out.println(e);
             }
         }
     }

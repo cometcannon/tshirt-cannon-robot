@@ -1,13 +1,12 @@
 package edu.utdallas.cometcannon.robot;
 
+import java.util.concurrent.*;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
-import edu.utdallas.cometcannon.manager.RobotState;
-
-import edu.utdallas.cometcannon.robot.command.FireCannonCommand;
-import edu.utdallas.cometcannon.robot.command.VelocityVectorCommand;
+import edu.utdallas.cometcannon.robot.command.*;
 
 class Mapping
 {
@@ -78,7 +77,6 @@ class Mapping
     {
         return controller.isButtonPressed(buttons[3]);
     }
-
 }
 
 public class RemoteController implements Runnable
@@ -88,12 +86,12 @@ public class RemoteController implements Runnable
     long lastTriggerCommandTime = System.currentTimeMillis();
 
     public static Controller controller;
-    RobotState robotState;
     Mapping buttonMap;
+    private ArrayBlockingQueue<Command> robotCommandQueue;
 
-    public RemoteController(RobotState robotState)
+    public RemoteController(ArrayBlockingQueue<Command> robotCommandQueue)
     {
-        this.robotState = robotState;
+        this.robotCommandQueue = robotCommandQueue;
 
         try {
             Controllers.create();
@@ -175,8 +173,7 @@ public class RemoteController implements Runnable
             return;
 
         System.out.println(leftTrigger + " " + rightTrigger ); //TODO: Start using logger
-
-        robotState.addNewCommand(new FireCannonCommand());
+        robotCommandQueue.offer(new FireCannonCommand());
     }
 
     private void handleAxisMovement()
@@ -185,15 +182,12 @@ public class RemoteController implements Runnable
         int v_y = (int) (-1 * controller.getXAxisValue() * 127);
         int w_z = (int) (-1 * controller.getRXAxisValue() * 127);
 
-        System.out.printf("%d, %d, %d\n", v_x, v_y, w_z);
-
-        robotState.addNewCommand(new VelocityVectorCommand(v_x, v_y, w_z));
+        robotCommandQueue.offer(new VelocityVectorCommand(v_x, v_y, w_z));
     }
 
     private void calibrate()
     {
-        for (int i = 1; i < controller.getAxisCount(); i++) {
+        for (int i = 1; i < controller.getAxisCount(); i++)
             controller.setDeadZone(i, 0.2f);
-        }
     }
 }
