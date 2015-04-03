@@ -54,10 +54,7 @@ public class RemoteController implements Runnable
             Controllers.create();
         } catch (LWJGLException ex) {
             ex.printStackTrace();
-            System.exit(0); // XXX we probably need to handle this more gracefully
         }
-
-        Controllers.poll();
 
         if (Controllers.getControllerCount() > 0) {
             controller = Controllers.getController(0);
@@ -73,35 +70,31 @@ public class RemoteController implements Runnable
         calibrate();
 
         while (true) {
-
-            Controllers.poll();
-
-            if(Controllers.getControllerCount() == 0)
-            {
-                robotState.addNewCommand(new KillRobotCommand());
-                continue;
-            }
-
-            controller.poll();
-
-            for (int i = 0; i < controller.getButtonCount(); i++)
-                if (controller.isButtonPressed(i))
-                    handleButtonPress(i);
-
-            for (int i = 0; i < triggers.length; i++)
-                if (controller.getAxisValue(triggers[i]) > 0.9)
-                    handleTriggerPress();
-
-            //System.out.printf("%d\n", (int)controller.getAxisValue(triggers[1]));
-
             boolean kill = true;
-            for (int i = 0; i < axes.length; i++) {
-                double axisValue = controller.getAxisValue(axes[i]);
 
-                if (axisValue > 0.1 || axisValue < -0.1) {
-                    handleAxisMovement();
-                    kill = false;
+            if(controller.poll())
+            {
+                for (int i = 0; i < controller.getButtonCount(); i++)
+                    if (controller.isButtonPressed(i))
+                        handleButtonPress(i);
+
+                for (int i = 0; i < triggers.length; i++)
+                    if (controller.getAxisValue(triggers[i]) > 0.9)
+                        handleTriggerPress();
+
+                for (int i = 0; i < axes.length; i++) {
+                    double axisValue = controller.getAxisValue(axes[i]);
+
+                    if (axisValue > 0.1 || axisValue < -0.1) {
+                        handleAxisMovement();
+                        kill = false;
+                    }
                 }
+            }
+            else
+            {
+                System.out.println("Controller Disconnected: Stopping the program");
+                System.exit(0);
             }
 
             if (kill)
