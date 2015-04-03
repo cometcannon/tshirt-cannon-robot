@@ -358,8 +358,6 @@ int main(int argc, char *argv[])
 
     state->atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY | O_NDELAY);
 
-    network_connect(state);
-
     pthread_mutex_init(&state->atmegafd_mutex, NULL);
     pthread_mutex_init(&state->clientfd_mutex, NULL);
     pthread_mutex_init(&state->sockfd_mutex, NULL);
@@ -390,27 +388,30 @@ int main(int argc, char *argv[])
 
     }
 
-    while (1) {
-        int len;
+    while(1){
+        network_connect(state);
 
-        if ((len = recv(state->sockfd, buffer, sizeof(buffer), 0)) < 0) {
-            perror("recv");
-            break;
+        while (1) {
+            int len;
+
+            if ((len = recv(state->sockfd, buffer, sizeof(buffer), 0)) <= 0) {
+                perror("recv");
+                break;
+            }
+
+            pthread_mutex_lock(&state->last_utime_mutex);
+            state->last_utime = utime_now();
+            pthread_mutex_unlock(&state->last_utime_mutex);
+
+            if (process_message(state, buffer, len) < 0)
+                break;
         }
 
-        pthread_mutex_lock(&state->last_utime_mutex);
-        state->last_utime = utime_now();
-        pthread_mutex_unlock(&state->last_utime_mutex);
+        close(state->sockfd);
+        close(state->clientfd);
 
-        if (process_message(state, buffer, len) < 0)
-            break;
+        sleep(1);
     }
-
-    close(state->sockfd);
-    close(state->clientfd);
-    close(state->atmegafd);
-
-    free(state);
 
     return 0;
 }
