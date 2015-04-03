@@ -26,7 +26,7 @@ class Mapping
 
     private int[] buttons = new int[10];
     private Controller controller;
-    private boolean foundMapping = false; 
+    private boolean foundMapping = false;
 
     public Mapping(Controller controller)
     {
@@ -121,7 +121,7 @@ public class RemoteController implements Runnable
             if(controller.poll())
             {
                 //checkButtons();
-                handleButtonPress(); 
+                handleButtonPress();
                 handleTriggerPress();
                 handleAxisMovement();
             }
