@@ -7,8 +7,7 @@
 
 class Encoder
 {
-
-    public:
+public:
     Encoder(int pinA, int pinB, int interruptPinRef)
     {
         encoderTickCount = 0;
@@ -67,7 +66,7 @@ class Encoder
     float ReturnAngularVelocity()
     { return angularVelocity; }
 
-    private:
+private:
     int encoderInterruptPinRef;
     int encoderPinA;
     int encoderPinB;

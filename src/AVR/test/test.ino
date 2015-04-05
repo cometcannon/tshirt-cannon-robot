@@ -43,12 +43,16 @@ unsigned long keepAliveTimeout = 1000;
 unsigned long angVelTimer;
 unsigned long angVelTimeout = 50;
 
+bool regulatorTriggered = false;
+unsigned long regulatorTriggeredTime;
+unsigned long regulatorTriggeredTimeout = 200;
+
 bool cannonTriggered = false;
 unsigned long cannonTriggerTime;
 unsigned long cannonTriggerTimeout = 1000;
 
 byte magicBytes[] = {0x47, 0x41, 0x4e, 0x53};
-byte commandLengthArray[] = {5, 5, 7, 9, 6, 5, 7, 9, 6};
+byte commandLengthArray[] = {5, 5, 7, 9, 5, 5, 7, 9, 5, 5, 5};
 
 void setup()
 {
@@ -96,8 +100,9 @@ void setup()
     keepAliveTimer = millis();
     angVelTimer = millis();
     cannonTriggerTime  = millis();
+    regulatorTriggeredTime = millis();
 
-    kill_motors();
+    KillMotors();
 }
 
 void loop()
@@ -116,34 +121,46 @@ void loop()
     {
         digitalWrite(cannonTriggerPin, LOW);
         cannonTriggered = false;
-        Serial1 << "Trigger closed\n";
+
+        if(debug)
+            Serial1 << "Trigger closed\n";
     }
 
-    if(desiredPressure < analogRead(pressureSensorPin) && !cannonTriggered)
-        digitalWrite(pressureRegulatorPin, HIGH);
-    else
+    if(regulatorTriggered && millis() - regulatorTriggeredTime > regulatorTriggeredTimeout)
+    {
         digitalWrite(pressureRegulatorPin, LOW);
+        regulatorTriggered = false;
+
+        if(debug)
+            Serial1 << "Regulator Trigger closed\n";
+    }
 
     if(millis() - keepAliveTimer > keepAliveTimeout)
-        kill_robot();
+        KillRobot();
 
-    checkForCommand();
+    CheckForCommand();
 }
 
-void kill_robot()
+int MapPressure()
 {
-    kill_motors();
+    int pressure = analogRead(pressureSensorPin);
+    return map(pressure, 0, 1023, 0, 200);
+}
+
+void KillRobot()
+{
+    KillMotors();
     desiredPressure = MIN_PRESSURE;
     digitalWrite(cannonTriggerPin, LOW);
     cannonTriggered = false;
 }
 
-void kill_motors()
+void KillMotors()
 {
-    cmd_all_motors(0, 0, 0, 0);
+    CommandAllMotorThrottles(0, 0, 0, 0);
 }
 
-void cmd_single_motor(int8_t motor, int8_t value)
+void CommandMotorThrottle(int8_t motor, int8_t value)
 {
     float command;
 
@@ -176,7 +193,7 @@ void cmd_single_motor(int8_t motor, int8_t value)
         Serial1 << "Command Single Motor " << motor << ": " << value << "\n";
 }
 
-void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
+void CommandAllMotorThrottles(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
 {
     float command1 = value1 * (1000.0 / 255.0) + 1502.0;
     float command2 = -value2 * (1000.0 / 255.0) + 1502.0;
@@ -192,7 +209,7 @@ void cmd_all_motors(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
         Serial1 << "Command All Motors: " << command1 << " " << command2 << " " << command3 << " " << command4 << "\n";
 }
 
-float print_motor_ang_vel(int8_t motor)
+void DebugEncoders(int8_t motor)
 {
     switch(motor)
     {
@@ -227,7 +244,21 @@ float print_motor_ang_vel(int8_t motor)
     }
 }
 
-void fire_cannon()
+void SendMotorAngularVelocity()
+{
+    int8_t angVel0 = map(encoder0.ReturnAngularVelocity(), -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED, -128, 127);
+    int8_t angVel1 = map(encoder1.ReturnAngularVelocity(), -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED, -128, 127);
+    int8_t angVel2 = map(encoder2.ReturnAngularVelocity(), -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED, -128, 127);
+    int8_t angVel3 = map(encoder3.ReturnAngularVelocity(), -MAX_WHEEL_SPEED, MAX_WHEEL_SPEED, -128, 127);
+
+    for(int i = 0; i < sizeof magicBytes; i++)
+        Serial1 << magicBytes[i];
+
+    Serial1 << angVel0 << angVel1 << angVel2 << angVel3;
+
+}
+
+void FireCannon()
 {
     digitalWrite(cannonTriggerPin, HIGH);
     cannonTriggerTime = millis();
@@ -237,7 +268,7 @@ void fire_cannon()
         Serial1 << "Trigger Pulled\n";
 }
 
-void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
+void CommandMotorAngularVelocity(int8_t motor, int8_t value)
 {
     float command;
 
@@ -270,7 +301,7 @@ void cmd_single_motor_ang_vel(int8_t motor, int8_t value)
         Serial1 << "Command Single Motor Vel" << motor << ": " << command << "\n";
 }
 
-void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
+void CommandAllMotorAngularVelocities(int8_t value1, int8_t value2, int8_t value3, int8_t value4)
 {
     float command0 = ((float)value1 + 0.5) * MAX_WHEEL_SPEED/127.5;
     float command1 = -(((float)value2 + 0.5)) * MAX_WHEEL_SPEED/127.5;
@@ -287,18 +318,24 @@ void cmd_all_motors_ang_vel(int8_t value1, int8_t value2, int8_t value3, int8_t 
         " " << command2 << " " << command3 << "\n";
 }
 
-void set_desired_pressure(float _desiredPressure)
+void IncreasePressure()
 {
-    desiredPressure = map(_desiredPressure, 0, 255, 0, 1023);
-
-    if(desiredPressure > 1023)
-        desiredPressure = 1023;
-
-    if(desiredPressure < MIN_PRESSURE)
-        desiredPressure = MIN_PRESSURE;
+    digitalWrite(pressureRegulatorPin, HIGH);
+    regulatorTriggeredTime = millis();
+    regulatorTriggered = true;
 
     if(debug)
-        Serial1 << "Set Desired Pressure to " << desiredPressure << "\n";
+        Serial1 << "Current Pressure is " << MapPressure() << "\n";
+}
+
+void SendPressure()
+{
+    for(int i = 0; i < sizeof magicBytes; i++)
+        Serial1 << magicBytes[i];
+
+    uint8_t pressure = MapPressure();
+
+    Serial1 << pressure;
 }
 
 void processCommand()
@@ -306,52 +343,55 @@ void processCommand()
     switch (commandBuffer[4])
     {
         case 0:
-            kill_robot();
+            KillRobot();
             break;
 
         case 1:
-            print_motor_ang_vel(2);
+            KillMotors();
             break;
 
         case 2:
-            cmd_single_motor(commandBuffer[5], commandBuffer[6]);
+            CommandMotorThrottle(commandBuffer[5], commandBuffer[6]);
             break;
 
         case 3:
-            cmd_all_motors(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
+            CommandAllMotorThrottles(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
             break;
 
         case 4:
-            print_motor_ang_vel(commandBuffer[5]);
+            SendMotorAngularVelocity();
             break;
 
         case 5:
-            fire_cannon();
+            FireCannon();
             break;
 
         case 6:
-            cmd_single_motor_ang_vel(commandBuffer[5], commandBuffer[6]);
+            CommandMotorAngularVelocity(commandBuffer[5], commandBuffer[6]);
             break;
 
         case 7:
-            cmd_all_motors_ang_vel(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
+            CommandAllMotorAngularVelocities(commandBuffer[5], commandBuffer[6], commandBuffer[7], commandBuffer[8]);
             break;
 
         case 8:
-            set_desired_pressure(commandBuffer[5]);
+            IncreasePressure();
             break;
 
         case 9:
             debug = true;
             break;
 
+        case 10:
+            SendPressure();
+            break;
     }
 
       keepAliveTimer = millis();
 
 }
 
-void checkForCommand()
+void CheckForCommand()
 {
     int data = Serial1.read();
     if(data > -1)
@@ -396,4 +436,3 @@ void HandleEncoderPinAInterrupt3()
 {
     encoder3.HandleEncoderPinAInterrupt();
 }
-
