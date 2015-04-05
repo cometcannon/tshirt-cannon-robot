@@ -144,7 +144,7 @@ public class RemoteController implements Runnable
     private void handleButtonPress()
     {
         if (buttonMap.isButtonAPressed()) {
-            System.out.println("A pressed");
+            robotCommandQueue.offer(new IncreasePressureCommand());
         }
 
         if (buttonMap.isButtonBPressed()) {
@@ -162,7 +162,7 @@ public class RemoteController implements Runnable
 
     private void handleTriggerPress()
     {
-        if (System.currentTimeMillis() - lastTriggerCommandTime < 1000)
+        if (System.currentTimeMillis() - lastTriggerCommandTime < 800)
             return;
 
         lastTriggerCommandTime = System.currentTimeMillis();

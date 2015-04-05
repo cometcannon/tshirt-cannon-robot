@@ -1,7 +1,11 @@
 package edu.utdallas.cometcannon.robot.command;
 
-public class FireCannonCommand implements Command
+public class IncreasePressureCommand implements Command
 {
+    public IncreasePressureCommand()
+    {
+    }
+
     @Override
     public byte[] generatePayload()
     {
@@ -16,7 +20,7 @@ public class FireCannonCommand implements Command
 
         ////////////////////////////////////////
         // command type
-        buffer[4] = 5;
+        buffer[4] = 8;
 
         return buffer;
     }

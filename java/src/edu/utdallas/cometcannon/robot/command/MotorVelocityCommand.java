@@ -1,11 +1,11 @@
 package edu.utdallas.cometcannon.robot.command;
 
-public class MotorCommand implements Command
+public class MotorVelocityCommand implements Command
 {
     private byte motorIndex;
     private byte magnitude;
 
-    public MotorCommand(int motorIndex, int magnitude)
+    public MotorVelocityCommand(int motorIndex, int magnitude)
     {
         this.motorIndex = (byte) motorIndex;
         this.magnitude = (byte) magnitude;
@@ -25,7 +25,7 @@ public class MotorCommand implements Command
 
         ////////////////////////////////////////
         // command type
-        buffer[4] = 2;
+        buffer[4] = 6;
 
         ////////////////////////////////////////
         // motor index
@@ -38,3 +38,4 @@ public class MotorCommand implements Command
         return buffer;
     }
 }
+
