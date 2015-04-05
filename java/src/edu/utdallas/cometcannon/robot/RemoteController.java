@@ -109,6 +109,11 @@ public class RemoteController implements Runnable
 
     }
 
+    public void Terminate()
+    {
+        keepAlive = false;
+    }
+
     @Override
     public void run()
     {
@@ -127,7 +132,7 @@ public class RemoteController implements Runnable
             {
                 System.out.println("Controller Disconnected: Stopping RemoteController Thread");
                 robotCommandQueue.offer(new VelocityVectorCommand(0, 0, 0));
-                keepAlive = false;
+                Terminate();
             }
 
             try { Thread.sleep(100); } catch (InterruptedException ex) { }
