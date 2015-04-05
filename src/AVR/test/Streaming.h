@@ -29,15 +29,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define STREAMING_LIBRARY_VERSION 5
 
 // Generic template
-template<class T> 
-inline Print &operator <<(Print &stream, T arg) 
+template<class T>
+inline Print &operator <<(Print &stream, T arg)
 { stream.print(arg); return stream; }
 
-struct _BASED 
-{ 
-  long val; 
+struct _BASED
+{
+  long val;
   int base;
-  _BASED(long v, int b): val(v), base(b) 
+  _BASED(long v, int b): val(v), base(b)
   {}
 };
 
@@ -52,7 +52,7 @@ struct _BYTE_CODE
 #define _BYTE(a)    _BYTE_CODE(a)
 
 inline Print &operator <<(Print &obj, const _BYTE_CODE &arg)
-{ obj.write(arg.val); return obj; } 
+{ obj.write(arg.val); return obj; }
 
 #else
 
@@ -66,12 +66,12 @@ inline Print &operator <<(Print &obj, const _BYTE_CODE &arg)
 #define _BIN(a)     _BASED(a, BIN)
 
 // Specialization for class _BASED
-// Thanks to Arduino forum user Ben Combee who suggested this 
+// Thanks to Arduino forum user Ben Combee who suggested this
 // clever technique to allow for expressions like
 //   Serial << _HEX(a);
 
 inline Print &operator <<(Print &obj, const _BASED &arg)
-{ obj.print(arg.val, arg.base); return obj; } 
+{ obj.print(arg.val, arg.base); return obj; }
 
 #if ARDUINO >= 18
 // Specialization for class _FLOAT
@@ -99,7 +99,7 @@ inline Print &operator <<(Print &obj, const _FLOAT &arg)
 
 enum _EndLineCode { endl };
 
-inline Print &operator <<(Print &obj, _EndLineCode arg) 
+inline Print &operator <<(Print &obj, _EndLineCode arg)
 { obj.println(); return obj; }
 
 #endif

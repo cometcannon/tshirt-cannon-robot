@@ -14,7 +14,7 @@ public class DebugPanel extends JPanel
     private JComboBox comboBox;
     private JButton sendButton;
     private JButton killButton;
-    
+
     protected DebugPanel(ArrayBlockingQueue<Command> robotCommandQueue)
     {
         this.robotCommandQueue = robotCommandQueue;
@@ -42,33 +42,30 @@ public class DebugPanel extends JPanel
 
             if (commandType.equalsIgnoreCase("MOTOR 0"))
                 robotCommandQueue.offer(new MotorCommand(0, magnitude));
-            
+
             if (commandType.equalsIgnoreCase("MOTOR 1"))
                 robotCommandQueue.offer(new MotorCommand(1, magnitude));
-            
+
             if (commandType.equalsIgnoreCase("MOTOR 2"))
                 robotCommandQueue.offer(new MotorCommand(2, magnitude));
-            
+
             if (commandType.equalsIgnoreCase("MOTOR 3"))
                 robotCommandQueue.offer(new MotorCommand(3, magnitude));
-            
+
             if (commandType.equalsIgnoreCase("FORWARD") ||
                 commandType.equalsIgnoreCase("BACKWARD") ||
                 commandType.equalsIgnoreCase("RIGHT") ||
                 commandType.equalsIgnoreCase("LEFT"))
                 robotCommandQueue.offer(new MoveDirectionCommand(commandType, magnitude));
-            
+
             if (commandType.equalsIgnoreCase("ROTATE CCW"))
                 robotCommandQueue.offer(new RotateCommand("CCW", magnitude));
-            
+
             if (commandType.equalsIgnoreCase("ROTATE CW"))
                 robotCommandQueue.offer(new RotateCommand("CW", magnitude));
-            
+
             if (commandType.equalsIgnoreCase("FIRE"))
                 robotCommandQueue.offer(new FireCannonCommand());
-            
-            if (commandType.equalsIgnoreCase("PRESSURE"))
-                robotCommandQueue.offer(new SetPressureCommand(magnitude));
         }
     }
 

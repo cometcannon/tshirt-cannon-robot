@@ -21,7 +21,7 @@ public class Networker implements Runnable
     {
         this.robotCommandQueue = robotCommandQueue;
     }
-    
+
     @Override
     public void run()
     {
@@ -32,12 +32,17 @@ public class Networker implements Runnable
         } catch (IOException e) {
             System.out.println(e);
         }
-        
-        while (true) {
+
+        while (true) { //TODO: We need to put reading and writing in separate threads
             try {
                 Command nextCommand = robotCommandQueue.poll(1000, TimeUnit.DAYS);
                 byte payload[] = nextCommand.generatePayload();
-                output.write(payload); 
+                output.write(payload);
+
+                if(input.available() > 0)
+                {
+                    //TODO: Do something with messages recieved
+                }
             } catch(Exception e){
                 e.printStackTrace();
             }

@@ -1,12 +1,12 @@
 package edu.utdallas.cometcannon.robot.command;
 
-public class VelocityVectorCommand implements Command
+public class VelocityVectorWheelsCommand implements Command
 {
     private byte v_x;
     private byte v_y;
     private byte w_z;
 
-    public VelocityVectorCommand(int v_x, int v_y, int w_z)
+    public VelocityVectorWheelsCommand(int v_x, int v_y, int w_z)
     {
         this.v_x = (byte) v_x;
         this.v_y = (byte) v_y;
@@ -27,7 +27,7 @@ public class VelocityVectorCommand implements Command
 
         ////////////////////////////////////////
         // command type
-        buffer[4] = 3;
+        buffer[4] = 7;
 
         ////////////////////////////////////////
         // velocity vector
@@ -38,3 +38,4 @@ public class VelocityVectorCommand implements Command
         return buffer;
     }
 }
+

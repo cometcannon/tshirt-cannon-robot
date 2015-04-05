@@ -1,6 +1,6 @@
 package edu.utdallas.cometcannon.robot.command;
 
-public class FireCannonCommand implements Command
+public class SendPressureCommand implements Command
 {
     @Override
     public byte[] generatePayload()
@@ -16,7 +16,7 @@ public class FireCannonCommand implements Command
 
         ////////////////////////////////////////
         // command type
-        buffer[4] = 5;
+        buffer[4] = 9;
 
         return buffer;
     }

@@ -1,18 +1,16 @@
 package edu.utdallas.cometcannon.robot.command;
 
-public class SetPressureCommand implements Command
+public class KillMotorsCommand implements Command
 {
-    private byte pressure;
-
-    public SetPressureCommand(int pressure)
+    public KillMotorsCommand()
     {
-        this.pressure = (byte) pressure;
+
     }
     
     @Override
     public byte[] generatePayload()
     {
-        byte buffer[] = new byte[6];
+        byte buffer[] = new byte[5];
 
         //////////////////////////////////////// 
         // magic bytes
@@ -23,12 +21,8 @@ public class SetPressureCommand implements Command
         
         //////////////////////////////////////// 
         // command type
-        buffer[4] = 6; 
+        buffer[4] = 1; 
         
-        //////////////////////////////////////// 
-        // pressure value
-        buffer[5] = pressure;
-
         return buffer;
     }
 }

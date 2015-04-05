@@ -15,7 +15,7 @@ public class MainFrame extends JFrame
     public MainFrame(ArrayBlockingQueue<Command> robotCommandQueue)
     {
         this.robotCommandQueue = robotCommandQueue;
-        JMenuBar menuBar = buildMenuBar(); 
+        JMenuBar menuBar = buildMenuBar();
         setJMenuBar(menuBar);
 
         setSize(400, 250);
@@ -23,56 +23,56 @@ public class MainFrame extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
-    
+
     private JMenuBar buildMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
         MenuItemListener menuListener = new MenuItemListener();
-        
+
         JMenu fileMenu = buildFileMenu(menuListener);
         JMenu viewMenu = buildViewMenu(menuListener);
-        
+
         menuBar.add(fileMenu);
         menuBar.add(viewMenu);
 
         return menuBar;
     }
-    
+
     private JMenu buildFileMenu(MenuItemListener listener)
     {
         JMenu fileMenu = new JMenu("File");
-        
+
         JMenuItem connectToRobotMenuItem = new JMenuItem("Connect to Robot");
         JMenuItem connectToControllerMenuItem = new JMenuItem("Connect to Controller");
         JMenuItem exitMenuItem = new JMenuItem("Exit");
-        
+
         connectToRobotMenuItem.addActionListener(listener);
         connectToControllerMenuItem.addActionListener(listener);
         exitMenuItem.addActionListener(listener);
-        
+
         fileMenu.add(connectToRobotMenuItem);
         fileMenu.add(connectToControllerMenuItem);
         fileMenu.add(exitMenuItem);
-        
+
         return fileMenu;
     }
-    
+
     private JMenu buildViewMenu(MenuItemListener listener)
     {
         JMenu viewMenu = new JMenu("View");
-        
+
         JMenuItem videoStreamMenuItem = new JMenuItem("Video Stream");
         JMenuItem debugPanelMenuItem = new JMenuItem("Debug Panel");
-        
+
         videoStreamMenuItem.addActionListener(listener);
         debugPanelMenuItem.addActionListener(listener);
 
         viewMenu.add(videoStreamMenuItem);
         viewMenu.add(debugPanelMenuItem);
-        
+
         return viewMenu;
     }
-    
+
     class MenuItemListener implements ActionListener
     {
         @Override
@@ -80,7 +80,7 @@ public class MainFrame extends JFrame
         {
             JMenuItem source = (JMenuItem) e.getSource();
             String sourceText = source.getText();
-            
+
             switch (sourceText) {
                 case "Connect to Robot":
                     Networker net = new Networker(robotCommandQueue);
@@ -99,16 +99,22 @@ public class MainFrame extends JFrame
                     startVideoStream();
                    break;
                 case "Debug Panel":
+                    System.out.println("Starting Pressure Command Thread");
+
+                    PressureCommandThread pc = new PressureCommandThread(robotCommandQueue);
+                    Thread pcThread = new Thread(pc);
+                    pcThread.start();
+
                     System.out.println("Open up new frame with debug panel here");
                     break;
             }
         }
-        
+
         private void startVideoStream()
         {
             try {
-                String[] cmd = {"/bin/sh", 
-                                "-c", 
+                String[] cmd = {"/bin/sh",
+                                "-c",
                                 "nc 192.168.240.3 5001 | mplayer -gui -fps 31 -cache 1024"};
                 Runtime runtime = Runtime.getRuntime();
                 Process proc = runtime.exec(cmd);
