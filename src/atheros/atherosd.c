@@ -26,6 +26,8 @@
 #define UTIMEOUT 300e3
 #define ATMEGA_INTERVAL 300e3
 
+bool debug = false;
+
 typedef struct state state_t;
 struct state {
     int64_t last_utime;
@@ -90,7 +92,110 @@ void kill_robot(state_t *state)
 
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 5);
-    printf("killed the robot\n");
+    if(debug)
+        printf("[atherosd] Killed the robot\n");
+    pthread_mutex_unlock(&state->atmegafd_mutex);
+}
+
+void kill_motors(state_t *state)
+{
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    buffer[4] = 1;
+
+    pthread_mutex_lock(&state->atmegafd_mutex);
+    write(state->atmegafd, buffer, 5);
+    if(debug)
+        printf("[atherosd] Killed the motors\n");
+    pthread_mutex_unlock(&state->atmegafd_mutex);
+}
+
+void command_motor(state_t *state, int motor, int8_t value, bool control_ang_vels)
+{
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    if(!control_ang_vels)
+        buffer[4] = 2;
+    else
+        buffer[4] = 6;
+
+    buffer[5] = motor;
+    buffer[6] = value;
+
+    pthread_mutex_lock(&state->atmegafd_mutex);
+    write(state->atmegafd, buffer, 7);
+
+    if(debug){
+        printf("[atherosd] M%d: %4d, Control Angular Velocity: ", motor, value);
+        if(control_ang_vels)
+            printf("TRUE\n");
+        else
+            printf("FALSE\n");
+    }
+
+    pthread_mutex_unlock(&state->atmegafd_mutex);
+}
+
+void command_velocity(state_t *state, int8_t v_x, int8_t v_y, int8_t w, bool control_ang_vels)
+{
+    int8_t buffer[MAX_BUFFER];
+
+    struct vel_profile vels = inverse_kinematics(v_x, v_y, w);
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    if(!control_ang_vels)
+        buffer[4] = 3;
+    else
+        buffer[4] = 7;
+
+    buffer[5] = vels.for_left;
+    buffer[6] = vels.for_right;
+    buffer[7] = vels.rear_right;
+    buffer[8] = vels.rear_left;
+
+    pthread_mutex_lock(&state->atmegafd_mutex);
+    write(state->atmegafd, buffer, 9);
+
+    if(debug){
+        printf("[atherosd] M1: %4d, M2: %4d, M3: %4d, M4: %4d, Control Angular Velocity: ", buffer[5], buffer[6], buffer[7], buffer[8]);
+        if(control_ang_vels)
+            printf("TRUE\n");
+        else
+            printf("FALSE\n");
+    }
+
+    pthread_mutex_unlock(&state->atmegafd_mutex);
+}
+
+void send_motor_ang_vels(state_t *state)
+{
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    buffer[4] = 4;
+
+    pthread_mutex_lock(&state->atmegafd_mutex);
+    write(state->atmegafd, buffer, 5);
+    if(debug)
+        printf("[atherosd] Sending Motor Angular Velocities\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
@@ -107,13 +212,14 @@ void fire_cannon(state_t *state)
 
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 5);
-    printf("fired the cannon\n");
+    if(debug)
+        printf("[atherosd] Fired the cannon\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
-void set_pressure(state_t *state, int8_t pressure)
+void increase_pressure(state_t *state)
 {
-     int8_t buffer[MAX_BUFFER];
+    int8_t buffer[MAX_BUFFER];
 
     buffer[0] = MAGIC >> 24 & 0xff;
     buffer[1] = MAGIC >> 16 & 0xff;
@@ -121,35 +227,29 @@ void set_pressure(state_t *state, int8_t pressure)
     buffer[3] = MAGIC >>  0 & 0xff;
 
     buffer[4] = 8;
-    buffer[5] = pressure;
 
     pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 6);
-    printf("set the pressure\n");
+    write(state->atmegafd, buffer, 5);
+    if(debug)
+        printf("[atherosd] Increasing pressure\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
-void command_velocity(state_t *state, int8_t v_x, int8_t v_y, int8_t w)
+void send_pressure(state_t *state)
 {
     int8_t buffer[MAX_BUFFER];
-
-    struct vel_profile vels = inverse_kinematics(v_x, v_y, w);
 
     buffer[0] = MAGIC >> 24 & 0xff;
     buffer[1] = MAGIC >> 16 & 0xff;
     buffer[2] = MAGIC >>  8 & 0xff;
     buffer[3] = MAGIC >>  0 & 0xff;
 
-    buffer[4] = 3;
-
-    buffer[5] = vels.for_left;
-    buffer[6] = vels.for_right;
-    buffer[7] = vels.rear_right;
-    buffer[8] = vels.rear_left;
+    buffer[4] = 9;
 
     pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 9);
-    printf("commanded a velocity\n");
+    write(state->atmegafd, buffer, 5);
+    if(debug)
+        printf("[atherosd] Sending pressure\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
@@ -162,75 +262,83 @@ void command_debug(state_t *state)
     buffer[2] = MAGIC >>  8 & 0xff;
     buffer[3] = MAGIC >>  0 & 0xff;
 
-    buffer[5] = 9;
+    buffer[5] = 10;
 
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 6);
-    printf("commanded debug mode\n");
+    if(debug)
+        printf("[atherosd] Commanded debug mode for AVR chip. Expect verbose output on /dev/ttyATH0 from the AVR chip.\n");
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
-void command_motor(state_t *state, int motor, int8_t value)
-{
-    int8_t buffer[MAX_BUFFER];
-
-    buffer[0] = MAGIC >> 24 & 0xff;
-    buffer[1] = MAGIC >> 16 & 0xff;
-    buffer[2] = MAGIC >>  8 & 0xff;
-    buffer[3] = MAGIC >>  0 & 0xff;
-
-    buffer[4] = 2;
-
-    buffer[5] = motor;
-    buffer[6] = value;
-
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 7);
-    printf("commanded a motor\n");
-    pthread_mutex_unlock(&state->atmegafd_mutex);
-}
-
-int process_message(state_t *state, int8_t *msg, int len)
+void process_message(state_t *state, int8_t *msg, int len)
 {
     if (len < 5) {
-        printf("short message\n");
-        return 0;
+        printf("[atherosd] Short message\n");
+        return;
     }
 
     if (msg[0] != (MAGIC >> 24 & 0xff) ||
         msg[1] != (MAGIC >> 16 & 0xff) ||
         msg[2] != (MAGIC >>  8 & 0xff) ||
         msg[3] != (MAGIC >>  0 & 0xff)) {
-        printf("bad magic\n");
-        return 0; // the magic bytes are wrong -> ignore message
+        printf("[atherosd] Bad magic bytes\n");
+        return;
     }
 
     int8_t msg_type = msg[4];
 
     switch (msg_type) {
-        case 0: // kill robot motors
+        case 0:
             kill_robot(state);
             break;
-        case 1: // kill robot motors and terminate this daemon
-            kill_robot(state);
-            return -1;
-        case 2: // keep alive message
+
+        case 1:
+            kill_motors(state);
             break;
-        case 3: // velocity command
-            command_velocity(state, msg[5], msg[6], msg[7]);
+
+        case 2:
+            command_motor(state, msg[5], msg[6], false);
             break;
-        case 4: // individual motor command
-            command_motor(state, msg[5], msg[6]);
+
+        case 3:
+            command_velocity(state, msg[5], msg[6], msg[7], false);
             break;
+
+        case 4:
+            send_motor_ang_vels(state);
+            break;
+
         case 5:
             fire_cannon(state);
             break;
-        case 8:
-            set_pressure(state, msg[5]);
-            break;
-    }
 
-    return 0;
+        case 6:
+            command_motor(state, msg[5], msg[6], true);
+            break;
+
+        case 7:
+            command_velocity(state, msg[5], msg[6], msg[7], true);
+            break;
+
+        case 8:
+            increase_pressure(state);
+            break;
+
+        case 9:
+            send_pressure(state);
+            break;
+
+        case 10:
+            command_debug(state);
+            break;
+
+        case 11:
+            debug = true;
+            printf("[atherosd] Turning on Debug Mode. Verbose output will ensue.\n");
+            break;
+
+    }
 }
 
 void network_connect(state_t *state)
@@ -275,86 +383,58 @@ void network_connect(state_t *state)
     pthread_mutex_unlock(&state->sockfd_mutex);
 }
 
-void *pulse_monitor(void *arg)
+void *serial_monitor(void *arg)
 {
     state_t *state = (state_t *) arg;
-    int kill = 0;
 
-    while (1) {
-        int64_t now = utime_now();
+    uint8_t messageBuffer[64];
+    uint8_t messageBufferIndex = 0;
 
-        pthread_mutex_lock(&state->last_utime_mutex);
+    uint8_t magicBytes[] = {0x47, 0x41, 0x4e, 0x53};
+    uint8_t messageLengthArray[] = {9, 6};
 
-        if (state->last_utime > 0 && now - state->last_utime > UTIMEOUT) {
-            printf("timeout exceeded\n");
-            kill_robot(state);
+    FILE *fp = fdopen(state->atmegafd, "r");
+
+    while(1)
+    {
+        pthread_mutex_lock(&state->atmegafd_mutex);
+        int data = getc(fp);
+        pthread_mutex_unlock(&state->atmegafd_mutex);
+
+        if(data != EOF)
+        {
+            messageBuffer[messageBufferIndex] = data;
+
+            if(messageBufferIndex <= 3 && messageBuffer[messageBufferIndex] != magicBytes[messageBufferIndex])
+            {
+                memset(messageBuffer, 0, messageBufferIndex + 1);
+                messageBufferIndex = 0;
+            }
+
+            else if(messageLengthArray[ messageBuffer[4] ] <= messageBufferIndex + 1)
+            {
+                pthread_mutex_lock(&state->sockfd_mutex);
+                write(state->sockfd, messageBuffer, messageBufferIndex + 1);
+                pthread_mutex_unlock(&state->sockfd_mutex);
+
+                memset(messageBuffer, 0, messageBufferIndex + 1);
+                messageBufferIndex = 0;
+            }
+
+            else
+                messageBufferIndex++;
         }
 
-        pthread_mutex_unlock(&state->last_utime_mutex);
-
-        usleep(10);
+        usleep(10e3);
     }
 }
 
-void *atmega_keep_alive(void *arg)
-{
-    state_t *state = (state_t *) arg;
-    int8_t buffer[MAX_BUFFER];
-
-    buffer[0] = MAGIC >> 24 & 0xff;
-    buffer[1] = MAGIC >> 16 & 0xff;
-    buffer[2] = MAGIC >>  8 & 0xff;
-    buffer[3] = MAGIC >>  0 & 0xff;
-
-    buffer[4] = 1;
-
-    while (1) {
-        pthread_mutex_lock(&state->atmegafd_mutex);
-        write(state->atmegafd, buffer, 5);
-        pthread_mutex_unlock(&state->atmegafd_mutex);
-
-        usleep(ATMEGA_INTERVAL);
-    }
-}
-
-void *atmega_poll_wheel_vel(void *arg)
-{
-    state_t *state = (state_t *) arg;
-    int8_t buffer[MAX_BUFFER];
-
-    buffer[0] = MAGIC >> 24 & 0xff;
-    buffer[1] = MAGIC >> 16 & 0xff;
-    buffer[2] = MAGIC >>  8 & 0xff;
-    buffer[3] = MAGIC >>  0 & 0xff;
-
-    buffer[4] = 4;
-    buffer[5] = 0;
-
-    while (1) {
-        pthread_mutex_lock(&state->atmegafd_mutex);
-        write(state->atmegafd, buffer, 6);
-        pthread_mutex_unlock(&state->atmegafd_mutex);
-
-        usleep(ATMEGA_INTERVAL);
-    }
-}
-
-int main(int argc, char *argv[])
+int main()
 {
     int sd, atmegafd, sd_current;
     int8_t buffer[MAX_PACKET];
-    pthread_t pulse_thread;
-    pthread_t atmega_thread;
+    pthread_t serial_monitor_thread;
     state_t *state = calloc(1, sizeof(state_t));
-    char *poll_wheel = "poll_wheel";
-    char *comp = "from-comp";
-    char *atmega = "to-atmega";
-    char *help = "help";
-
-    if (argc > 1 && !strcmp(argv[1], help)) {
-        printf("usage: %s from-comp to-atmega\n\nBy default, neither thread is initialized. Add \"from-comp\" and/or \"to-atmega\" to enable the threads.", argv[0]);
-        exit(0);
-    }
 
     state->atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY | O_NDELAY);
 
@@ -363,30 +443,7 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&state->sockfd_mutex, NULL);
     pthread_mutex_init(&state->last_utime_mutex, NULL);
 
-    for(int i = 0; i < argc; i++)
-    {
-
-        if (!strcmp(argv[i], comp)) {
-            printf("starting from-comp thread...\n");
-            pthread_create(&pulse_thread, NULL, pulse_monitor, state);
-        }
-
-        if (!strcmp(argv[i], atmega)) {
-            printf("starting to-atmega thread...\n");
-            pthread_create(&atmega_thread, NULL, atmega_keep_alive, state);
-        }
-
-        if (!strcmp(argv[i], poll_wheel)) {
-            printf("starting poll-wheel-vel thread...\n");
-            pthread_create(&atmega_thread, NULL, atmega_poll_wheel_vel, state);
-        }
-
-        if (!strcmp(argv[i], "debug")){
-            printf("starting debug mode...\n");
-            command_debug(state);
-        }
-
-    }
+    pthread_create(&serial_monitor_thread, NULL, serial_monitor, state);
 
     while(1){
         network_connect(state);
@@ -395,7 +452,10 @@ int main(int argc, char *argv[])
             int len;
 
             if ((len = recv(state->sockfd, buffer, sizeof(buffer), 0)) <= 0) {
-                perror("recv");
+                if(debug){
+                    perror("recv");
+                    printf("[atherosd] Connection Broken\n");
+                }
                 break;
             }
 
@@ -403,14 +463,15 @@ int main(int argc, char *argv[])
             state->last_utime = utime_now();
             pthread_mutex_unlock(&state->last_utime_mutex);
 
-            if (process_message(state, buffer, len) < 0)
-                break;
+            process_message(state, buffer, len)
         }
 
         close(state->sockfd);
         close(state->clientfd);
 
         sleep(1);
+        if(debug)
+            printf("[atherosd] Restarting Connection\n");
     }
 
     return 0;
