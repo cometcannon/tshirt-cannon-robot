@@ -43,7 +43,7 @@ class Mapping
         }
 
         else if (osName.equalsIgnoreCase("Linux")) { //TODO: Need to populate button array
-            buttons = new int[] {};
+            buttons = new int[] {0, 1, 2, 3, 4, 5, -1, 8, 10, 11};
         }
 
         else if (osName.equalsIgnoreCase("windows"))
