@@ -335,8 +335,11 @@ void process_message(state_t *state, int8_t *msg, int len)
             break;
 
         case 11:
-            debug = true;
-            printf("[atherosd] Turning on Debug Mode. Verbose output will ensue.\n");
+            debug = !debug;
+            if(debug)
+                printf("[atherosd] Turning on Debug Mode. Verbose output will ensue.\n");
+            else
+                printf("[atherosd] Turning off Debug Mode.\n");
             break;
 
     }

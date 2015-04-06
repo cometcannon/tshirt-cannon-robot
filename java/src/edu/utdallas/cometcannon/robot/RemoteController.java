@@ -42,7 +42,7 @@ class Mapping
             buttons = new int[] {11, 12, 13, 14, 8, 9, 4, 5, 7, 6};
         }
 
-        else if (osName.equalsIgnoreCase("Linux")) { //TODO: Need to populate button array
+        else if (osName.equalsIgnoreCase("Linux")) {
             buttons = new int[] {0, 1, 2, 3, 4, 5, -1, 8, 10, 11};
         }
 
@@ -153,15 +153,15 @@ public class RemoteController implements Runnable
         }
 
         if (buttonMap.isButtonBPressed()) {
-            System.out.println("B pressed");
+            //robotCommandQueue.offer(new DebugAVRCommand());
         }
 
         if (buttonMap.isButtonXPressed()) {
-            System.out.println("X pressed");
+            robotCommandQueue.offer(new DebugAtherosCommand());
         }
 
         if (buttonMap.isButtonYPressed()) {
-            System.out.println("Y pressed");
+            robotCommandQueue.offer(new SendPressureCommand());
         }
     }
 
