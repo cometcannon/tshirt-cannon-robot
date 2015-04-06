@@ -268,7 +268,7 @@ void command_debug(state_t *state)
     pthread_mutex_lock(&state->atmegafd_mutex);
     write(state->atmegafd, buffer, 6);
     if(debug)
-        printf("[atherosd] Commanded debug mode for AVR chip. Expect verbose output on /dev/ttyATH0 from the AVR chip.\n");
+        printf("[atherosd] {%d} Commanded debug mode for AVR chip. Expect verbose output on /dev/ttyATH0 from the AVR chip.\n", buffer[5]);
     pthread_mutex_unlock(&state->atmegafd_mutex);
 }
 
@@ -335,8 +335,11 @@ void process_message(state_t *state, int8_t *msg, int len)
             break;
 
         case 11:
-            debug = true;
-            printf("[atherosd] Turning on Debug Mode. Verbose output will ensue.\n");
+            debug = !debug;
+            if(debug)
+                printf("[atherosd] Turning on Debug Mode. Verbose output will ensue.\n");
+            else
+                printf("[atherosd] Turning off Debug Mode.\n");
             break;
 
     }
@@ -415,6 +418,7 @@ void *serial_monitor(void *arg)
             else if(messageLengthArray[ messageBuffer[4] ] <= messageBufferIndex + 1)
             {
                 pthread_mutex_lock(&state->sockfd_mutex);
+                printf("Writing %d bytes to sockdf\n", messageBufferIndex + 1);
                 write(state->sockfd, messageBuffer, messageBufferIndex + 1);
                 pthread_mutex_unlock(&state->sockfd_mutex);
 
