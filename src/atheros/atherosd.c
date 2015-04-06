@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -463,7 +464,7 @@ int main()
             state->last_utime = utime_now();
             pthread_mutex_unlock(&state->last_utime_mutex);
 
-            process_message(state, buffer, len)
+            process_message(state, buffer, len);
         }
 
         close(state->sockfd);
