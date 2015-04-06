@@ -7,14 +7,18 @@ import java.io.*;
 
 import edu.utdallas.cometcannon.robot.*;
 import edu.utdallas.cometcannon.robot.command.*;
+import edu.utdallas.cometcannon.robot.response.*;
 
 public class MainFrame extends JFrame
 {
     private ArrayBlockingQueue<Command> robotCommandQueue;
+    private ArrayBlockingQueue<Response> robotResponseQueue;
 
-    public MainFrame(ArrayBlockingQueue<Command> robotCommandQueue)
+    public MainFrame(ArrayBlockingQueue<Command> robotCommandQueue,
+                     ArrayBlockingQueue<Response> robotResponseQueue)
     {
         this.robotCommandQueue = robotCommandQueue;
+        this.robotResponseQueue = robotResponseQueue;
         JMenuBar menuBar = buildMenuBar();
         setJMenuBar(menuBar);
 
@@ -83,7 +87,8 @@ public class MainFrame extends JFrame
 
             switch (sourceText) {
                 case "Connect to Robot":
-                    Networker net = new Networker(robotCommandQueue);
+                    Networker net = new Networker(robotCommandQueue,
+                                                  robotResponseQueue);
                     Thread netThread = new Thread(net);
                     netThread.start();
                     break;
