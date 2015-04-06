@@ -34,8 +34,9 @@ struct state {
     int64_t last_utime;
     pthread_mutex_t last_utime_mutex;
 
-    int atmegafd;
-    pthread_mutex_t atmegafd_mutex;
+    FILE *atmegafp_write;
+    FILE *atmegafp_read;
+    pthread_mutex_t atmegafp_mutex;
 
     int clientfd;
     pthread_mutex_t clientfd_mutex;
@@ -91,11 +92,11 @@ void kill_robot(state_t *state)
 
     buffer[4] = 0;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 5);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 5, state->atmegafp_write);
     if(debug)
         printf("[atherosd] Killed the robot\n");
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void kill_motors(state_t *state)
@@ -109,11 +110,11 @@ void kill_motors(state_t *state)
 
     buffer[4] = 1;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 5);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 5, state->atmegafp_write);
     if(debug)
         printf("[atherosd] Killed the motors\n");
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void command_motor(state_t *state, int motor, int8_t value, bool control_ang_vels)
@@ -133,8 +134,8 @@ void command_motor(state_t *state, int motor, int8_t value, bool control_ang_vel
     buffer[5] = motor;
     buffer[6] = value;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 7);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 7, state->atmegafp_write);
 
     if(debug){
         printf("[atherosd] M%d: %4d, Control Angular Velocity: ", motor, value);
@@ -144,7 +145,7 @@ void command_motor(state_t *state, int motor, int8_t value, bool control_ang_vel
             printf("FALSE\n");
     }
 
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void command_velocity(state_t *state, int8_t v_x, int8_t v_y, int8_t w, bool control_ang_vels)
@@ -168,8 +169,8 @@ void command_velocity(state_t *state, int8_t v_x, int8_t v_y, int8_t w, bool con
     buffer[7] = vels.rear_right;
     buffer[8] = vels.rear_left;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 9);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 9, state->atmegafp_write);
 
     if(debug){
         printf("[atherosd] M1: %4d, M2: %4d, M3: %4d, M4: %4d, Control Angular Velocity: ", buffer[5], buffer[6], buffer[7], buffer[8]);
@@ -179,7 +180,7 @@ void command_velocity(state_t *state, int8_t v_x, int8_t v_y, int8_t w, bool con
             printf("FALSE\n");
     }
 
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void send_motor_ang_vels(state_t *state)
@@ -193,11 +194,11 @@ void send_motor_ang_vels(state_t *state)
 
     buffer[4] = 4;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 5);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 5, state->atmegafp_write);
     if(debug)
         printf("[atherosd] Sending Motor Angular Velocities\n");
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void fire_cannon(state_t *state)
@@ -211,11 +212,11 @@ void fire_cannon(state_t *state)
 
     buffer[4] = 5;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 5);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 5, state->atmegafp_write);
     if(debug)
         printf("[atherosd] Fired the cannon\n");
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void increase_pressure(state_t *state)
@@ -229,11 +230,11 @@ void increase_pressure(state_t *state)
 
     buffer[4] = 8;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 5);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 5, state->atmegafp_write);
     if(debug)
         printf("[atherosd] Increasing pressure\n");
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void send_pressure(state_t *state)
@@ -247,11 +248,11 @@ void send_pressure(state_t *state)
 
     buffer[4] = 9;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 5);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 5, state->atmegafp_write);
     if(debug)
         printf("[atherosd] Sending pressure\n");
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void command_debug(state_t *state)
@@ -265,11 +266,11 @@ void command_debug(state_t *state)
 
     buffer[5] = 10;
 
-    pthread_mutex_lock(&state->atmegafd_mutex);
-    write(state->atmegafd, buffer, 6);
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    fwrite(buffer, 1, 6, state->atmegafp_write);
     if(debug)
         printf("[atherosd] {%d} Commanded debug mode for AVR chip. Expect verbose output on /dev/ttyATH0 from the AVR chip.\n", buffer[5]);
-    pthread_mutex_unlock(&state->atmegafd_mutex);
+    pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
 void process_message(state_t *state, int8_t *msg, int len)
@@ -397,13 +398,11 @@ void *serial_monitor(void *arg)
     uint8_t magicBytes[] = {0x47, 0x41, 0x4e, 0x53};
     uint8_t messageLengthArray[] = {9, 6};
 
-    FILE *fp = fdopen(state->atmegafd, "r");
-
     while(1)
     {
-        pthread_mutex_lock(&state->atmegafd_mutex);
-        int data = getc(fp);
-        pthread_mutex_unlock(&state->atmegafd_mutex);
+        pthread_mutex_lock(&state->atmegafp_mutex);
+        int data = getc(state->atmegafp_read);
+        pthread_mutex_unlock(&state->atmegafp_mutex);
 
         if(data != EOF)
         {
@@ -436,14 +435,14 @@ void *serial_monitor(void *arg)
 
 int main()
 {
-    int sd, atmegafd, sd_current;
     int8_t buffer[MAX_PACKET];
     pthread_t serial_monitor_thread;
     state_t *state = calloc(1, sizeof(state_t));
 
-    state->atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY | O_NDELAY);
+    state->atmegafp_write = fopen("/dev/ttyATH0", "a");
+    state->atmegafp_read = fopen("/dev/ttyATH0", "r");
 
-    pthread_mutex_init(&state->atmegafd_mutex, NULL);
+    pthread_mutex_init(&state->atmegafp_mutex, NULL);
     pthread_mutex_init(&state->clientfd_mutex, NULL);
     pthread_mutex_init(&state->sockfd_mutex, NULL);
     pthread_mutex_init(&state->last_utime_mutex, NULL);
