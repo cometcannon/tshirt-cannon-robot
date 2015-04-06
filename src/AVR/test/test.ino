@@ -324,7 +324,7 @@ void IncreasePressure()
     regulatorTriggeredTime = millis();
     regulatorTriggered = true;
 
-    if(debug)
+    //if(debug)
         Serial1 << "Current Pressure is " << MapPressure() << "\n";
 }
 
@@ -379,11 +379,11 @@ void processCommand()
             break;
 
         case 9:
-            debug = true;
+            SendPressure();
             break;
 
         case 10:
-            SendPressure();
+            debug = !debug;
             break;
     }
 

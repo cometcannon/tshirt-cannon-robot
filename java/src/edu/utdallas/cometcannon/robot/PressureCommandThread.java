@@ -3,7 +3,7 @@ package edu.utdallas.cometcannon.robot;
 import edu.utdallas.cometcannon.robot.command.*;
 import java.util.concurrent.*;
 
-public class PressureCommandThread implements Runnable 
+public class PressureCommandThread implements Runnable
 {
     private boolean keepAlive = true;
     private ArrayBlockingQueue<Command> robotCommandQueue;
