@@ -1,12 +1,14 @@
 T-shirt Cannon Robot
 =============
 
+Welcome to the T-Shirt Cannon Robot repo!
+
 Contents
 -------------
 
 Running the video stream
 -------------
-nc 192.168.240.3 5001 | mplayer -fps 60 -cache 1024 - 
+nc 192.168.240.3 5001 | mplayer -fps 60 -cache 1024 -
 
 Site to install drivers
 -------------
