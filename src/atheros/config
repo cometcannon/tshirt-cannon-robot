@@ -1,0 +1,59 @@
+########################################
+# to configure the Yun for usage, access
+# the Yun's terminal through telnet or
+# ssh and paste this entire file into
+# the terminal
+
+########################################
+cat > /etc/config/wireless <<EOF
+config wifi-device radio0
+       option type      'mac80211'
+       option hwmode    '11ng'
+       option path      'platform/ar933x_wmac'
+       option htmode    'HT20'
+       list   ht_capab  'SHORT-GI-20'
+       list   ht_capab  'SHORT-GI-40'
+       list   ht_capab  'RX-STBC1'
+       list   ht_capab  'DSSS_CCK-40'
+       option disabled  '0'
+
+config wifi-iface
+       option device    'radio0'
+       option ifname    'wlan0'
+       option network   'lan'
+       option mode      'ap'
+       option ssid      'robonet'
+       option encryption 'psk2'
+       option key       'RobotsAreTheCoolest'
+EOF
+
+########################################
+cat > /etc/config/network <<EOF
+config interface loopback
+       option ifname    'lo'
+       option proto     'static'
+       option ipaddr    '127.0.0.1'
+       option netmask   '255.0.0.0'
+
+config interface lan
+       option ifname    'wlan0'
+       option proto     'static'
+       option ipaddr    '192.168.240.2'
+       option ipaddr    '255.255.255.0'
+
+config interface br0
+       option type      'bridge'
+       option ifname    'eth1 wlan0'
+       option proto     'static'
+       option ipaddr    '192.168.240.1'
+       option netmask   '255.255.255.0'
+EOF
+
+########################################
+cat > /etc/rc.local <<EOF
+boot-complete-notify
+
+atherosd_x
+
+exit 0
+EOF
