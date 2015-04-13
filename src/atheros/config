@@ -19,7 +19,6 @@ config wifi-device radio0
 
 config wifi-iface
        option device    'radio0'
-       option ifname    'wlan0'
        option network   'lan'
        option mode      'ap'
        option ssid      'robonet'
@@ -36,16 +35,15 @@ config interface loopback
        option netmask   '255.0.0.0'
 
 config interface lan
-       option ifname    'wlan0'
-       option proto     'static'
-       option ipaddr    '192.168.240.2'
-       option ipaddr    '255.255.255.0'
+        option ifname    'wlan0'
+        option proto     'static'
+        option ipaddr    '192.168.240.1'
+        option netmask   '255.255.255.0'
 
 config interface br0
-       option type      'bridge'
-       option ifname    'eth1 wlan0'
+       option ifname    'eth1'
        option proto     'static'
-       option ipaddr    '192.168.240.1'
+       option ipaddr    '192.168.1.1'
        option netmask   '255.255.255.0'
 EOF
 
