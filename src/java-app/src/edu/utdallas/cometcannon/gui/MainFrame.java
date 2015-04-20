@@ -12,6 +12,9 @@ import edu.utdallas.cometcannon.robot.response.*;
 
 public class MainFrame extends JFrame
 {
+    public static final int WIDTH = 400;
+    public static final int HEIGHT = 250;
+
     private ArrayBlockingQueue<Command> robotCommandQueue;
     private ArrayBlockingQueue<Response> robotResponseQueue;
 
@@ -25,7 +28,7 @@ public class MainFrame extends JFrame
 
         buildPanels();
 
-        setSize(400, 250);
+        setSize(WIDTH, HEIGHT);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
