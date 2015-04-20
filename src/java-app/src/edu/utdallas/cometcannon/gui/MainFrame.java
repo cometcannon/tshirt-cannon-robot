@@ -2,6 +2,7 @@ package edu.utdallas.cometcannon.gui;
 
 import javax.swing.*;
 import java.util.concurrent.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
@@ -22,10 +23,30 @@ public class MainFrame extends JFrame
         JMenuBar menuBar = buildMenuBar();
         setJMenuBar(menuBar);
 
+        buildPanels();
+
         setSize(400, 250);
+        setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+    }
+
+    private void buildPanels()
+    {
+        VelocityPanel velocityPanel = new VelocityPanel();
+        PressurePanel pressurePanel = new PressurePanel();
+        StatusPanel statusPanel = new StatusPanel();
+
+        JPanel visualPanel = new JPanel();
+        visualPanel.setLayout(new GridLayout(1,2));
+        visualPanel.add(velocityPanel);
+        visualPanel.add(pressurePanel);
+
+        setLayout(new BorderLayout());
+
+        add(visualPanel, BorderLayout.CENTER);
+        add(statusPanel, BorderLayout.SOUTH);
     }
 
     private JMenuBar buildMenuBar()
