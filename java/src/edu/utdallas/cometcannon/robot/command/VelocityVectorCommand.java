@@ -13,6 +13,21 @@ public class VelocityVectorCommand implements Command
         this.w_z = (byte) w_z;
     }
 
+    public int getXVelocity()
+    {
+        return v_x;
+    }
+
+    public int getYVelocity()
+    {
+        return v_y;
+    }
+
+    public int getAngularVelocity()
+    {
+        return w_z;
+    }
+
     @Override
     public byte[] generatePayload()
     {

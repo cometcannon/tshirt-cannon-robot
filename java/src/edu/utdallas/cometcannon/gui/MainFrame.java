@@ -1,7 +1,9 @@
 package edu.utdallas.cometcannon.gui;
 
 import javax.swing.*;
+import javax.swing.border.*;
 import java.util.concurrent.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
@@ -11,8 +13,18 @@ import edu.utdallas.cometcannon.robot.response.*;
 
 public class MainFrame extends JFrame
 {
+    public static int WIDTH = 400;
+    public static int HEIGHT = 250;
+
+    public static int V_X;
+    public static int V_Y;
+
     private ArrayBlockingQueue<Command> robotCommandQueue;
     private ArrayBlockingQueue<Response> robotResponseQueue;
+
+    private VelocityPanel velocityPanel;
+    private StatusPanel statusPanel;
+    private PressurePanel pressurePanel;
 
     public MainFrame(ArrayBlockingQueue<Command> robotCommandQueue,
                      ArrayBlockingQueue<Response> robotResponseQueue)
@@ -22,10 +34,49 @@ public class MainFrame extends JFrame
         JMenuBar menuBar = buildMenuBar();
         setJMenuBar(menuBar);
 
-        setSize(400, 250);
+        buildPanels();
+
+        addComponentListener(new ResizeListener());
+
+        setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+
+        try {Thread.sleep(2000);} catch (InterruptedException ex) {}
+        statusPanel.updateStatus("<html>Status: <font color='green'>Oh wait, never mind. We're good.</font></html>");
+
+        try {Thread.sleep(2000);} catch (InterruptedException ex) {}
+        statusPanel.updateStatus("<html>Status: <font color='green'>OK</font></html>");
+    }
+
+    private void buildPanels()
+    {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        final int BORDER_HEIGHT = (int) (MainFrame.HEIGHT * 0.04);
+        Border emptyBorder = BorderFactory.createEmptyBorder(BORDER_HEIGHT,
+                                                             BORDER_HEIGHT,
+                                                             BORDER_HEIGHT,
+                                                             BORDER_HEIGHT);
+        mainPanel.setBorder(emptyBorder);
+
+        velocityPanel = new VelocityPanel(robotCommandQueue);
+        pressurePanel = new PressurePanel();
+        statusPanel = new StatusPanel();
+
+        JPanel visualPanel = new JPanel();
+        visualPanel.setLayout(new GridLayout(1,2));
+        visualPanel.add(velocityPanel);
+        visualPanel.add(pressurePanel);
+
+        setLayout(new BorderLayout());
+
+        mainPanel.add(visualPanel, BorderLayout.CENTER);
+        mainPanel.add(statusPanel, BorderLayout.SOUTH);
+
+        add(mainPanel);
     }
 
     private JMenuBar buildMenuBar()
@@ -75,6 +126,16 @@ public class MainFrame extends JFrame
         viewMenu.add(debugPanelMenuItem);
 
         return viewMenu;
+    }
+
+    class ResizeListener extends ComponentAdapter
+    {
+        public void componentResized(ComponentEvent e)
+        {
+            WIDTH = getWidth();
+            HEIGHT = getHeight();
+            velocityPanel.updateRobotSize();
+        }
     }
 
     class MenuItemListener implements ActionListener
