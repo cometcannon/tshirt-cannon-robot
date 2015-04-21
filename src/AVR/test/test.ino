@@ -19,19 +19,20 @@ Encoder encoder1(3, 8, 1);
 Encoder encoder2(7, 11, 4);
 Encoder encoder3(12, 13, 12);
 
-Wheel wheel0(5,  &esc0, &encoder0, &angularVelocityController0);
-Wheel wheel1(6,  &esc1, &encoder1, &angularVelocityController1);
-Wheel wheel2(9,  &esc2, &encoder2, &angularVelocityController2);
-Wheel wheel3(10, &esc3, &encoder3, &angularVelocityController3);
+Wheel wheel0(10,  &esc0, &encoder0, &angularVelocityController0);
+Wheel wheel1(9,  &esc1, &encoder1, &angularVelocityController1);
+Wheel wheel2(5,  &esc2, &encoder2, &angularVelocityController2);
+Wheel wheel3(6, &esc3, &encoder3, &angularVelocityController3);
 
 bool debug = false;
 
 const float MAX_WHEEL_SPEED = 5.5; //m/s. Could be slightly higher
 const int MIN_PRESSURE = 200;
 
-int cannonTriggerPin = A0;
-int pressureRegulatorPin = A1;
+int cannonTriggerPin = A1;
+int pressureRegulatorPin = A0;
 int pressureSensorPin = A2;
+int buzzerPin = A3;
 float desiredPressure = MIN_PRESSURE;
 
 byte commandBuffer[64];
@@ -51,6 +52,10 @@ bool cannonTriggered = false;
 unsigned long cannonTriggerTime;
 unsigned long cannonTriggerTimeout = 1000;
 
+bool buzzerBuzzed = false;
+unsigned long buzzerTime;
+unsigned long buzzerTimeout = 1000;
+
 byte magicBytes[] = {0x47, 0x41, 0x4e, 0x53};
 byte commandLengthArray[] = {5, 5, 7, 9, 5, 5, 7, 9, 5, 5, 5};
 
@@ -67,6 +72,9 @@ void setup()
 
     pinMode(pressureSensorPin, INPUT);
     digitalWrite(pressureSensorPin, LOW);
+
+    pinMode(buzzerPin, OUTPUT);
+    digitalWrite(buzzerPin, LOW);
 
     pinMode(2, INPUT_PULLUP);
     digitalWrite(2, LOW);
@@ -92,15 +100,16 @@ void setup()
     attachInterrupt(encoder2.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt2, RISING);
     attachPinChangeInterrupt(encoder3.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt3, RISING);
 
-    esc0.attach(5);
-    esc1.attach(6);
-    esc2.attach(9);
-    esc3.attach(10);
+    esc0.attach(10);
+    esc1.attach(9);
+    esc2.attach(5);
+    esc3.attach(6);
 
     keepAliveTimer = millis();
     angVelTimer = millis();
     cannonTriggerTime  = millis();
     regulatorTriggeredTime = millis();
+    buzzerTime = millis();
 
     KillMotors();
 }
@@ -133,6 +142,12 @@ void loop()
 
         if(debug)
             Serial1 << "Regulator Trigger closed\n";
+    }
+
+    if(buzzerBuzzed && millis() - buzzerTime > buzzerTimeout)
+    {
+        digitalWrite(buzzerPin, LOW);
+        buzzerBuzzed = false;
     }
 
     if(millis() - keepAliveTimer > keepAliveTimeout)
@@ -323,6 +338,10 @@ void IncreasePressure()
     digitalWrite(pressureRegulatorPin, HIGH);
     regulatorTriggeredTime = millis();
     regulatorTriggered = true;
+
+    digitalWrite(buzzerPin, HIGH);
+    buzzerTime = millis();
+    buzzerBuzzed = true;
 
     //if(debug)
         Serial1 << "Current Pressure is " << MapPressure() << "\n";
