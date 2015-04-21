@@ -77,6 +77,11 @@ class Mapping
     {
         return controller.isButtonPressed(buttons[3]);
     }
+
+    public boolean isRightStickPressed()
+    {
+        return controller.isButtonPressed(buttons[8]);
+    }
 }
 
 public class RemoteController implements Runnable
@@ -150,6 +155,11 @@ public class RemoteController implements Runnable
     {
         if (buttonMap.isButtonAPressed()) {
             robotCommandQueue.offer(new IncreasePressureCommand());
+        }
+
+        if (buttonMap.isRightStickPressed()){
+            robotCommandQueue.offer(new HonkCommand());
+            System.out.println("Honk!");
         }
 
         if (buttonMap.isButtonBPressed()) {
