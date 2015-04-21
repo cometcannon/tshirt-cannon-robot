@@ -438,7 +438,7 @@ int main()
     pthread_t serial_monitor_thread;
     state_t *state = calloc(1, sizeof(state_t));
 
-    state->atmegafp = open("/dev/ttyATH0", O_RDWR | O_NOCTTY |O_NDELAY);
+    state->atmegafd = open("/dev/ttyATH0", O_RDWR | O_NOCTTY |O_NDELAY);
 
     pthread_mutex_init(&state->atmegafp_mutex, NULL);
     pthread_mutex_init(&state->clientfd_mutex, NULL);
