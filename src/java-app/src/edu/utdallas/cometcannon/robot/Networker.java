@@ -10,7 +10,7 @@ import edu.utdallas.cometcannon.robot.response.*;
 public class Networker implements Runnable
 {
     final int YUN_PORT = 12313;
-    final String YUN_ADDRESS = "192.168.240.4";
+    final String YUN_ADDRESS = "192.168.240.1";
 
     ArrayBlockingQueue<Command> robotCommandQueue;
     ArrayBlockingQueue<Response> robotResponseQueue;
@@ -41,18 +41,21 @@ public class Networker implements Runnable
         Thread readerThread = new Thread(reader);
         readerThread.start();
 
-        while (true) { 
+        while (true) {
             try {
-                Command nextCommand = robotCommandQueue.poll(1000, TimeUnit.DAYS);
-                byte payload[] = nextCommand.generatePayload();
-                output.write(payload);
+                Command nextCommand = robotCommandQueue.poll(1, TimeUnit.MILLISECONDS);
+
+                if (nextCommand != null) {
+                    byte payload[] = nextCommand.generatePayload();
+                    output.write(payload);
+                }
             } catch(IOException | InterruptedException e){
                 e.printStackTrace();
             }
 
         }
     }
-    
+
     class NetworkReader implements Runnable
     {
         @Override

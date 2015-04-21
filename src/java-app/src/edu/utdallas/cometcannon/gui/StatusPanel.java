@@ -4,9 +4,15 @@ import javax.swing.*;
 
 public class StatusPanel extends JPanel
 {
+    private JLabel statusLabel;
     public StatusPanel()
     {
-        JLabel status = new JLabel("Status: OK");
-        add(status);
+        statusLabel = new JLabel("<html>Status: <font color='red'>CATASTROPHIC FAILURE! RUN FOR YOUR LIFE!</font></html>");
+        add(statusLabel);
+    }
+
+    public void updateStatus(String status)
+    {
+        statusLabel.setText(status);
     }
 }
