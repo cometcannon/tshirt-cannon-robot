@@ -130,7 +130,7 @@ void command_horn(state_t *state)
     pthread_mutex_lock(&state->atmegafp_mutex);
     write(state->atmegafd, buffer, 5);
     if(debug)
-        printf("[atherosd] Honked Horn\n");
+        printf("[atherosd] {%d} Honked Horn\n", buffer[4]);
     pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
