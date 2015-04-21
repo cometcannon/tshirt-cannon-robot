@@ -12,8 +12,8 @@ public class VelocityPanel extends JPanel
     private ArrayBlockingQueue<Command> robotCommandQueue;
     private VisualVelocityPanel visPanel;
     private JLabel panelTitle;
-    private int v_x;
-    private int v_y;
+    public static int v_x;
+    public static int v_y;
 
     public VelocityPanel(ArrayBlockingQueue<Command> robotCommandQueue)
     {
@@ -40,9 +40,6 @@ public class VelocityPanel extends JPanel
         public void run()
         {
             while (true) {
-
-                v_x = MainFrame.V_X;
-                v_y = MainFrame.V_Y;
                 visPanel.repaint();
 
                 try { Thread.sleep(10); } catch (InterruptedException ex) { }

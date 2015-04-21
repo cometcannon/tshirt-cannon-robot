@@ -16,9 +16,6 @@ public class MainFrame extends JFrame
     public static int WIDTH = 400;
     public static int HEIGHT = 250;
 
-    public static int V_X;
-    public static int V_Y;
-
     private ArrayBlockingQueue<Command> robotCommandQueue;
     private ArrayBlockingQueue<Response> robotResponseQueue;
 
