@@ -7,6 +7,7 @@ import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
 import edu.utdallas.cometcannon.robot.command.*;
+import edu.utdallas.cometcannon.gui.*;
 
 class Mapping
 {
@@ -100,7 +101,7 @@ public class RemoteController implements Runnable
         }
 
         if (Controllers.getControllerCount() > 0) {
-            controller = Controllers.getController(0);
+            controller = Controllers.getController(7);
             System.out.println("Found controller");
             buttonMap = new Mapping(controller);
         }
@@ -189,6 +190,9 @@ public class RemoteController implements Runnable
         int w_z = (int) (-1 * controller.getRXAxisValue() * 127);
 
         robotCommandQueue.offer(new VelocityVectorCommand(v_x, v_y, w_z));
+
+        MainFrame.V_X = v_x;
+        MainFrame.V_Y = v_y;
     }
 
     private void calibrate()
