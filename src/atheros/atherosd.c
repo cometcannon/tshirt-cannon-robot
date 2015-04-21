@@ -116,6 +116,24 @@ void kill_motors(state_t *state)
     pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
+void command_horn(state_t *state)
+{
+    int8_t buffer[MAX_BUFFER];
+
+    buffer[0] = MAGIC >> 24 & 0xff;
+    buffer[1] = MAGIC >> 16 & 0xff;
+    buffer[2] = MAGIC >>  8 & 0xff;
+    buffer[3] = MAGIC >>  0 & 0xff;
+
+    buffer[4] = 2;
+
+    pthread_mutex_lock(&state->atmegafp_mutex);
+    write(state->atmegafd, buffer, 5);
+    if(debug)
+        printf("[atherosd] Killed the motors\n");
+    pthread_mutex_unlock(&state->atmegafp_mutex);
+}
+
 void command_motor(state_t *state, int motor, int8_t value, bool control_ang_vels)
 {
     int8_t buffer[MAX_BUFFER];
@@ -299,7 +317,8 @@ void process_message(state_t *state, int8_t *msg, int len)
             break;
 
         case 2:
-            command_motor(state, msg[5], msg[6], false);
+            //command_motor(state, msg[5], msg[6], false);
+            command_horn(state);
             break;
 
         case 3:
