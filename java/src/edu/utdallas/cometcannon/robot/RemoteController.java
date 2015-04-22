@@ -201,8 +201,8 @@ public class RemoteController implements Runnable
 
         robotCommandQueue.offer(new VelocityVectorCommand(v_x, v_y, w_z));
 
-        MainFrame.V_X = v_x;
-        MainFrame.V_Y = v_y;
+        VelocityPanel.v_x = v_x;
+        VelocityPanel.v_y = v_y;
     }
 
     private void calibrate()
