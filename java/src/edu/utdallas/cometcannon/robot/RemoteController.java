@@ -106,7 +106,7 @@ public class RemoteController implements Runnable
         }
 
         if (Controllers.getControllerCount() > 0) {
-            controller = Controllers.getController(7);
+            controller = Controllers.getController(0);
             System.out.println("Found controller");
             buttonMap = new Mapping(controller);
         }
