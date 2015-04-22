@@ -160,7 +160,6 @@ public class RemoteController implements Runnable
 
         if (buttonMap.isRightStickPressed()){
             robotCommandQueue.offer(new HonkCommand());
-            System.out.println("Honk!");
         }
 
         if (buttonMap.isButtonBPressed()) {
