@@ -20,7 +20,7 @@ public:
         cannonTriggerTime = millis();
         cannonTriggerTimeout = 1000;
 
-        minPressure = 80;
+        minPressure = 60;
 
         pinMode(cannonTriggerPin, OUTPUT);
         digitalWrite(cannonTriggerPin, LOW);
