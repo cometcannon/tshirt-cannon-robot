@@ -8,7 +8,7 @@ Contents
 
 Running the video stream
 -------------
-nc 192.168.240.3 5001 | mplayer -fps 60 -cache 1024 -
+nc 192.168.1.1 5001 | mplayer -fps 60 -cache 1024 -
 
 Site to install xbox controller drivers
 -------------
