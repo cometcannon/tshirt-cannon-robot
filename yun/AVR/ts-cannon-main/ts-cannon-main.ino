@@ -103,10 +103,17 @@ void setup()
     br_Wheel.initialize();
     bl_Wheel.initialize();
 
-    attachInterrupt(fl_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt0, RISING);
-    attachInterrupt(fr_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt1, RISING);
-    attachInterrupt(br_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt2, RISING);
-    attachPinChangeInterrupt(bl_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt3, RISING);
+    attachInterrupt(fl_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt0, RISING);
+    attachInterrupt(fr_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt1, RISING);
+    attachPinChangeInterrupt(br_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt2, RISING);
+    attachPinChangeInterrupt(bl_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt3, RISING);
+
+    memset(commandBuffer, 0, sizeof commandBuffer);
+
 
     keepAliveTimer = millis();
     angVelTimer = millis();
@@ -387,16 +394,17 @@ void CheckForCommand()
     {
       commandBuffer[commandBufferIndex] = data;
 
-      if(commandBufferIndex <= 3 && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
+      if(commandBufferIndex <= 3
+        && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
       {
-          memset(commandBuffer, 0, commandBufferIndex + 1);
+          memset(commandBuffer, 0, sizeof commandBuffer);
           commandBufferIndex = 0;
       }
 
-      else if(commandLengthArray[ commandBuffer[4] ] <= commandBufferIndex + 1)
+      else if(commandLengthArray[ commandBuffer[4] ] < commandBufferIndex)
       {
           processCommand();
-          memset(commandBuffer, 0, commandBufferIndex + 1);
+          memset(commandBuffer, 0, sizeof commandBuffer);
           commandBufferIndex = 0;
       }
 
