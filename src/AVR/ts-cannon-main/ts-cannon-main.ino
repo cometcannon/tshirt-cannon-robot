@@ -262,7 +262,7 @@ void SendMotorAngularVelocity()
     for(int i = 0; i < sizeof magicBytes; i++)
         Serial1 << magicBytes[i];
 
-    Serial1 << angVel0 << angVel1 << angVel2 << angVel3;
+    Serial1 << 0 << angVel0 << angVel1 << angVel2 << angVel3;
 
 }
 
@@ -337,7 +337,7 @@ void SendPressure()
     for(int i = 0; i < sizeof magicBytes; i++)
         Serial1 << magicBytes[i];
 
-    Serial1 << cannon.MeasurePressure();
+    Serial1 << (int8_t) 1 << cannon.MeasurePressure();
 }
 
 void processCommand()
