@@ -8,7 +8,7 @@
 class Encoder
 {
 public:
-    Encoder(int pinA, int pinB, int interruptPinRef)
+    Encoder(int8_t pinA, int8_t pinB, int8_t interruptPinRef)
     {
         encoderTickCount = 0;
         previousEncoderTickCount = 0;
@@ -19,13 +19,13 @@ public:
         timeOfLastUpdate = micros();
     }
 
-    int ReturnEncoderInterruptPinRef()
+    int8_t ReturnEncoderInterruptPinRef()
     { return encoderInterruptPinRef; }
 
-    int ReturnEncoderPinA()
+    int8_t ReturnEncoderPinA()
     { return encoderPinA; }
 
-    int ReturnEncoderPinB()
+    int8_t ReturnEncoderPinB()
     { return encoderPinB; }
 
     long ReturnEncoderTickCount()
@@ -67,9 +67,9 @@ public:
     { return angularVelocity; }
 
 private:
-    int encoderInterruptPinRef;
-    int encoderPinA;
-    int encoderPinB;
+    int8_t encoderInterruptPinRef;
+    int8_t encoderPinA;
+    int8_t encoderPinB;
     float angularVelocity;
 
     long previousEncoderTickCount;

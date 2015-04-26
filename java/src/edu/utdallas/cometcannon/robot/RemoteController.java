@@ -7,6 +7,7 @@ import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 
 import edu.utdallas.cometcannon.robot.command.*;
+import edu.utdallas.cometcannon.gui.*;
 
 class Mapping
 {
@@ -76,6 +77,11 @@ class Mapping
     public boolean isButtonYPressed()
     {
         return controller.isButtonPressed(buttons[3]);
+    }
+
+    public boolean isRightStickPressed()
+    {
+        return controller.isButtonPressed(buttons[8]);
     }
 }
 
@@ -152,6 +158,10 @@ public class RemoteController implements Runnable
             robotCommandQueue.offer(new IncreasePressureCommand());
         }
 
+        if (buttonMap.isRightStickPressed()){
+            robotCommandQueue.offer(new HonkCommand());
+        }
+
         if (buttonMap.isButtonBPressed()) {
             //robotCommandQueue.offer(new DebugAVRCommand());
         }
@@ -189,6 +199,9 @@ public class RemoteController implements Runnable
         int w_z = (int) (-1 * controller.getRXAxisValue() * 127);
 
         robotCommandQueue.offer(new VelocityVectorCommand(v_x, v_y, w_z));
+
+        VelocityPanel.v_x = v_x;
+        VelocityPanel.v_y = v_y;
     }
 
     private void calibrate()

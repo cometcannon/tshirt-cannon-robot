@@ -5,7 +5,9 @@
 
 class PIDController
 {
-    public:
+public:
+    PIDController(){}
+
     PIDController(int samplePeriod, double _kp, double _ki, double _kd, double _maxOutput, double _minOutput)
     {
         currentSamplingPeriodInMS = samplePeriod;
@@ -71,7 +73,7 @@ class PIDController
         controllerOutput = 0;
     }
 
-    private:
+private:
     double kp, ki, kd;
     unsigned long previousSampleTime;
     double controllerOutput, maxOutput, minOutput, previousInput;

@@ -11,16 +11,21 @@
 
 class Wheel
 {
-    public:
-    Wheel(int _ESCPin, Servo* _esc, Encoder* _encoder, PIDController* _angularVelocityController)
+public:
+    Wheel(int8_t ESCPin, Encoder* encoder)
     {
+        this->ESCPin = ESCPin;
+        this->encoder = encoder;
+
+        angularVelocityController =
+                    PIDController(10, 0.0, 0.0, 0.0, 500.0, -500.0);
+
+    }
+
+    void initialize()
+    {
+        esc.attach(ESCPin);
         SetThrottle(1500);
-
-        encoder = _encoder;
-        angularVelocityController = _angularVelocityController;
-        esc = _esc;
-
-        ESCPin = _ESCPin;
     }
 
     int ReturnCurrentThrottle()
@@ -39,21 +44,23 @@ class Wheel
         else if (throttle < 1000)
             throttle = 1000;
 
-        esc->writeMicroseconds(throttle);
+        esc.writeMicroseconds(throttle);
 
         currentThrottle = throttle;
     }
 
     void ControlAngularVelocity(float angularVelocitySetpoint)
     {
-        if(angularVelocityController != NULL && encoder != NULL)
-            SetThrottle((int)angularVelocityController->ComputeOutput(encoder->ReturnAngularVelocity(), angularVelocitySetpoint) + 1500);
+        if(encoder != NULL)
+            SetThrottle((int)angularVelocityController.ComputeOutput(
+                        encoder->ReturnAngularVelocity(),
+                        angularVelocitySetpoint) + 1500);
     }
 
-    private:
+private:
     Encoder* encoder;
-    PIDController* angularVelocityController;
-    Servo* esc;
+    PIDController angularVelocityController;
+    Servo esc;
 
     int currentThrottle;
     char ESCPin;
