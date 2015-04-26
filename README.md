@@ -39,14 +39,6 @@ the folder, the rest are for debugging. Additionally, yun/atheros/README
 contains the information needed for compiling and copying this code to the
 Atheros chip.
 
-Running the video stream from outside the app
--------------
-nc 192.168.1.1 5001 | mplayer -fps 60 -cache 1024 -
-
-Site to install xbox controller drivers
--------------
-OSX: http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver
-
 Documentation
 -------------
 The documentation for our project will be stored in overview.tex within doc/ of
