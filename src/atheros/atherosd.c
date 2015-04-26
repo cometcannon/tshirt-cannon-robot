@@ -27,7 +27,7 @@
 #define ATMEGA_INTERVAL 300e3
 
 bool debug = false;
-int8_t magic_bytes[] = {0x47, 0x41, 0x4e, 0x53};
+int8_t const magic_bytes[] = {0x47, 0x41, 0x4e, 0x53};
 
 typedef struct state state_t;
 struct state {
@@ -90,7 +90,7 @@ void send_command(state_t *state, struct command cmd)
 {
     pthread_mutex_lock(&state->atmegafp_mutex);
 
-    for(unsigned long i = 0; i < sizeof magic_bytes; i++)
+    for(int8_t i = 0; i < (int8_t)(sizeof magic_bytes); i++)
         fputc(magic_bytes[i], state->atmegafp);
 
     for(int8_t i = 0; i < cmd.cmd_size; i++)
@@ -99,7 +99,7 @@ void send_command(state_t *state, struct command cmd)
     pthread_mutex_unlock(&state->atmegafp_mutex);
 }
 
-struct command kill_robot()
+struct command gen_kill_robot_cmd()
 {
     struct command cmd;
 
@@ -110,7 +110,7 @@ struct command kill_robot()
     return cmd;
 }
 
-struct command kill_motors()
+struct command gen_kill_motors_cmd()
 {
     struct command cmd;
 
@@ -121,7 +121,7 @@ struct command kill_motors()
     return cmd;
 }
 
-struct command command_horn()
+struct command gen_honk_horn_cmd()
 {
     struct command cmd;
 
@@ -132,7 +132,7 @@ struct command command_horn()
     return cmd;
 }
 
-struct command command_motor(int8_t motor, int8_t value, bool control_ang_vels)
+struct command gen_motor_cmd(int8_t motor, int8_t value, bool control_ang_vels)
 {
     struct command cmd;
 
@@ -148,7 +148,7 @@ struct command command_motor(int8_t motor, int8_t value, bool control_ang_vels)
     return cmd;
 }
 
-struct command command_velocity(int8_t v_x, int8_t v_y, int8_t w, bool control_ang_vels)
+struct command gen_velocity_cmd(int8_t v_x, int8_t v_y, int8_t w, bool control_ang_vels)
 {
     struct vel_profile vels = inverse_kinematics(v_x, v_y, w);
     struct command cmd;
@@ -167,7 +167,7 @@ struct command command_velocity(int8_t v_x, int8_t v_y, int8_t w, bool control_a
     return cmd;
 }
 
-struct command send_motor_ang_vels()
+struct command gen_send_motor_velocities_cmd()
 {
     struct command cmd;
 
@@ -178,7 +178,7 @@ struct command send_motor_ang_vels()
     return cmd;
 }
 
-struct command fire_cannon()
+struct command gen_fire_cannon_cmd()
 {
     struct command cmd;
 
@@ -189,7 +189,7 @@ struct command fire_cannon()
     return cmd;
 }
 
-struct command increase_pressure()
+struct command gen_increase_pressure_cmd()
 {
     struct command cmd;
 
@@ -200,7 +200,7 @@ struct command increase_pressure()
     return cmd;
 }
 
-struct command send_pressure()
+struct command gen_send_pressure_cmd()
 {
     struct command cmd;
 
@@ -211,7 +211,7 @@ struct command send_pressure()
     return cmd;
 }
 
-struct command command_debug()
+struct command gen_debug_cmd()
 {
     struct command cmd;
 
@@ -242,48 +242,48 @@ void process_message(state_t *state, int8_t *msg, int len)
 
     switch (msg_type) {
         case 0:
-            cmd = kill_robot();
+            cmd = gen_kill_robot_cmd();
             break;
 
         case 1:
-            cmd = kill_motors();
+            cmd = gen_kill_motors_cmd();
             break;
 
         case 2:
-            //cmd = command_motor(msg[5], msg[6], false);
-            cmd = command_horn();
+            //cmd = gen_motor_cmd(msg[5], msg[6], false);
+            cmd = gen_honk_horn_cmd();
             break;
 
         case 3:
-            cmd = command_velocity(msg[5], msg[6], msg[7], false);
+            cmd = gen_velocity_cmd(msg[5], msg[6], msg[7], false);
             break;
 
         case 4:
-            cmd = send_motor_ang_vels();
+            cmd = gen_send_motor_velocities_cmd();
             break;
 
         case 5:
-            cmd = fire_cannon();
+            cmd = gen_fire_cannon_cmd();
             break;
 
         case 6:
-            cmd = command_motor(msg[5], msg[6], true);
+            cmd = gen_motor_cmd(msg[5], msg[6], true);
             break;
 
         case 7:
-            cmd = command_velocity(msg[5], msg[6], msg[7], true);
+            cmd = gen_velocity_cmd(msg[5], msg[6], msg[7], true);
             break;
 
         case 8:
-            cmd = increase_pressure();
+            cmd = gen_increase_pressure_cmd();
             break;
 
         case 9:
-            cmd = send_pressure();
+            cmd = gen_send_pressure_cmd();
             break;
 
         case 10:
-            cmd = command_debug();
+            cmd = gen_debug_cmd();
             break;
 
         case 11:
