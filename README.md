@@ -10,7 +10,7 @@ find information about the robot itself.
 
 Note that the various links in this README may have been changed between the
 time of its writting and now. If this happens, your best bet is to just google
-the before of after them.
+the description before of after them.
 
 Contents
 -------------
