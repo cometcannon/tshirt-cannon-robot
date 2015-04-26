@@ -136,7 +136,7 @@ struct command command_motor(int8_t motor, int8_t value, bool control_ang_vels)
 {
     struct command cmd;
 
-    control_ang_vels ? cmd.cmd[0] = 6 : cmd.cmd[0] = 2;
+    control_ang_vels ? (cmd.cmd[0] = 6) : (cmd.cmd[0] = 2);
     cmd.cmd[1] = motor;
     cmd.cmd[2] = value;
 
@@ -153,7 +153,7 @@ struct command command_velocity(int8_t v_x, int8_t v_y, int8_t w, bool control_a
     struct vel_profile vels = inverse_kinematics(v_x, v_y, w);
     struct command cmd;
 
-    control_ang_vels ? cmd.cmd[0] = 7 : cmd.cmd[0] = 3;
+    control_ang_vels ? (cmd.cmd[0] = 7) : (cmd.cmd[0] = 3);
     cmd.cmd[1] = vels.for_left;
     cmd.cmd[2] = vels.for_right;
     cmd.cmd[3] = vels.rear_right;
