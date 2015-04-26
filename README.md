@@ -14,11 +14,13 @@ the before of after them.
 
 Contents
 -------------
-doc/ :  This folder contains the overview.tex document along with any of its
+1. doc/  
+This folder contains the overview.tex document along with any of its
 dependencies. If you're unfamiliar with LaTeX, see the Documentation section
 below.
 
-java/ : This folder contains the source code for the GUI that is used to
+2. java/
+This folder contains the source code for the GUI that is used to
 operate the robot. We use ant (http://ant.apache.org) to compile, run, and
 jar this app.
 
@@ -26,7 +28,8 @@ Please familiarize yourself with this build tool before trying to
 develop this app further. More information about the GUI and how it works can
 be seen in the overview document mentioned above.
 
-yun/ :  This folder contains the source code and configuration files that we
+3. yun/
+This folder contains the source code and configuration files that we
 developed for the yun microcontroller (http://www.arduino.cc/en/Guide/ArduinoYun)
 onboard the robot.
 
