@@ -24,6 +24,12 @@ public:
 
     void initialize()
     {
+        pinMode(encoder->ReturnEncoderPinA(), INPUT_PULLUP);
+        pinMode(encoder->ReturnEncoderPinB(), INPUT_PULLUP);
+
+        digitalWrite(encoder->ReturnEncoderPinA(), LOW);
+        digitalWrite(encoder->ReturnEncoderPinB(), LOW);
+
         esc.attach(ESCPin);
         SetThrottle(1500);
     }
