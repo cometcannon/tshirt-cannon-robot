@@ -350,6 +350,7 @@ void *serial_monitor(void *arg)
 
     uint8_t messageBuffer[64];
     uint8_t messageBufferIndex = 0;
+    memset(messageBuffer, 0, sizeof messageBuffer);
 
     uint8_t messageLengthArray[] = {9, 6};
 
@@ -359,22 +360,25 @@ void *serial_monitor(void *arg)
 
         messageBuffer[messageBufferIndex] = data;
 
-        if(messageBufferIndex <= 3 && messageBuffer[messageBufferIndex] != magic_bytes[messageBufferIndex])
+        if(messageBufferIndex <= 3 &&
+                messageBuffer[messageBufferIndex] != magic_bytes[messageBufferIndex])
         {
             memset(messageBuffer, 0, messageBufferIndex + 1);
             messageBufferIndex = 0;
         }
 
-        else if(messageLengthArray[ messageBuffer[4] ] <= messageBufferIndex + 1)
+        else if(messageLengthArray[ messageBuffer[4] ] < messageBufferIndex)
         {
             pthread_mutex_lock(&state->sockfd_mutex);
-            uint8_t num_bytes_written = write(state->sockfd, messageBuffer, messageBufferIndex + 1);
+            uint8_t num_bytes_written = write(state->sockfd,
+                    messageBuffer, messageBufferIndex + 1);
+
             pthread_mutex_unlock(&state->sockfd_mutex);
 
             if(debug)
                 printf("Writing %d bytes to sockdf\n", num_bytes_written);
 
-            memset(messageBuffer, 0, messageBufferIndex + 1);
+            memset(messageBuffer, 0, sizeof messageBuffer);
             messageBufferIndex = 0;
         }
 
