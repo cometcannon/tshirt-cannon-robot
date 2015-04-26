@@ -64,10 +64,10 @@ A5      ***
 
 Horn horn(HORN_PIN);
 
-Encoder fl_Encoder(2, 4, 0);
-Encoder fr_Encoder(3, 8, 1);
-Encoder br_Encoder(7, 11, 4);
-Encoder bl_Encoder(12, 13, 12);
+Encoder fl_Encoder(FL_ENCODER_PIN_A, FL_ENCODER_PIN_B, FL_ENCODER_INTREF);
+Encoder fr_Encoder(FR_ENCODER_PIN_A, FR_ENCODER_PIN_B, FR_ENCODER_INTREF);
+Encoder br_Encoder(BR_ENCODER_PIN_A, BR_ENCODER_PIN_B, BR_ENCODER_INTREF);
+Encoder bl_Encoder(BL_ENCODER_PIN_A, BL_ENCODER_PIN_B, BL_ENCODER_INTREF);
 
 Wheel fl_Wheel(FL_WHEEL_ESCPIN, &fl_Encoder);
 Wheel fr_Wheel(FR_WHEEL_ESCPIN, &fr_Encoder);
@@ -103,29 +103,17 @@ void setup()
     br_Wheel.initialize();
     bl_Wheel.initialize();
 
-    pinMode(2, INPUT_PULLUP);
-    digitalWrite(2, LOW);
-    pinMode(4, INPUT_PULLUP);
-    digitalWrite(4, LOW);
+    attachInterrupt(fl_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt0, RISING);
+    attachInterrupt(fr_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt1, RISING);
+    attachPinChangeInterrupt(br_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt2, RISING);
+    attachPinChangeInterrupt(bl_Encoder.ReturnEncoderInterruptPinRef(),
+        HandleEncoderPinAInterrupt3, RISING);
 
-    pinMode(3, INPUT_PULLUP);
-    digitalWrite(3, LOW);
-    pinMode(8, INPUT_PULLUP);
-    digitalWrite(8, LOW);
+    memset(commandBuffer, 0, sizeof commandBuffer);
 
-    pinMode(7, INPUT_PULLUP);
-    digitalWrite(7, LOW);
-    //pinMode(11, INPUT_PULLUP);
-    //digitalWrite(11, LOW);
-
-    pinMode(12, INPUT_PULLUP);
-    pinMode(13, OUTPUT);
-    digitalWrite(13, LOW);
-
-    attachInterrupt(fl_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt0, RISING);
-    attachInterrupt(fr_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt1, RISING);
-    attachInterrupt(br_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt2, RISING);
-    attachPinChangeInterrupt(bl_Encoder.ReturnEncoderInterruptPinRef(), HandleEncoderPinAInterrupt3, RISING);
 
     keepAliveTimer = millis();
     angVelTimer = millis();
@@ -262,7 +250,7 @@ void SendMotorAngularVelocity()
     for(int i = 0; i < sizeof magicBytes; i++)
         Serial1 << magicBytes[i];
 
-    Serial1 << angVel0 << angVel1 << angVel2 << angVel3;
+    Serial1 << 0 << angVel0 << angVel1 << angVel2 << angVel3;
 
 }
 
@@ -337,7 +325,7 @@ void SendPressure()
     for(int i = 0; i < sizeof magicBytes; i++)
         Serial1 << magicBytes[i];
 
-    Serial1 << cannon.MeasurePressure();
+    Serial1 << (int8_t) 1 << cannon.MeasurePressure();
 }
 
 void processCommand()
@@ -406,16 +394,17 @@ void CheckForCommand()
     {
       commandBuffer[commandBufferIndex] = data;
 
-      if(commandBufferIndex <= 3 && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
+      if(commandBufferIndex <= 3
+        && commandBuffer[commandBufferIndex] != magicBytes[commandBufferIndex])
       {
-          memset(commandBuffer, 0, commandBufferIndex + 1);
+          memset(commandBuffer, 0, sizeof commandBuffer);
           commandBufferIndex = 0;
       }
 
-      else if(commandLengthArray[ commandBuffer[4] ] <= commandBufferIndex + 1)
+      else if(commandLengthArray[ commandBuffer[4] ] < commandBufferIndex)
       {
           processCommand();
-          memset(commandBuffer, 0, commandBufferIndex + 1);
+          memset(commandBuffer, 0, sizeof commandBuffer);
           commandBufferIndex = 0;
       }
 

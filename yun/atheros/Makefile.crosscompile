@@ -6,8 +6,9 @@ CC := $(CROSS_STAGING)/bin/mips-openwrt-linux-uclibc-gcc -std=gnu99 -Wall -Wno-u
 
 SIMPLE_UI_OBJS = simple_ui.o
 ATHEROSD_OBJS = atherosd.o
+OMAR_TERMIOS_OBJS = omartermios.o
 
-APPS = simple_ui_x atherosd_x
+APPS = simple_ui_x atherosd_x omartermios_x
 
 all: $(APPS)
 
@@ -16,6 +17,9 @@ simple_ui_x: $(SIMPLE_UI_OBJS)
 
 atherosd_x: $(ATHEROSD_OBJS)
 	$(CC) -o $@ $(ATHEROSD_OBJS) -lpthread
+
+omartermios_x: $(OMAR_TERMIOS_OBJS)
+	$(CC) -o $@ $(OMAR_TERMIOS_OBJS)
 
 clean:
 	@rm -f *.o $(APPS) *~
