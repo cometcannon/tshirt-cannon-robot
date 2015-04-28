@@ -260,9 +260,9 @@ void SendMotorAngularVelocity()
 
 
     for(int i = 0; i < sizeof magicBytes; i++)
-        Serial1 << magicBytes[i];
+        Serial1 << magicBytes[i]; //Not sure whether this works
 
-    Serial1 << angVel0 << angVel1 << angVel2 << angVel3;
+    Serial1 << 0 << angVel0 << angVel1 << angVel2 << angVel3; //Not sure whether this works
 
 }
 
@@ -328,16 +328,16 @@ void IncreasePressure()
 {
     cannon.IncreasePressure();
 
-    //if(debug)
+    //if(debug) //Once sending pressure works, this should be uncommented
         Serial1 << "Current Pressure is " << cannon.MeasurePressure() << "\n";
 }
 
 void SendPressure()
 {
     for(int i = 0; i < sizeof magicBytes; i++)
-        Serial1 << magicBytes[i];
+        Serial1 << magicBytes[i]; //Not sure whether this works
 
-    Serial1 << cannon.MeasurePressure();
+    Serial1 << 1 << cannon.MeasurePressure(); //Not sure whether this works
 }
 
 void processCommand()
