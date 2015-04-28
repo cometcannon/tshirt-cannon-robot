@@ -7,16 +7,17 @@
 
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
-\newcommand{\botname}{\textit{The Comet Cannon}}
+\setlength\parindent{0pt}
+
 \newcommand{\specialcell}[2][c]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 \newcommand{\xxx}[1]{{\color{red}\bf #1}}
 \newcommand{\AxisRotator}[1][rotate=0]{\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
 
 \begin{document}
 
-\title{T-Shirt Cannon Robot Overview}
+\title{\textbf{T-Shirt Cannon Robot Overview}}
 \author{Hazen Eckert \hspace{3mm} Omar Hasan \hspace{3mm} Ryan Marcotte \hspace{3mm} Ridhwaan Rahman}
-\date{May 1st, 2015}
+\date{\today}
 \maketitle
 
 \begin{center}
@@ -25,99 +26,39 @@
 
 \pagebreak
 
-\tableofcontents
-
 \section*{Preface}
+The purpose of this document is to both instruct the user on how to operate the
+robot as well as inform them about its various quirks. At the time of this
+document's writing, the repository that contains the source code for the
+robot's processors as well as for the Java app that is used to control it
+can be found here (https://github.com/ryanjmarcotte/tshirt-cannon). Should
+the link to the repo change, one might be able to find it by searching github
+for a repo named "tshirt-cannon".\\
+
+If you find anything wrong with this document and you know LaTeX, feel free to
+correct it. And finally, if you have any questions or concerns, feel free to
+contact our mentor Dr. Nicholas Gans (nrg092000@utdallas.edu).\\
+
+You can also try to contact one of the team members:
+\begin{itemize}
+    \item Omar Hasan:           omarhasan777@gmail.com
+    \item Ryan Marcotte:        ridhwaan.rahman99@gmail.com
+    \item Ridhwaan Rahman:      ryanjmarcotte.rm@gmail.com
+    \item Hazen Eckert:         mr.mac.3.0.1@gmail.com
+\end{itemize}
 \addcontentsline{toc}{section}{Preface}
 
-\section{System Overview}
+\pagebreak
+\tableofcontents
+\pagebreak
 
-\begin{figure}[h!]
-  \centering
-  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
-  \tikzstyle{dcvolt} = [solid, ultra thick, red];
-  \tikzstyle{signal} = [solid, ultra thick, ->, >=stealth];
+\section{System Design}
 
-  \begin{tikzpicture}
-    draw[help lines] (-6, -12) grid (12,1);
-    \node (circuitbreaker) [block, align=center] {\textbf{Circuit}\\\textbf{Breaker}};
-    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {\textbf{Boost}\\\textbf{Converter}};
-    \node (buck) [block, align=center, right of=boost, xshift=7cm] {\textbf{Buck}\\\textbf{Converter}};
-    \node (mcu) [block, below of=buck, yshift=-1.25cm] {\textbf{MCU}};
-    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {\textbf{Trigger}\\\textbf{Solenoid}};
-    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {\textbf{Pressure}\\\textbf{Solenoid}};
-    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {\textbf{Encoders}};
-    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {\textbf{Pressure}\\\textbf{Sensor}};
-    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {\textbf{Camera}\\\textbf{Module}};
-    \node (esc) [block, right of=camera, xshift=2cm] {\textbf{ESC}};
-    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {\textbf{Motors}};
-
-    \draw [dcvolt] (circuitbreaker.north) -- +(0,0.5) node[anchor=south] {\textbf{+12V}};
-    \draw [dcvolt] (circuitbreaker.south) -- +(0,-0.9) node[anchor=west, yshift=0.5cm] {\textbf{+12V}};
-    \draw [dcvolt] (boost.north) -- +(0,1) -| +(4,1) node {};
-    \draw [dcvolt] (buck.north) -- +(0,1) -| +(-4,1) node {};
-    \draw [dcvolt] (esc.north) -- +(0,5.55) -| +(-5.5,5.55) node {};
-    \draw [dcvolt] (buck.south) -- node[anchor=west, yshift=0.2cm] {\textbf{+5V}} (mcu.north);
-    \draw [dcvolt] (encoders.north) -- +(0,2.7) -| +(3.5,2.7) node {};
-    \draw [dcvolt] (pressuresensor.north) -- +(0,0.2) -| +(-3,0.2) node {};
-    \draw [dcvolt] (camera.north) -- +(0,2.65) -| +(-2.5,2.65) node{};
-    \draw [dcvolt] (boost.south) -- +(0,-1) node[anchor=west, yshift=0.5cm] {\textbf{+24V}};
-    \draw [dcvolt] (triggersolenoid.north) -- +(0,2.4) -| +(1.5,2.4) node {};
-    \draw [dcvolt] (pressuresolenoid.north) -- +(0,2.4) -| +(-1.5,2.4) node {};
-    \draw [signal] (pressuresensor.east) -- +(0.5,0) -| +(0.5,0.75) -| +(-0.31, 0.75) -- (mcu.295);
-    \draw [signal] (mcu.320) -- +(0,-0.8) -| +(3.5,-0.8) -| +(3.5,-1.75) -- (esc.west);
-    \draw [signal] (encoders.east) -- +(0.5,0) -| +(0.5,0.95) -| +(2.39,0.95) -- (mcu.south);
-    \draw [signal] (mcu.240) -- +(0,-0.6) -| +(-4.8,-0.6) -| +(-4.8,-1.75) -- (pressuresolenoid.east);
-    \draw [signal] (mcu.220) -- +(0,-0.4) -| +(-7.4,-0.4) -| +(-7.4,-1.75) -- (triggersolenoid.east);
-    \draw [signal] (esc.south) -- +(0,-1.5) -- (motors.east);
-    \draw [signal] (motors.west) -- +(-3.5,0) -| (encoders.south);
-  \end{tikzpicture}
-  \caption{Electrical System Diagram}
-  \label{fig:e_system}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-
-  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=3cm, minimum height=2cm,text centered, draw=black]
-\tikzstyle{container} = [draw, ultra thick, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
-  \tikzstyle{arrow} = [thick, ->, ultra thick, >=latex]
-  \begin{tikzpicture}[node distance=2cm]
-    \node (input) [align=center, xshift=-1cm] {\textbf{User}\\\textbf{Inputs}};
-    \node (output) [right of=input, align=center] {\textbf{Video}\\\textbf{Display}};
-    \node (app) [block, yshift=-2cm] {\textbf{Java App}};
-    \node (ar9331) [block, right of=app, xshift=6cm, align=center] {\textbf{Atheros AR9331}};
-    \node (atmega) [block, below of=ar9331, yshift=-2cm, align=center] {\textbf{ATmega32u4}};
-    \node (rpi) [block, below of=app, left of=atmega, xshift=-6cm, yshift=2cm] {\textbf{Raspberry Pi}};
-
-    \node (yun) [container, fit=(atmega) (ar9331)] {};
-    \node (yun_text) [yshift=-0.3cm] at (yun.north) {\textbf{Yun}};
-
-    \draw [arrow] (app.350) -- node[anchor=south, align=center, xshift=-7mm, yshift=-11mm] {\textbf{Velocity}\\\textbf{Commands}} (ar9331.190);
-    \draw [arrow] (ar9331.170) -- node[anchor=north, align=center, xshift=-7mm, yshift=12mm] {\textbf{Status}\\\textbf{Updates}} (app.10);
-    \draw [arrow] (ar9331.250) -- node[anchor=east, align=center] {\textbf{GPIO}\\\textbf{Commands}} (atmega.110);
-    \draw [arrow] (atmega.70) -- node[anchor=west, align=center] {\textbf{Sensor}\\\textbf{Readings}} (ar9331.290);
-    \draw [arrow] (rpi.70) -- node[anchor=east, align=center, xshift=2cm] {\textbf{Video}\\\textbf{Stream}} (app.290);
-    \draw [arrow] (app.250) -- node[anchor=west, align=center, xshift=-2.7cm] {\textbf{Video}\\\textbf{Commands}} (rpi.110);
-    \draw [arrow] (input) -- (app.134);
-    \draw [arrow] (app.46) -- (output);
-  \end{tikzpicture}
-  \caption{System Overview}
-  \label{fig:system_diagram}
-\end{figure}
-
-\subsection{Computer}
-\subsection{AR9331}
-
-\subsection{Serial Communication}
-\label{sec:ar9331_serial_com}
-\noindent The AR9331 and ATMega32U4 communicate via serial. To do this, we open the proper serial device (\texttt{/dev/ttyATH0}) and use the straightforward \texttt{write()} command. No further configuration of the serial device is necessary.
-
-
+\subsection{Mechanical System}
 \subsubsection{Velocity Kinematics}
 \label{sec:ar9331_vel_kin}
 
-\noindent In order to command a desired robot velocity,
+In order to command a desired robot velocity,
 \begin{math}
   v=
   \begin{bmatrix}
@@ -199,25 +140,93 @@
   \label{tab:motor_nums}
 \end{table}
 
+\subsection{Electronics System}
 
-\subsection{ATmega32u4}
+\begin{figure}[h!]
+  \centering
+  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+  \tikzstyle{dcvolt} = [solid, ultra thick, red];
+  \tikzstyle{signal} = [solid, ultra thick, ->, >=stealth];
 
-\subsubsection{Serial Communication}
-\label{sec:atmega_serial_com}
+  \begin{tikzpicture}
+    draw[help lines] (-6, -12) grid (12,1);
+    \node (circuitbreaker) [block, align=center] {\textbf{Circuit}\\\textbf{Breaker}};
+    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {\textbf{Boost}\\\textbf{Converter}};
+    \node (buck) [block, align=center, right of=boost, xshift=7cm] {\textbf{Buck}\\\textbf{Converter}};
+    \node (mcu) [block, below of=buck, yshift=-1.25cm] {\textbf{MCU}};
+    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {\textbf{Trigger}\\\textbf{Solenoid}};
+    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {\textbf{Pressure}\\\textbf{Solenoid}};
+    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {\textbf{Encoders}};
+    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {\textbf{Pressure}\\\textbf{Sensor}};
+    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {\textbf{Camera}\\\textbf{Module}};
+    \node (esc) [block, right of=camera, xshift=2cm] {\textbf{ESC}};
+    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {\textbf{Motors}};
 
-\noindent Serial communication can occur between the ATmega and AR9331 chips or between the ATmega chip and a computer connected via USB. In the former case, we read and write to \texttt{Serial1}, whereas in the latter, we utilize the typical \texttt{Serial}.
+    \draw [dcvolt] (circuitbreaker.north) -- +(0,0.5) node[anchor=south] {\textbf{+12V}};
+    \draw [dcvolt] (circuitbreaker.south) -- +(0,-0.9) node[anchor=west, yshift=0.5cm] {\textbf{+12V}};
+    \draw [dcvolt] (boost.north) -- +(0,1) -| +(4,1) node {};
+    \draw [dcvolt] (buck.north) -- +(0,1) -| +(-4,1) node {};
+    \draw [dcvolt] (esc.north) -- +(0,5.55) -| +(-5.5,5.55) node {};
+    \draw [dcvolt] (buck.south) -- node[anchor=west, yshift=0.2cm] {\textbf{+5V}} (mcu.north);
+    \draw [dcvolt] (encoders.north) -- +(0,2.7) -| +(3.5,2.7) node {};
+    \draw [dcvolt] (pressuresensor.north) -- +(0,0.2) -| +(-3,0.2) node {};
+    \draw [dcvolt] (camera.north) -- +(0,2.65) -| +(-2.5,2.65) node{};
+    \draw [dcvolt] (boost.south) -- +(0,-1) node[anchor=west, yshift=0.5cm] {\textbf{+24V}};
+    \draw [dcvolt] (triggersolenoid.north) -- +(0,2.4) -| +(1.5,2.4) node {};
+    \draw [dcvolt] (pressuresolenoid.north) -- +(0,2.4) -| +(-1.5,2.4) node {};
+    \draw [signal] (pressuresensor.east) -- +(0.5,0) -| +(0.5,0.75) -| +(-0.31, 0.75) -- (mcu.295);
+    \draw [signal] (mcu.320) -- +(0,-0.8) -| +(3.5,-0.8) -| +(3.5,-1.75) -- (esc.west);
+    \draw [signal] (encoders.east) -- +(0.5,0) -| +(0.5,0.95) -| +(2.39,0.95) -- (mcu.south);
+    \draw [signal] (mcu.240) -- +(0,-0.6) -| +(-4.8,-0.6) -| +(-4.8,-1.75) -- (pressuresolenoid.east);
+    \draw [signal] (mcu.220) -- +(0,-0.4) -| +(-7.4,-0.4) -| +(-7.4,-1.75) -- (triggersolenoid.east);
+    \draw [signal] (esc.south) -- +(0,-1.5) -- (motors.east);
+    \draw [signal] (motors.west) -- +(-3.5,0) -| (encoders.south);
+  \end{tikzpicture}
+  \caption{Electrical System Diagram}
+  \label{fig:e_system}
+\end{figure}
 
+\subsection{Software System}
+\begin{figure}[h!]
+  \centering
 
-\subsection{Raspberry Pi}
+  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=3cm, minimum height=2cm,text centered, draw=black]
+\tikzstyle{container} = [draw, ultra thick, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
+  \tikzstyle{arrow} = [thick, ->, ultra thick, >=latex]
+  \begin{tikzpicture}[node distance=2cm]
+    \node (input) [align=center, xshift=-1cm] {\textbf{User}\\\textbf{Inputs}};
+    \node (output) [right of=input, align=center] {\textbf{Video}\\\textbf{Display}};
+    \node (app) [block, yshift=-2cm] {\textbf{Java App}};
+    \node (ar9331) [block, right of=app, xshift=6cm, align=center] {\textbf{Atheros AR9331}};
+    \node (atmega) [block, below of=ar9331, yshift=-2cm, align=center] {\textbf{ATmega32u4}};
+    \node (rpi) [block, below of=app, left of=atmega, xshift=-6cm, yshift=2cm] {\textbf{Raspberry Pi}};
 
-\section{Application Interface Specifications}
+    \node (yun) [container, fit=(atmega) (ar9331)] {};
+    \node (yun_text) [yshift=-0.3cm] at (yun.north) {\textbf{Yun}};
+
+    \draw [arrow] (app.350) -- node[anchor=south, align=center, xshift=-7mm, yshift=-11mm] {\textbf{Velocity}\\\textbf{Commands}} (ar9331.190);
+    \draw [arrow] (ar9331.170) -- node[anchor=north, align=center, xshift=-7mm, yshift=12mm] {\textbf{Status}\\\textbf{Updates}} (app.10);
+    \draw [arrow] (ar9331.250) -- node[anchor=east, align=center] {\textbf{GPIO}\\\textbf{Commands}} (atmega.110);
+    \draw [arrow] (atmega.70) -- node[anchor=west, align=center] {\textbf{Sensor}\\\textbf{Readings}} (ar9331.290);
+    \draw [arrow] (rpi.70) -- node[anchor=east, align=center, xshift=2cm] {\textbf{Video}\\\textbf{Stream}} (app.290);
+    \draw [arrow] (app.250) -- node[anchor=west, align=center, xshift=-2.7cm] {\textbf{Video}\\\textbf{Commands}} (rpi.110);
+    \draw [arrow] (input) -- (app.134);
+    \draw [arrow] (app.46) -- (output);
+  \end{tikzpicture}
+  \caption{System Overview}
+  \label{fig:system_diagram}
+\end{figure}
+
+\section{Java Application}
+
+\section{Network Protocols}
 
 \subsection{Message Formats}
 
 \subsubsection{Computer to Robot}
 \label{sec:comp_robot_msg}
 
-\noindent Tables \ref{tab:comp_kill_cmd_msg}-\ref{tab:comp_fire_cmd_msg} show the various message types that can be sent from the computer to the robot. Some message types are destined for the Yun, while others are destined for the Raspberry Pi. \xxx{Query commands will begin at 101}
+Tables \ref{tab:comp_kill_cmd_msg}-\ref{tab:comp_fire_cmd_msg} show the various message types that can be sent from the computer to the robot. Some message types are destined for the Yun, while others are destined for the Raspberry Pi. \xxx{Query commands will begin at 101}
 
 \begin{table}[h!]
   \centering
@@ -456,16 +465,33 @@
 \subsubsection{ATmega32u4 to AR9331}
 \label{sec:mega_ath_msg}
 
+\section{Microcontrollers}
+\subsection{AR9331}
+
+\subsection{Serial Communication}
+\label{sec:ar9331_serial_com}
+The AR9331 and ATMega32U4 communicate via serial. To do this, we open the proper serial device (\texttt{/dev/ttyATH0}) and use the straightforward \texttt{write()} command. No further configuration of the serial device is necessary.
+
+\subsection{ATmega32u4}
+
+\subsubsection{Serial Communication}
+\label{sec:atmega_serial_com}
+
+Serial communication can occur between the ATmega and AR9331 chips or between the ATmega chip and a computer connected via USB. In the former case, we read and write to \texttt{Serial1}, whereas in the latter, we utilize the typical \texttt{Serial}.
+
+
+\subsection{Raspberry Pi}
+
 \section{Chassis}
 \begin{center}
     \includegraphics[width=11cm]{pics/chassis/andymark_chassis.jpg}
 \end{center}
 
 \subsection{Overview}
-\botname's Chassis is the AndyMark C-Chassis with Mecanum Wheel Drive. This chassis was chosen among others because of its price, modularity, and size.
+The Robot's Chassis is the AndyMark C-Chassis with Mecanum Wheel Drive. This
+chassis was chosen among others because of its price, modularity, and size.
 
 \subsection{Assembly}
-\subsection{Troubleshooting}
 \subsection{References}
 
 \begin{table}[h!]
@@ -484,11 +510,6 @@
     \includegraphics[width=11cm]{pics/cannon/blowhard_cannon.jpg}
 \end{center}
 
-\subsection{Troubleshooting}
-\begin{center}
-    \includegraphics[width=11cm]{pics/cannon/broken_release_valve.jpg}
-\end{center}
-
 
 \subsection{Running the video stream from outside the app}
 nc 192.168.1.1 5001 | mplayer -fps 60 -cache 1024 -
@@ -496,5 +517,12 @@ nc 192.168.1.1 5001 | mplayer -fps 60 -cache 1024 -
 \subsection{Site to install xbox controller drivers}
 OSX: http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver
 
+\section{Troubleshooting}
+\subsection{Chassis}
+\subsection{T-Shirt Cannon}
+
+\begin{center}
+    \includegraphics[width=11cm]{pics/cannon/broken_release_valve.jpg}
+\end{center}
 
 \end{document}
