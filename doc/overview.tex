@@ -4,6 +4,7 @@
 \usepackage{multirow}
 \usepackage{tikz}
 \usepackage{amsmath}
+\usepackage{hyperref}
 
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
@@ -31,9 +32,9 @@ The purpose of this document is to both instruct the user on how to operate the
 robot as well as inform them about its various quirks. At the time of this
 document's writing, the repository that contains the source code for the
 robot's processors as well as for the Java app that is used to control it
-can be found here (https://github.com/ryanjmarcotte/tshirt-cannon). Should
-the link to the repo change, one might be able to find it by searching github
-for a repo named "tshirt-cannon".\\
+can be found here (\url{https://github.com/cometcannon/tshirt-cannon-robot}).
+Should the link to the repo change, one might be able to find it by searching
+github for an organization named "commetcannon".\\
 
 If you find anything wrong with this document and you know LaTeX, feel free to
 correct it. And finally, if you have any questions or concerns, feel free to
@@ -52,9 +53,9 @@ You can also try to contact one of the team members:
 \tableofcontents
 \pagebreak
 
-\section{System Design}
+\section{System Design Overview}
 
-\subsection{Mechanical System}
+\subsection{Mechanical Design Overview}
 \subsubsection{Velocity Kinematics}
 \label{sec:ar9331_vel_kin}
 
@@ -140,7 +141,7 @@ In order to command a desired robot velocity,
   \label{tab:motor_nums}
 \end{table}
 
-\subsection{Electronics System}
+\subsection{Electrical Design Overview}
 
 \begin{figure}[h!]
   \centering
@@ -186,7 +187,7 @@ In order to command a desired robot velocity,
   \label{fig:e_system}
 \end{figure}
 
-\subsection{Software System}
+\subsection{Software Design Overview}
 \begin{figure}[h!]
   \centering
 
@@ -217,13 +218,61 @@ In order to command a desired robot velocity,
   \label{fig:system_diagram}
 \end{figure}
 
-\section{Java Application}
+\section{Mechanical Components}
+\subsection{Chassis}
+\begin{center}
+    \includegraphics[width=11cm]{pics/chassis/andymark_chassis.jpg}
+\end{center}
 
-\section{Network Protocols}
+The Robot's Chassis is the AndyMark C-Chassis with Mecanum Wheel Drive. This
+chassis was chosen among others because of its price, modularity, and size.
 
-\subsection{Message Formats}
+\subsubsection{Assembly}
+\subsubsection{References}
 
-\subsubsection{Computer to Robot}
+\begin{table}[h!]
+  \begin{tabular}{| c | c |}
+    \hline
+    \textbf{AndyMark Frame Assembly} &  http://files.andymark.com/am-0952AssemblyInstructions.pdf\\
+    \hline
+    \textbf{AndyMark Gearbox Assembly} &  http://files.andymark.com/x2010-toughbox-user-guide.pdf\\
+    \hline
+  \end{tabular}
+  \label{tab:fire_cmd_msg}
+\end{table}
+
+\subsection{T-Shirt Cannon}
+\begin{center}
+    \includegraphics[width=11cm]{pics/cannon/blowhard_cannon.jpg}
+\end{center}
+
+\section{Electrical Components}
+
+\subsection{Microcontrollers}
+\subsubsection{AR9331}
+
+\subsubsection{Serial Communication}
+\label{sec:ar9331_serial_com}
+The AR9331 and ATMega32U4 communicate via serial. To do this, we open the proper serial device (\texttt{/dev/ttyATH0}) and use the straightforward \texttt{write()} command. No further configuration of the serial device is necessary.
+
+\subsubsection{ATmega32u4}
+
+\paragraph{Serial Communication}
+\label{sec:atmega_serial_com}
+
+Serial communication can occur between the ATmega and AR9331 chips or between the ATmega chip and a computer connected via USB. In the former case, we read and write to \texttt{Serial1}, whereas in the latter, we utilize the typical \texttt{Serial}.
+
+
+\subsubsection{Raspberry Pi}
+
+\section{Software Components}
+\subsection{Java Application}
+
+\subsection{Network Protocols}
+
+\subsubsection{Message Formats}
+
+\paragraph{Computer to Robot}
 \label{sec:comp_robot_msg}
 
 Tables \ref{tab:comp_kill_cmd_msg}-\ref{tab:comp_fire_cmd_msg} show the various message types that can be sent from the computer to the robot. Some message types are destined for the Yun, while others are destined for the Raspberry Pi. \xxx{Query commands will begin at 101}
@@ -318,12 +367,12 @@ Tables \ref{tab:comp_kill_cmd_msg}-\ref{tab:comp_fire_cmd_msg} show the various 
   \label{tab:comp_fire_cmd_msg}
 \end{table}
 
-\subsubsection{Robot to Computer}
+\paragraph{Robot to Computer}
 \label{sec:robot_comp_msg}
 
 
 
-\subsubsection{AR9331 to ATmega32u4}
+\paragraph{AR9331 to ATmega32u4}
 \label{sec:ath_mega_msg}
 
 \xxx{Query commands will start at 101, but we have yet to come up with the types that we need}
@@ -462,67 +511,29 @@ Tables \ref{tab:comp_kill_cmd_msg}-\ref{tab:comp_fire_cmd_msg} show the various 
   \caption{Set Pressure Regulation Command}
   \label{tab:ath_ind_motor_cmd_msg}
 \end{table}
-\subsubsection{ATmega32u4 to AR9331}
+\paragraph{ATmega32u4 to AR9331}
 \label{sec:mega_ath_msg}
 
-\section{Microcontrollers}
-\subsection{AR9331}
-
-\subsection{Serial Communication}
-\label{sec:ar9331_serial_com}
-The AR9331 and ATMega32U4 communicate via serial. To do this, we open the proper serial device (\texttt{/dev/ttyATH0}) and use the straightforward \texttt{write()} command. No further configuration of the serial device is necessary.
-
-\subsection{ATmega32u4}
-
-\subsubsection{Serial Communication}
-\label{sec:atmega_serial_com}
-
-Serial communication can occur between the ATmega and AR9331 chips or between the ATmega chip and a computer connected via USB. In the former case, we read and write to \texttt{Serial1}, whereas in the latter, we utilize the typical \texttt{Serial}.
-
-
-\subsection{Raspberry Pi}
-
-\section{Chassis}
-\begin{center}
-    \includegraphics[width=11cm]{pics/chassis/andymark_chassis.jpg}
-\end{center}
-
-\subsection{Overview}
-The Robot's Chassis is the AndyMark C-Chassis with Mecanum Wheel Drive. This
-chassis was chosen among others because of its price, modularity, and size.
-
-\subsection{Assembly}
-\subsection{References}
-
-\begin{table}[h!]
-  \begin{tabular}{| c | c |}
-    \hline
-    \textbf{AndyMark Frame Assembly} &  http://files.andymark.com/am-0952AssemblyInstructions.pdf\\
-    \hline
-    \textbf{AndyMark Gearbox Assembly} &  http://files.andymark.com/x2010-toughbox-user-guide.pdf\\
-    \hline
-  \end{tabular}
-  \label{tab:fire_cmd_msg}
-\end{table}
-
-\section{T-Shirt Cannon}
-\begin{center}
-    \includegraphics[width=11cm]{pics/cannon/blowhard_cannon.jpg}
-\end{center}
-
+\section{Operating the Robot}
 
 \subsection{Running the video stream from outside the app}
 nc 192.168.1.1 5001 | mplayer -fps 60 -cache 1024 -
 
-\subsection{Site to install xbox controller drivers}
-OSX: http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver
-
 \section{Troubleshooting}
-\subsection{Chassis}
-\subsection{T-Shirt Cannon}
+
+\subsection{Mechanical Issues}
+\subsubsection{Chassis}
+\subsubsection{T-Shirt Cannon}
 
 \begin{center}
     \includegraphics[width=11cm]{pics/cannon/broken_release_valve.jpg}
 \end{center}
+
+\subsection{Electrical Issues}
+
+\subsection{Software Issues}
+\subsubsection{Site to install xbox controller drivers}
+OSX: http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver
+
 
 \end{document}
