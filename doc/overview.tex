@@ -5,6 +5,7 @@
 \usepackage{tikz}
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage{standalone}
 
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
@@ -72,31 +73,7 @@ In order to command a desired robot velocity,
 
 \begin{figure}[h!]
   \centering
-
-  \tikzstyle{robot} = [rectangle, minimum width=3cm, minimum height=4cm,text centered, draw=black]
-  \tikzstyle{wheel} = [rectangle, minimum width=5mm, minimum height=1cm, draw=black]
-  \tikzstyle{arrow} = [thick, ->, >=latex]
-  \tikzstyle{dist} = [thick, <->, >=|]
-
-  \begin{tikzpicture}
-    \node (robot) [robot] {};
-    \node (wheel 1) [wheel, left of=robot, xshift=-7.5mm, yshift=1cm] {0};
-    \node (wheel 2) [wheel, right of=robot, xshift=7.5mm, yshift=1cm] {1};
-    \node (wheel 3) [wheel, right of=robot, xshift=7.5mm, yshift=-1cm] {2};
-    \node (wheel 4) [wheel, left of=robot, xshift=-7.5mm, yshift=-1cm] {3};
-
-    \draw [arrow] (0,0) -- node[anchor=north, xshift=-4mm] {y} (-1,0);
-    \draw [arrow] (0,0) -- node[anchor=west, yshift=5mm] {x} (0,1);
-    \draw (0,0)  -- (0,0) node[xshift=2.8mm] {\AxisRotator[x=0.3cm,y=0.3cm,->,rotate=-90,black] $\omega_z$};
-    \draw [dist] (0,2.3) -- node[anchor=south] {$l_1$} (1.8,2.3);
-    \draw [dist] (0.03,2.3) -- node[anchor=south] {$l_1$} (-1.8,2.3);
-    \draw [dist] (0,-2.3) -- node[anchor=north] {$l_1$} (1.8,-2.3);
-    \draw [dist] (0.03,-2.3) -- node[anchor=north] {$l_1$} (-1.8,-2.3);
-    \draw [dist] (2.3,0) -- node[anchor=west] {$l_2$} (2.3, 1);
-    \draw [dist] (2.3,0.03) -- node[anchor=west] {$l_2$} (2.3, -1);
-    \draw [dist] (-2.3,0) -- node[anchor=east] {$l_2$} (-2.3, 1);
-    \draw [dist] (-2.3,0.03) -- node[anchor=east] {$l_2$} (-2.3, -1);
-  \end{tikzpicture}
+  \includestandalone[width=\textwidth]{./tikz-figures/kinematics}
   \caption{Top View of Robot}
   \label{fig:robot_top_view}
 \end{figure}
