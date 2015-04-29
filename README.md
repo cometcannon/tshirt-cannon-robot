@@ -5,6 +5,8 @@ Welcome to the T-Shirt Cannon Robot repository! This repository contains the
 source code for the T-shirt Cannon Robot developed at the University of Texas
 at Dallas (http://www.utdallas.edu/).
 
+![Alt text](/doc/pics/chassis/robot.jpg?raw=true "Our robot in all its glory!")
+
 This README contains information about the contents of this repo and how to
 find information about the robot itself.
 
