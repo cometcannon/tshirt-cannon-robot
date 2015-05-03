@@ -10,7 +10,7 @@ import edu.utdallas.cometcannon.robot.response.*;
 public class Networker implements Runnable
 {
     final int YUN_PORT = 12313;
-    final String YUN_ADDRESS = "192.168.1.6";
+    final String YUN_ADDRESS = "192.168.240.1";
 
     ArrayBlockingQueue<Command> robotCommandQueue;
     ArrayBlockingQueue<Response> robotResponseQueue;
