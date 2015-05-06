@@ -6,8 +6,10 @@ all: ${DOCS}
 
 overview:
 	$(LATEX) overview.tex
+	$(LATEX) overview.tex
 
 sd2-report:
+	$(LATEX) sd2-report.tex
 	$(LATEX) sd2-report.tex
 
 clean:
