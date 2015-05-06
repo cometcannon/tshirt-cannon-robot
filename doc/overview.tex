@@ -56,131 +56,11 @@ You can also try to contact one of the team members:\\
 \tableofcontents
 \pagebreak
 
-\section{Introduction}
-\label{sec:intro}
+\section{System Design Overview}
 
-\subsection{Purpose}
-\label{sec:purpose}
-
-\subsection{Problem Statement and Design Objectives}
-\label{sec:probstatement}
-
-\subsection{Design Process Summary}
-\label{sec:designprocesssummary}
-
-\subsection{Final Results Summary}
-\label{sec:resultssummary}
-
-\section{Review of Conceptual and Preliminary Design}
-\label{sec:conceptualpreliminarydesign}
-
-\subsection{Problem Analysis}
-\label{sec:probanalysis}
-
-\xxx{Review of problem}\\
-\xxx{Summary of specifications}\\
-\xxx{Discussion of main features of the design problem}\\
-\xxx{Summary of basic engineering or technical approach}
-
-\subsection{Decision Analysis}
-\label{sec:decisionanalysis}
-
-\xxx{Description of solution alternatives for the problem}\\
-\xxx{Definition of effectiveness criteria}\\
-\xxx{Discussion of decision analysis and final decision}
-
-\section{Basic Solution Description}
-\label{sec:basicsoldesc}
-
-\xxx{Schematics and flow sheets defining all system components and their relationships}\\
-\xxx{Analysis/balance of key parameters (voltage, current, power, timing or computing requirements, mechanical parameters, etc.)}\\
-\xxx{Component sizing and component-level specifications}\\
-\xxx{Initial system performance estimates}
-\begin{figure}[h!]
-  \centering
-
-  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=3cm, minimum height=2cm,text centered, draw=black]
-\tikzstyle{container} = [draw, ultra thick, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
-  \tikzstyle{arrow} = [thick, ->, ultra thick, >=latex]
-  \begin{tikzpicture}[node distance=2cm]
-    \node (input) [align=center, xshift=-1cm] {\textbf{User}\\\textbf{Inputs}};
-    \node (output) [right of=input, align=center] {\textbf{Video}\\\textbf{Display}};
-    \node (app) [block, yshift=-2cm] {\textbf{Java App}};
-    \node (ar9331) [block, right of=app, xshift=6cm, align=center] {\textbf{Atheros AR9331}};
-    \node (atmega) [block, below of=ar9331, yshift=-2cm, align=center] {\textbf{ATmega32u4}};
-    \node (rpi) [block, below of=app, left of=atmega, xshift=-6cm, yshift=2cm] {\textbf{Raspberry Pi}};
-
-    \node (yun) [container, fit=(atmega) (ar9331)] {};
-    \node (yun_text) [yshift=-0.3cm] at (yun.north) {\textbf{Yun}};
-
-    \draw [arrow] (app.350) -- node[anchor=south, align=center, xshift=-7mm, yshift=-11mm] {\textbf{Velocity}\\\textbf{Commands}} (ar9331.190);
-    \draw [arrow] (ar9331.170) -- node[anchor=north, align=center, xshift=-7mm, yshift=12mm] {\textbf{Status}\\\textbf{Updates}} (app.10);
-    \draw [arrow] (ar9331.250) -- node[anchor=east, align=center] {\textbf{GPIO}\\\textbf{Commands}} (atmega.110);
-    \draw [arrow] (atmega.70) -- node[anchor=west, align=center] {\textbf{Sensor}\\\textbf{Readings}} (ar9331.290);
-    \draw [arrow] (rpi.70) -- node[anchor=east, align=center, xshift=2cm] {\textbf{Video}\\\textbf{Stream}} (app.290);
-    \draw [arrow] (app.250) -- node[anchor=west, align=center, xshift=-2.7cm] {\textbf{Video}\\\textbf{Commands}} (rpi.110);
-    \draw [arrow] (input) -- (app.134);
-    \draw [arrow] (app.46) -- (output);
-  \end{tikzpicture}
-  \caption{Software System Diagram}
-  \label{fig:system_diagram}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
-  \tikzstyle{dcvolt} = [solid, ultra thick, red];
-  \tikzstyle{signal} = [solid, ultra thick, ->, >=stealth];
-
-  \begin{tikzpicture}
-    draw[help lines] (-6, -12) grid (12,1);
-    \node (circuitbreaker) [block, align=center] {\textbf{Circuit}\\\textbf{Breaker}};
-    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {\textbf{Boost}\\\textbf{Converter}};
-    \node (buck) [block, align=center, right of=boost, xshift=7cm] {\textbf{Buck}\\\textbf{Converter}};
-    \node (mcu) [block, below of=buck, yshift=-1.25cm] {\textbf{MCU}};
-    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {\textbf{Trigger}\\\textbf{Solenoid}};
-    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {\textbf{Pressure}\\\textbf{Solenoid}};
-    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {\textbf{Encoders}};
-    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {\textbf{Pressure}\\\textbf{Sensor}};
-    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {\textbf{Camera}\\\textbf{Module}};
-    \node (esc) [block, right of=camera, xshift=2cm] {\textbf{ESC}};
-    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {\textbf{Motors}};
-
-    \draw [dcvolt] (circuitbreaker.north) -- +(0,0.5) node[anchor=south] {\textbf{+12V}};
-    \draw [dcvolt] (circuitbreaker.south) -- +(0,-0.9) node[anchor=west, yshift=0.5cm] {\textbf{+12V}};
-    \draw [dcvolt] (boost.north) -- +(0,1) -| +(4,1) node {};
-    \draw [dcvolt] (buck.north) -- +(0,1) -| +(-4,1) node {};
-    \draw [dcvolt] (esc.north) -- +(0,5.55) -| +(-5.5,5.55) node {};
-    \draw [dcvolt] (buck.south) -- node[anchor=west, yshift=0.2cm] {\textbf{+5V}} (mcu.north);
-    \draw [dcvolt] (encoders.north) -- +(0,2.7) -| +(3.5,2.7) node {};
-    \draw [dcvolt] (pressuresensor.north) -- +(0,0.2) -| +(-3,0.2) node {};
-    \draw [dcvolt] (camera.north) -- +(0,2.65) -| +(-2.5,2.65) node{};
-    \draw [dcvolt] (boost.south) -- +(0,-1) node[anchor=west, yshift=0.5cm] {\textbf{+24V}};
-    \draw [dcvolt] (triggersolenoid.north) -- +(0,2.4) -| +(1.5,2.4) node {};
-    \draw [dcvolt] (pressuresolenoid.north) -- +(0,2.4) -| +(-1.5,2.4) node {};
-    \draw [signal] (pressuresensor.east) -- +(0.5,0) -| +(0.5,0.75) -| +(-0.31, 0.75) -- (mcu.295);
-    \draw [signal] (mcu.320) -- +(0,-0.8) -| +(3.5,-0.8) -| +(3.5,-1.75) -- (esc.west);
-    \draw [signal] (encoders.east) -- +(0.5,0) -| +(0.5,0.95) -| +(2.39,0.95) -- (mcu.south);
-    \draw [signal] (mcu.240) -- +(0,-0.6) -| +(-4.8,-0.6) -| +(-4.8,-1.75) -- (pressuresolenoid.east);
-    \draw [signal] (mcu.220) -- +(0,-0.4) -| +(-7.4,-0.4) -| +(-7.4,-1.75) -- (triggersolenoid.east);
-    \draw [signal] (esc.south) -- +(0,-1.5) -- (motors.east);
-    \draw [signal] (motors.west) -- +(-3.5,0) -| (encoders.south);
-  \end{tikzpicture}
-  \caption{Electrical System Diagram}
-  \label{fig:e_system}
-\end{figure}
-
-\section{Performance Optimization and Design of System Components}
-\label{sec:optimization}
-\xxx{Description of components and their component-level specifications} \\
-\xxx{Design criteria used} \\
-\xxx{Discussion of the technical approach used} \\
-\xxx{Discussion of design details} \\
-\xxx{Presentation and discussion of engineering drawings and schematics} \\
-\xxx{Fabrication, construction, or production instructions and specifications} \\
-\xxx{This section should provide any and all information necessary to ``build'' the component of the design you have focused on, all the way down to the number of nuts, bolts, transistors, wiring harness pin-outs, etc.} \\
-\xxx{Summary of the final design results} \\
-\xxx{Performance evaluation}
+\subsection{Mechanical Design Overview}
+\subsubsection{Velocity Kinematics}
+\label{sec:ar9331_vel_kin}
 
 In order to command a desired robot velocity,
 \begin{math}
@@ -195,7 +75,7 @@ In order to command a desired robot velocity,
 
 \begin{figure}[h!]
   \centering
-  \includestandalone[width=\textwidth]{./tikz-figures/kinematics}
+  \includestandalone[width=0.5\textwidth]{./tikz-figures/kinematics}
   \caption{Top View of Robot}
   \label{fig:robot_top_view}
 \end{figure}
@@ -240,47 +120,21 @@ In order to command a desired robot velocity,
   \label{tab:motor_nums}
 \end{table}
 
-\section{Project Implementation, Operation, and Assessment}
-\label{sec:implopassess}
-\xxx{Details of implementation} \\
-\xxx{Operational test results} \\
-\xxx{Evaluation of results relative to design criteria (how well did it do?)} \\
-\xxx{What changes are suggested by design results}
+\subsection{Electrical Design Overview}
+\begin{figure}[h!]
+  \centering
+  \includestandalone[width=0.8\textwidth]{./tikz-figures/electroncs-overview}
+  \caption{Electrical System Diagram}
+  \label{fig:e_system}
+\end{figure}
 
-\section{Final Scope of Work Statement}
-\label{sec:finalscope}
-\xxx{Summarize what has been done} \\
-\xxx{Summarize what still needs to be done} \\
-\xxx{Lessons learned and suggestions for future activities} \\
-\xxx{Describe any special details of the design that only you would know} \\
-\xxx{Related project management issues} \\
-\xxx{Address complete system life-cycle issues (marketing, sales, service, retirement)}
-
-\section{Cost Estimation}
-\label{sec:cost}
-\xxx{Estimate of system cost (materials and construction)} \\
-\xxx{Estimate of design cost (man-hours, materials and supplies, travel)} \\
-\xxx{Other (such as construction or production or operating costs)}
-
-\section{Project Management Summary}
-\label{sec:projman}
-
-\xxx{Tasks: what has been done} \\
-\xxx{Tasks: what still needs to be done} \\
-\xxx{Time: Gantt chart showing activities and their duration and order} \\
-\xxx{Facilities} \\
-\xxx{Personnel: summarize personnel needs to complete design; include a WBS}
-
-\section{Conclusion}
-\label{sec:conclusion}
-
-\xxx{Restate purpose of report} \\
-\xxx{Restate objectives} \\
-\xxx{Summarize final design selection} \\
-\xxx{Give costs and timeline} \\
-\xxx{State willingness to ``keep the customer satisfied''}
-
-\section{System Design Overview}
+\subsection{Software Design Overview}
+\begin{figure}[h!]
+  \centering
+  \includestandalone[width=0.8\textwidth]{./tikz-figures/software-overview}
+  \caption{Software System Diagram}
+  \label{fig:system_diagram}
+\end{figure}
 
 \section{Mechanical Components}
 \subsection{Chassis}
@@ -332,7 +186,6 @@ the ATmega chip and a computer connected via USB. In the former case, we read
 and write to \texttt{Serial1}, whereas in the latter, we utilize the typical
 \texttt{Serial}.
 
-
 \subsubsection{Raspberry Pi}
 
 \section{Software Components}
@@ -382,6 +235,8 @@ and write to \texttt{Serial1}, whereas in the latter, we utilize the typical
   \caption{Computer-to-Robot Message Specifications}
   \label{tab:comptorobotmsgspecs}
 \end{table}
+
+\paragraph{Robot to Computer}
 
 \paragraph{AR9331 to ATmega32u4}
 \label{sec:ath_mega_msg}
@@ -522,6 +377,7 @@ and write to \texttt{Serial1}, whereas in the latter, we utilize the typical
   \caption{Set Pressure Regulation Command}
   \label{tab:ath_ind_motor_cmd_msg}
 \end{table}
+
 \paragraph{ATmega32u4 to AR9331}
 \label{sec:mega_ath_msg}
 

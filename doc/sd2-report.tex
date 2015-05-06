@@ -64,7 +64,9 @@ Finally, a software system for handling the robot-user interface was designed.
 
 \subsection{Final Results Summary}
 \label{sec:resultssummary}
-\xxx{NEED TO DO}
+Our robot meets the specifications that were put forth in the earlier
+subsections. It has been tested already on numerous occasions and has performed
+the desired tasks on those occasions.
 
 \section{Review of Conceptual and Preliminary Design}
 \label{sec:conceptualpreliminarydesign}
@@ -88,11 +90,6 @@ specifications will solve the problem as thus described:
         a microprocessor for embedded linux and wireless communication
     \item Highly reconfigurable IP camera
 \end{itemize}
-
-\xxx{Review of problem}\\
-\xxx{Summary of specifications}\\
-\xxx{Discussion of main features of the design problem}\\
-\xxx{Summary of basic engineering or technical approach}
 
 \subsection{Decision Analysis}
 \label{sec:decisionanalysis}
@@ -119,10 +116,6 @@ triggering mechanism. Furthermore, since the robot will need to take wireless
 commands as input, it would be ideal to wirelessly program the robot's
 microcontroller as well. We chose this solution over using separate
 microcontrollers for high and low level commands.\\
-
-\xxx{Description of solution alternatives for the problem}\\
-\xxx{Definition of effectiveness criteria}\\
-\xxx{Discussion of decision analysis and final decision}
 
 \section{Basic Solution Description}
 \label{sec:basicsoldesc}
@@ -219,74 +212,14 @@ lanyard.  This cuts the power from the battery to all systems of the robot.}\\
 \xxx{Initial system performance estimates}
 \begin{figure}[h!]
   \centering
-
-  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=3cm, minimum height=2cm,text centered, draw=black]
-\tikzstyle{container} = [draw, ultra thick, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
-  \tikzstyle{arrow} = [thick, ->, ultra thick, >=latex]
-  \begin{tikzpicture}[node distance=2cm]
-    \node (input) [align=center, xshift=-1cm] {\textbf{User}\\\textbf{Inputs}};
-    \node (output) [right of=input, align=center] {\textbf{Video}\\\textbf{Display}};
-    \node (app) [block, yshift=-2cm] {\textbf{Java App}};
-    \node (ar9331) [block, right of=app, xshift=6cm, align=center] {\textbf{Atheros AR9331}};
-    \node (atmega) [block, below of=ar9331, yshift=-2cm, align=center] {\textbf{ATmega32u4}};
-    \node (rpi) [block, below of=app, left of=atmega, xshift=-6cm, yshift=2cm] {\textbf{Raspberry Pi}};
-
-    \node (yun) [container, fit=(atmega) (ar9331)] {};
-    \node (yun_text) [yshift=-0.3cm] at (yun.north) {\textbf{Yun}};
-
-    \draw [arrow] (app.350) -- node[anchor=south, align=center, xshift=-7mm, yshift=-11mm] {\textbf{Velocity}\\\textbf{Commands}} (ar9331.190);
-    \draw [arrow] (ar9331.170) -- node[anchor=north, align=center, xshift=-7mm, yshift=12mm] {\textbf{Status}\\\textbf{Updates}} (app.10);
-    \draw [arrow] (ar9331.250) -- node[anchor=east, align=center] {\textbf{GPIO}\\\textbf{Commands}} (atmega.110);
-    \draw [arrow] (atmega.70) -- node[anchor=west, align=center] {\textbf{Sensor}\\\textbf{Readings}} (ar9331.290);
-    \draw [arrow] (rpi.70) -- node[anchor=east, align=center, xshift=2cm] {\textbf{Video}\\\textbf{Stream}} (app.290);
-    \draw [arrow] (app.250) -- node[anchor=west, align=center, xshift=-2.7cm] {\textbf{Video}\\\textbf{Commands}} (rpi.110);
-    \draw [arrow] (input) -- (app.134);
-    \draw [arrow] (app.46) -- (output);
-  \end{tikzpicture}
+  \includestandalone[width=0.8\textwidth]{./tikz-figures/software-overview}
   \caption{Software System Diagram}
   \label{fig:system_diagram}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
-  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
-  \tikzstyle{dcvolt} = [solid, ultra thick, red];
-  \tikzstyle{signal} = [solid, ultra thick, ->, >=stealth];
-
-  \begin{tikzpicture}
-    draw[help lines] (-6, -12) grid (12,1);
-    \node (circuitbreaker) [block, align=center] {\textbf{Circuit}\\\textbf{Breaker}};
-    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {\textbf{Boost}\\\textbf{Converter}};
-    \node (buck) [block, align=center, right of=boost, xshift=7cm] {\textbf{Buck}\\\textbf{Converter}};
-    \node (mcu) [block, below of=buck, yshift=-1.25cm] {\textbf{MCU}};
-    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {\textbf{Trigger}\\\textbf{Solenoid}};
-    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {\textbf{Pressure}\\\textbf{Solenoid}};
-    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {\textbf{Encoders}};
-    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {\textbf{Pressure}\\\textbf{Sensor}};
-    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {\textbf{Camera}\\\textbf{Module}};
-    \node (esc) [block, right of=camera, xshift=2cm] {\textbf{ESC}};
-    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {\textbf{Motors}};
-
-    \draw [dcvolt] (circuitbreaker.north) -- +(0,0.5) node[anchor=south] {\textbf{+12V}};
-    \draw [dcvolt] (circuitbreaker.south) -- +(0,-0.9) node[anchor=west, yshift=0.5cm] {\textbf{+12V}};
-    \draw [dcvolt] (boost.north) -- +(0,1) -| +(4,1) node {};
-    \draw [dcvolt] (buck.north) -- +(0,1) -| +(-4,1) node {};
-    \draw [dcvolt] (esc.north) -- +(0,5.55) -| +(-5.5,5.55) node {};
-    \draw [dcvolt] (buck.south) -- node[anchor=west, yshift=0.2cm] {\textbf{+5V}} (mcu.north);
-    \draw [dcvolt] (encoders.north) -- +(0,2.7) -| +(3.5,2.7) node {};
-    \draw [dcvolt] (pressuresensor.north) -- +(0,0.2) -| +(-3,0.2) node {};
-    \draw [dcvolt] (camera.north) -- +(0,2.65) -| +(-2.5,2.65) node{};
-    \draw [dcvolt] (boost.south) -- +(0,-1) node[anchor=west, yshift=0.5cm] {\textbf{+24V}};
-    \draw [dcvolt] (triggersolenoid.north) -- +(0,2.4) -| +(1.5,2.4) node {};
-    \draw [dcvolt] (pressuresolenoid.north) -- +(0,2.4) -| +(-1.5,2.4) node {};
-    \draw [signal] (pressuresensor.east) -- +(0.5,0) -| +(0.5,0.75) -| +(-0.31, 0.75) -- (mcu.295);
-    \draw [signal] (mcu.320) -- +(0,-0.8) -| +(3.5,-0.8) -| +(3.5,-1.75) -- (esc.west);
-    \draw [signal] (encoders.east) -- +(0.5,0) -| +(0.5,0.95) -| +(2.39,0.95) -- (mcu.south);
-    \draw [signal] (mcu.240) -- +(0,-0.6) -| +(-4.8,-0.6) -| +(-4.8,-1.75) -- (pressuresolenoid.east);
-    \draw [signal] (mcu.220) -- +(0,-0.4) -| +(-7.4,-0.4) -| +(-7.4,-1.75) -- (triggersolenoid.east);
-    \draw [signal] (esc.south) -- +(0,-1.5) -- (motors.east);
-    \draw [signal] (motors.west) -- +(-3.5,0) -| (encoders.south);
-  \end{tikzpicture}
+  \includestandalone[width=0.8\textwidth]{./tikz-figures/electroncs-overview}
   \caption{Electrical System Diagram}
   \label{fig:e_system}
 \end{figure}
@@ -316,7 +249,7 @@ In order to command a desired robot velocity,
 
 \begin{figure}[h!]
   \centering
-  \includestandalone[width=\textwidth]{./tikz-figures/kinematics}
+  \includestandalone[width=0.5\textwidth]{./tikz-figures/kinematics}
   \caption{Top View of Robot}
   \label{fig:robot_top_view}
 \end{figure}

@@ -1,0 +1,32 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{standalone}
+
+\begin{document}
+
+  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=3cm, minimum height=2cm,text centered, draw=black]
+  \tikzstyle{container} = [draw, ultra thick, rectangle, rounded corners, dashed, text width=11em, inner sep=3.5em]
+  \tikzstyle{arrow} = [thick, ->, ultra thick, >=latex]
+
+  \begin{tikzpicture}[node distance=2cm]
+    \node (input) [align=center, xshift=-1cm] {\textbf{User}\\\textbf{Inputs}};
+    \node (output) [right of=input, align=center] {\textbf{Video}\\\textbf{Display}};
+    \node (app) [block, yshift=-2cm] {\textbf{Java App}};
+    \node (ar9331) [block, right of=app, xshift=6cm, align=center] {\textbf{Atheros AR9331}};
+    \node (atmega) [block, below of=ar9331, yshift=-2cm, align=center] {\textbf{ATmega32u4}};
+    \node (rpi) [block, below of=app, left of=atmega, xshift=-6cm, yshift=2cm] {\textbf{Raspberry Pi}};
+
+    \node (yun) [container, fit=(atmega) (ar9331)] {};
+    \node (yun_text) [yshift=-0.3cm] at (yun.north) {\textbf{Yun}};
+
+    \draw [arrow] (app.350) -- node[anchor=south, align=center, xshift=-7mm, yshift=-11mm] {\textbf{Velocity}\\\textbf{Commands}} (ar9331.190);
+    \draw [arrow] (ar9331.170) -- node[anchor=north, align=center, xshift=-7mm, yshift=12mm] {\textbf{Status}\\\textbf{Updates}} (app.10);
+    \draw [arrow] (ar9331.250) -- node[anchor=east, align=center] {\textbf{GPIO}\\\textbf{Commands}} (atmega.110);
+    \draw [arrow] (atmega.70) -- node[anchor=west, align=center] {\textbf{Sensor}\\\textbf{Readings}} (ar9331.290);
+    \draw [arrow] (rpi.70) -- node[anchor=east, align=center, xshift=2cm] {\textbf{Video}\\\textbf{Stream}} (app.290);
+    \draw [arrow] (app.250) -- node[anchor=west, align=center, xshift=-2.7cm] {\textbf{Video}\\\textbf{Commands}} (rpi.110);
+    \draw [arrow] (input) -- (app.134);
+    \draw [arrow] (app.46) -- (output);
+  \end{tikzpicture}
+
+\end{document}

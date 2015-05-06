@@ -1,0 +1,45 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usepackage{standalone}
+
+\begin{document}
+  \tikzstyle{block} = [rectangle, ultra thick, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+  \tikzstyle{dcvolt} = [solid, ultra thick, red];
+  \tikzstyle{signal} = [solid, ultra thick, ->, >=stealth];
+
+  \begin{tikzpicture}
+    draw[help lines] (-6, -12) grid (12,1);
+    \node (circuitbreaker) [block, align=center] {\textbf{Circuit}\\\textbf{Breaker}};
+    \node (boost) [block, align=center, below of=circuitbreaker, xshift=-4cm, yshift=-2cm] {\textbf{Boost}\\\textbf{Converter}};
+    \node (buck) [block, align=center, right of=boost, xshift=7cm] {\textbf{Buck}\\\textbf{Converter}};
+    \node (mcu) [block, below of=buck, yshift=-1.25cm] {\textbf{MCU}};
+    \node (triggersolenoid) [block, align=center, below of=boost, yshift=-3.5cm, xshift=-1.5cm] {\textbf{Trigger}\\\textbf{Solenoid}};
+    \node (pressuresolenoid) [block, align=center, right of=triggersolenoid, xshift=2cm] {\textbf{Pressure}\\\textbf{Solenoid}};
+    \node (encoders) [block, right of=pressuresolenoid, xshift=2cm] {\textbf{Encoders}};
+    \node (pressuresensor) [block, align=center, right of=encoders, xshift=2cm] {\textbf{Pressure}\\\textbf{Sensor}};
+    \node (camera) [block, align=center, right of=pressuresensor, xshift=2cm] {\textbf{Camera}\\\textbf{Module}};
+    \node (esc) [block, right of=camera, xshift=2cm] {\textbf{ESC}};
+    \node (motors) [block, below of=esc, xshift=-4.5cm, yshift=-1cm] {\textbf{Motors}};
+
+    \draw [dcvolt] (circuitbreaker.north) -- +(0,0.5) node[anchor=south] {\textbf{+12V}};
+    \draw [dcvolt] (circuitbreaker.south) -- +(0,-0.9) node[anchor=west, yshift=0.5cm] {\textbf{+12V}};
+    \draw [dcvolt] (boost.north) -- +(0,1) -| +(4,1) node {};
+    \draw [dcvolt] (buck.north) -- +(0,1) -| +(-4,1) node {};
+    \draw [dcvolt] (esc.north) -- +(0,5.55) -| +(-5.5,5.55) node {};
+    \draw [dcvolt] (buck.south) -- node[anchor=west, yshift=0.2cm] {\textbf{+5V}} (mcu.north);
+    \draw [dcvolt] (encoders.north) -- +(0,2.7) -| +(3.5,2.7) node {};
+    \draw [dcvolt] (pressuresensor.north) -- +(0,0.2) -| +(-3,0.2) node {};
+    \draw [dcvolt] (camera.north) -- +(0,2.65) -| +(-2.5,2.65) node{};
+    \draw [dcvolt] (boost.south) -- +(0,-1) node[anchor=west, yshift=0.5cm] {\textbf{+24V}};
+    \draw [dcvolt] (triggersolenoid.north) -- +(0,2.4) -| +(1.5,2.4) node {};
+    \draw [dcvolt] (pressuresolenoid.north) -- +(0,2.4) -| +(-1.5,2.4) node {};
+    \draw [signal] (pressuresensor.east) -- +(0.5,0) -| +(0.5,0.75) -| +(-0.31, 0.75) -- (mcu.295);
+    \draw [signal] (mcu.320) -- +(0,-0.8) -| +(3.5,-0.8) -| +(3.5,-1.75) -- (esc.west);
+    \draw [signal] (encoders.east) -- +(0.5,0) -| +(0.5,0.95) -| +(2.39,0.95) -- (mcu.south);
+    \draw [signal] (mcu.240) -- +(0,-0.6) -| +(-4.8,-0.6) -| +(-4.8,-1.75) -- (pressuresolenoid.east);
+    \draw [signal] (mcu.220) -- +(0,-0.4) -| +(-7.4,-0.4) -| +(-7.4,-1.75) -- (triggersolenoid.east);
+    \draw [signal] (esc.south) -- +(0,-1.5) -- (motors.east);
+    \draw [signal] (motors.west) -- +(-3.5,0) -| (encoders.south);
+  \end{tikzpicture}
+
+\end{document}
