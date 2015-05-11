@@ -151,15 +151,19 @@ that all pressurized components not be made with PVC because of its shattering
 properties. Furthermore, the cannon had to be electronically triggered and the
 range had to be electronically controlled.
 
-\begin{center}
-    \includegraphics[width=15cm]{./pics/cannon/blowhard_cannon.jpg}\\
-     Figure 1:The Blow Hard T-Shirt Cannon
-\end{center}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=15cm]{./pics/cannon/blowhard_cannon.jpg}
+  \caption{The Blow Hard T-Shirt Cannon}
+  \label{fig:cannon}
+\end{figure}
 
-\begin{center}
-    \includegraphics[width=15cm]{./pics/chassis/robot.jpg}
-    Figure 2: Complete Mechanical System
-\end{center}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=15cm]{./pics/chassis/robot.jpg}
+  \caption{Complete Mechanical System}
+  \label{fig:mech_system}
+\end{figure}
 
 \subsection{Electrical System}
 There are many different electronic subsystems that make up the electrical
@@ -251,10 +255,12 @@ pressure regulation are implemented on a prototyping board mounted on the
 Arduino Yun. For more information about the prototyping board see section 3.3
 Control Electronics below.\\
 
-\begin{center}
-    \includegraphics[width=15cm]{./pics/cannon/PressureControl.jpg}\\
-     Figure 1: Electronic Pressure Control Diagram
-\end{center}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=15cm]{./pics/cannon/PressureControl.jpg}
+  \caption{Electronic Pressure Control Diagram}
+  \label{fig:pressure_diagram}
+\end{figure}
 
 \subsection{Chassis}
 The original requirements for the chassis of our robot were that it had to move
@@ -297,10 +303,13 @@ Connected to the ATmega through a prototyping board are the motor controllers,
 which are controlled via PWM, the pneumatic circuits, which provide electronic
 triggering and range adjustment, and a control circuit for a piezo buzzer that
 acts as a horn. The prototyping board is pictured below.\\
-\begin{center}
-    \includegraphics[width=15cm]{./pics/electronics/AnnotatedProtoboard.jpg}\\
-     Image 1: Prototyping Board
-\end{center}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=15cm]{./pics/electronics/AnnotatedProtoboard.jpg}
+  \caption{Prototyping Board}
+  \label{fig:protoboard_diagram}
+\end{figure}
 
 A Raspberry Pi single board computer provides wireless networking and video
 streaming to the robot. Originally, the network was hosted by the Arduino Yun.
