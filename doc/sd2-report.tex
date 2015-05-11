@@ -121,31 +121,77 @@ microcontrollers for high and low level commands.\\
 \section{Basic Solution Description}
 \label{sec:basicsoldesc}
 
-\xxx{Schematics and flow sheets defining all system components and their relationships}\\
-\xxx{Analysis/balance of key parameters (voltage, current, power, timing or computing requirements, mechanical parameters, etc.)}\\
-\xxx{Component sizing and component-level specifications}\\
-\xxx{Initial system performance estimates}
+Our solution is most easily subdivided by the mechanical, electronic, and software solutions. The following sections will discuss each of these in turn and define their major sub components. 
+
+\subsection{Mechanical System}
+The mechanical system consists of three main components: the wheelbase, the chassis, and the cannon. The wheelbase includes the wheels, gearboxes and motors that provide movement to the chassis. The requirements that applied to the wheelbase were that it must provide holonomic movement, be safe on gym floors, and reach a maximum speed of 10 ft/s. The chassis provides the frame to which the wheelbase and cannon must mount and mounting area for all the electronics. There were only two requirement for the chassis: that it have a maximum carrying capacity of greater than 60 lbs and it would provide many mount points for future additions. Finally, the cannon is the component responsible for launching the t-shirts into the air. It was required to shoot at a select-able range from 20 to 150 feet and have a capacity of 20 shots at max range. A major requirement for our cannon was that it must be safe. To that end, we required our cannon to have an automatic pressure release system and that all pressurized components not be made with PVC because of its shattering properties. Furthermore, the cannon had to be electronically triggered and the range had to be electronically controlled. 
+
+\begin{center}
+    \includegraphics[width=15cm]{./pics/cannon/blowhard_cannon.jpg}\\
+     Figure 1:The Blow Hard T-Shirt Cannon
+\end{center}
+
+\begin{center}
+    \includegraphics[width=15cm]{./pics/chassis/robot.jpg}
+    Figure 2: Complete Mechanical System
+\end{center}
+
+\subsection{Electrical System}
+There are many different electronic subsystems that make up the electrical system of the robot. First the power subsystem provides three different voltages (5 VDC,  12 VDC, and 24 VDC) for the other electronics. It consists of a 12 VDC battery, a boost converter to supply 24 VDC and a buck converter to supply 5 VDC. The main requirement for the power subsystem was to have enough power for at least 10 minutes of high activity usage. Beyond that requirement, our 24 VDC electronics demand at least 1.5 A and our 5VDC electronics require at least 2 A.
+
+The control subsystem consists of the two logic boards that provide the processing power for the on board software. The Arduino Yun runs the control software and controls all the other electrical components on the robot except the camera. The Raspberry Pi controls the video stream and hosts the wireless network. These boards communicate with the user base station to receive commands and to present the user with feedback. The requirement for this subsystem was that it should be able to receive command from at least 50 ft away from the base station while streaming video and 100 ft without the video stream. 
+
+The remaining electronics are the control circuits for the mechanical system. The electronic speed controllers (ESCs) allow the Arduino Yun to control the drive motors. The 24 VDC pneumatic solenoids provide electronic triggering and pressure regulation and their controls circuits allow the Arduino Yun to activate them. The pressure sensor provides feedback to the Arduino Yun for pressure regulation.  Encoders, which are present but not implemented for reasons explained in Section 4.2, provide wheel rotation information back to the Arduino for velocity control. Finally, a piezo buzzer acts as a horn. There were no specific requirements for these components as they were constructed as solutions to meet other requirements.
+
+\begin{figure}[h!]
+  \centering
+  \includestandalone[width=0.8\textwidth]{./tikz-figures/electroncs-overview}
+  \caption{Electrical System Diagram}
+  \label{fig:e_system}
+\end{figure}
+
+\subsection{Software System}
+The software that implement all the robots functionality can be divided up based on the physical device on which each component runs. First, the software on the ATmega that resides on the Arduino Yun is responsible for controlling the physical hardware through the on board electronics. It communicates with the Arduino Yun's Atheros chip that runs the Linux-based OpenWRT. The ATmega responds to commands from the Atheros to set the velocity of the robot, trigger and charge the cannon, and provide diagnostic information such as tank pressure. The software on the Atheros chip is mainly responsible for relaying commands from the base station to the ATmega and providing status updates to the bases station from the ATmega. 
+
+The Raspberry Pi is configured to provide the wireless network to which the base station and Arduino Yun connect. It is additionally responsible for providing a live video stream from the robot to the base station. The base station, which consists of a Linux or Mac-based laptop and an Xbox controller, provides the user with and intuitive controller-based interface for controlling the robot and graphical user interface to provide the video stream and robot status information.
+
+\begin{figure}[h!]
+  \centering
+  \includestandalone[width=0.8\textwidth]{./tikz-figures/software-overview}
+  \caption{Software System Diagram}
+  \label{fig:system_diagram}
+\end{figure}
+
+
+\section{Performance Optimization and Design of System Components}
+\label{sec:optimization}
 
 \subsection{T-Shirt Cannon}
 The requirements for our cannon are that it should be electronically
-trigger-able, able to shoot a t-shirt 20 to 150 feet from a 45 degree angle,
-and be able to make 20 shots on a single charge. The cannon we chose is CO$_2$
+trigger-able, able to shoot a t-shirt 5 to 145 feet from a 45 degree angle,
+and be able to make 15 shots on a single charge. The cannon we chose is CO$_2$
 based and triggers pneumatically. Other options included a mechanical throwing
 mechanism or building the cannon ourselves, but those options would have taken
 too much time away from designing the other components. A 20oz CO$_2$ tank
-provides enough capacity for at least 20 shots at maximum range. In order to
+provides enough capacity for at least 15 shots at maximum range. In order to
 trigger electronically, we replaced the manual pneumatic trigger with
-a solenoid valve. An electronic regulator would not fit within our budget so we
-decided to use a pressure transducer and a solenoid valve to allow us to set
-the firing pressure of the cannon, and therefore the range, electronically. The
+a 2-position normally closed 1/4in solenoid valve. An electronic regulator would not fit within our budget so we
+decided to use a 200 psi pressure transducer and a 2-position normally closed 1/4in solenoid valve to allow us to set
+the firing pressure of the cannon, and by extension the range, electronically. As shown in the figure below, the
 pressure transducer provides the current pressure in the cannon's reservoir and
-the solenoid allows us to shut off the flow of CO$_2$ once the desired pressure
-is achieved.\\
+the solenoid valve allows us to shut off the flow of CO$_2$ once the desired pressure
+is achieved. The solenoid control circuits for both the electronic triggering and electronic pressure regulation are implemented on a prototyping board mounted on the Arduino Yun. For more information about the prototyping board see section 3.3 Control Electronics below.\\
+
+\begin{center}
+    \includegraphics[width=15cm]{./pics/cannon/PressureControl.jpg}\\
+     Figure 1: Electronic Pressure Control Diagram
+\end{center}
 
 \subsection{Chassis}
-The chassis for our robot has to move holonomically, have maximum speed of 10
+The original requirements for the chassis of our robot were that it had to move 
+holonomically, have maximum speed of approximately 10
 ft/s, be safe for gymnasium floors, and have a load capacity of approximately
-60 pounds. These requirements led us to choose a four wheeled mecanum drive
+60 pounds. This led us to choose a four wheeled mecanum drive
 system mounted on an aluminum chassis. We chose mecanum wheels because they
 have the highest load capacity and simplest control algorithm of the holonomic
 drive solutions we could afford. Mecanum wheels have rollers attached at an
@@ -154,15 +200,22 @@ movement and rotating in place. This comes at the cost of a loss of efficiency
 and each wheel requires a separate motor, gearbox, quadrature encoder, and
 motor controller.\\
 
-The motors and gearboxes that came with the chassis provide more than enough
-torque to achieve 10 ft/s. However, in order to eliminate drift and provide
-smoother controls, we decided to include quadrature encoders to provide
-velocity feedback for a closed loop control loop. While the motor controllers
-we chose can provide 40A continuous current to each motor, our power
+The motors and gearboxes that came with the chassis provide enough
+torque to achieve a maximum of about 8.8 ft/s, less than the required 
+10 ft/s. After testing, we determined that 6 ft/s was a safer and more 
+appropriate maximum speed for our robot so we did not pursue achieving 
+10 ft/s.  Originally, in order to eliminate expected drift and provide
+smoother controls, we had decided to include quadrature encoders to provide
+velocity feedback for a closed loop control loop. After test driving the robot and 
+finding it very easy and intuitive to drive, we determined that this feature would 
+not add any discernible improvement to the driver's ability 
+to control the robot. Therefore, we did not add a feedback mechanism to the 
+control of the robot. The motor controllers we chose can provide 40A continuous 
+current to each motor, however, our power
 distribution system is only capable of delivering 30A to each motor.\\
 
 \subsection{Control Electronics}
-An Arduino Yun microcontroller provides the robot with a WiFi
+An Arduino Yun microcontroller provides the robot with a network
 connection and a low level microcontroller. Other options included Texas
 Instruments based microcontrollers, but because we wanted simplicity of
 programming, we went with the Arduino. The Yun has both an ATmega
@@ -171,10 +224,21 @@ that runs OpenWrt Linux that provides networking capabilities. The Atheros runs
 our application that receives velocity, triggering, and other commands over
 WiFi and processes them into low level commands for the ATmega. The ATmega
 handles hardware interrupt, monitors electrical components, and executes
-commands given by the Atheros device. Connected to the ATmega are the motor
-controllers, which are controlled via PWM, the quadrature encoder, which sense
-rotations of the wheels for velocity feedback, and the pneumatic circuits,
-which provide electronic triggering and range adjustment.\\
+commands given by the Atheros device. Connected to the ATmega through a prototyping board are the motor
+controllers, which are controlled via PWM, the pneumatic circuits,
+which provide electronic triggering and range adjustment, and a control circuit for a piezo buzzer that acts as a horn. The prototyping board is pictured below.\\
+
+\begin{center}
+    \includegraphics[width=15cm]{./pics/electronics/AnnotatedProtoboard.jpg}\\
+     Image 1: Prototyping Board
+\end{center}
+
+A Raspberry Pi single board computer provides wireless networking and video 
+streaming to the robot. Originally, the network was hosted by the Arduino Yun. 
+However, testing revealed that the signal strength of the Yun's network did not satisfy 
+our design requirements.  The network was then hosted by the Raspberry Pi using 
+an USB wireless adapter with a stronger antenna. This enabled us to achieve a maximum 
+range of 75ft with a video stream and 150ft without a video stream.
 
 In the software of the control electronics are several safety power shutoffs.
 If communication ceases between the Atheros and the ATmega or between the user
@@ -188,9 +252,9 @@ The user interface runs on a personal computer running any operating system
 with a Java Virtual Machine. An X-Box controller provides the user with
 a familiar and intuitive control scheme. The graphical user interface running
 on the personal computer updates the user with diagnostic information such as
-current firing pressure, battery charge, and connection strength. This
+current firing pressure, desired velocity, and connection strength. This
 interface also presents the user with a video stream from the robot’s point of
-view. A Linux based single board computer, the Raspberry Pi, is streaming this
+view. The Linux-based Raspberry Pi is streaming this
 video from a webcam on the robot.\\
 
 \subsection{Power Distribution System}
@@ -204,25 +268,11 @@ battery is able to source up to 300A at any time and can source 60A for 10
 minutes straight before discharging. Since our motors will draw at least 2A at
 free current, we expect that once the robot achieves a constant velocity, each
 motor will draw around 10A. Thus, we expect our battery to give us enough power
-to allow the robot to operate for at least 10 minutes at a time.\\
+to allow the robot to operate for approximately 40 minutes at a time under moderate usage.\\
 
-\xxx{In the interest of safety, we have included in the power distribution
-system a kill switch that is triggered by physically pulling a bright orange
-lanyard.  This cuts the power from the battery to all systems of the robot.}\\
+A 120A breaker serves as the main power switch for the robot. The user is able to completely disconnect the robot from power by pressing the reset button on this breaker. 
 
-\begin{figure}[h!]
-  \centering
-  \includestandalone[width=0.8\textwidth]{./tikz-figures/software-overview}
-  \caption{Software System Diagram}
-  \label{fig:system_diagram}
-\end{figure}
 
-\begin{figure}[h!]
-  \centering
-  \includestandalone[width=0.8\textwidth]{./tikz-figures/electroncs-overview}
-  \caption{Electrical System Diagram}
-  \label{fig:e_system}
-\end{figure}
 
 \section{Performance Optimization and Design of System Components}
 \label{sec:optimization}
