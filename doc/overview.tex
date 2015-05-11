@@ -1,4 +1,4 @@
-\documentclass[letterpaper,12pt]{article}
+\documentclass[letterpaper,12pt]{report}
 
 \usepackage[margin=1.0in]{geometry}
 \usepackage{multirow}
@@ -11,20 +11,20 @@
 
 \setlength\parindent{0pt}
 
+\newcommand{\botname}{Comet Cannon }
 \newcommand{\specialcell}[2][c]{\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 \newcommand{\xxx}[1]{{\color{red}\bf #1}}
-\newcommand{\AxisRotator}[1][rotate=0]{\tikz [x=0.25cm,y=0.60cm,line width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
+\newcommand{\AxisRotator}[1][rotate=0]{\tikz [x=0.25cm,y=0.60cm,line
+        width=.2ex,-stealth,#1] \draw (0,0) arc (-150:150:1 and 1);}
 
 \begin{document}
 
-\title{\textbf{T-Shirt Cannon Robot User Guide}}
-\author{Hazen Eckert \hspace{3mm} Omar Hasan \hspace{3mm} Ryan Marcotte \hspace{3mm} Ridhwaan Rahman}
+\title{\textbf{\botname Robot User Guide}}
+\author{Hazen Eckert \hspace{3mm} Omar Hasan \hspace{3mm} Ryan Marcotte
+        \hspace{3mm} Ridhwaan Rahman}
+
 \date{\today}
 \maketitle
-
-\begin{center}
-    \includegraphics[width=15cm]{./pics/chassis/robot.jpg}
-\end{center}
 
 \pagebreak
 
@@ -32,10 +32,10 @@
 The purpose of this document is to both instruct the user on how to operate the
 robot as well as inform them about its various quirks. At the time of this
 document's writing, the repository that contains the source code for the
-robot's processors as well as for the Java app that is used to control it
-can be found here (\url{https://github.com/cometcannon/tshirt-cannon-robot}).
+robot's processors as well as for the Java app that is used to control it can
+be found here (\url{https://github.com/cometcannon/tshirt-cannon-robot}).
 Should the link to the repo change, one might be able to find it by searching
-github for an organization named "commetcannon".\\
+github for an organization named ``commetcannon''.\\
 
 If you find anything wrong with this document and you know LaTeX, feel free to
 correct it. And finally, if you have any questions or concerns, feel free to
@@ -52,26 +52,49 @@ You can also try to contact one of the team members:\\
 \end{center}
 \addcontentsline{toc}{section}{Preface}
 
+\begin{figure}[!h]
+\centering
+    \includegraphics[width=14cm]{./pics/chassis/robot.jpg}
+    \caption{The \botname at Synergy Park North (SPN)}
+\end{figure}
+
 \pagebreak
 \tableofcontents
 \pagebreak
 
-\section{System Design Overview}
+\chapter{System Design Overview}
+The system design for the \botname can be separated and analyzed individually.
+These components are in order: Mechanical, Electrical, and Software. In the
+following sections, the conceptual design of the robot will be made clear.
+The physical components and their specifications will be presented in the
+chapters that follow this one.
 
-\subsection{Mechanical Design Overview}
-\subsubsection{Velocity Kinematics}
+\section{Mechanical Design Overview}
+The mechanical design requirements are as follows:
+
+\begin{enumerate}
+    \item Move from one point to another on a 2d plane.
+    \item Launch soft projectiles at a controllable range of distances from
+        itself. This range would preferably be from around 10 feet to 100 feet.
+\end{enumerate}
+
+As one can imagine, there are many ways to satisfy these requirements that
+don't require ingenuity. The following design took many factors, such as cost,
+convenience, and simplicity into account. To satisfy 1, the robot was designed
+to be 4-wheel drive. It was first imagined to have a car-like chassis.
+Additionally, since the \botname was first envisioned to be used in UTD's
+basketball gym,
+
+\subsection{Velocity Kinematics}
 \label{sec:ar9331_vel_kin}
 
 In order to command a desired robot velocity,
 \begin{math}
-  v=
-  \begin{bmatrix}
-    v_x \\
-    v_y \\
-    \omega_z
-  \end{bmatrix}
+    v= [ v_x \quad v_y \quad \omega_z ]^T
 \end{math}
-, we calculate the wheel velocities as shown in Equations \ref{eq:rw_to_v}-\ref{eq:v_wheel_4}, according to Figure \ref{fig:robot_top_view}.
+, we calculate the wheel velocities as shown in Equations
+\ref{eq:rw_to_v}-\ref{eq:v_wheel_4}, according to Figure
+\ref{fig:robot_top_view}.
 
 \begin{figure}[h!]
   \centering
@@ -120,7 +143,7 @@ In order to command a desired robot velocity,
   \label{tab:motor_nums}
 \end{table}
 
-\subsection{Electrical Design Overview}
+\section{Electrical Design Overview}
 \begin{figure}[h!]
   \centering
   \includestandalone[width=0.8\textwidth]{./tikz-figures/electroncs-overview}
@@ -128,7 +151,7 @@ In order to command a desired robot velocity,
   \label{fig:e_system}
 \end{figure}
 
-\subsection{Software Design Overview}
+\section{Software Design Overview}
 \begin{figure}[h!]
   \centering
   \includestandalone[width=0.8\textwidth]{./tikz-figures/software-overview}
@@ -136,8 +159,8 @@ In order to command a desired robot velocity,
   \label{fig:system_diagram}
 \end{figure}
 
-\section{Mechanical Components}
-\subsection{Chassis}
+\chapter{Mechanical Components}
+\section{Chassis}
 \begin{center}
     \includegraphics[width=11cm]{pics/chassis/andymark_chassis.jpg}
 \end{center}
@@ -145,8 +168,8 @@ In order to command a desired robot velocity,
 The Robot's Chassis is the AndyMark C-Chassis with Mecanum Wheel Drive. This
 chassis was chosen among others because of its price, modularity, and size.
 
-\subsubsection{Assembly}
-\subsubsection{References}
+\subsection{Assembly}
+\subsection{References}
 
 \begin{table}[h!]
   \begin{tabular}{| c | c |}
@@ -159,24 +182,24 @@ chassis was chosen among others because of its price, modularity, and size.
   \label{tab:fire_cmd_msg}
 \end{table}
 
-\subsection{T-Shirt Cannon}
+\section{T-Shirt Cannon}
 \begin{center}
     \includegraphics[width=11cm]{pics/cannon/blowhard_cannon.jpg}
 \end{center}
 
-\section{Electrical Components}
+\chapter{Electrical Components}
 
-\subsection{Microcontrollers}
-\subsubsection{AR9331}
+\section{Microcontrollers}
+\subsection{AR9331}
 
-\subsubsection{Serial Communication}
+\subsection{Serial Communication}
 \label{sec:ar9331_serial_com}
 The AR9331 and ATMega32U4 communicate via serial. To do this, we open the proper
 serial device (\texttt{/dev/ttyATH0}) and use the straightforward
 \texttt{write()} command. No further configuration of the serial device is
 necessary.
 
-\subsubsection{ATmega32u4}
+\subsection{ATmega32u4}
 
 \paragraph{Serial Communication}
 \label{sec:atmega_serial_com}
@@ -186,14 +209,14 @@ the ATmega chip and a computer connected via USB. In the former case, we read
 and write to \texttt{Serial1}, whereas in the latter, we utilize the typical
 \texttt{Serial}.
 
-\subsubsection{Raspberry Pi}
+\subsection{Raspberry Pi}
 
-\section{Software Components}
-\subsection{Java Application}
+\chapter{Software Components}
+\section{Java Application}
 
-\subsection{Network Protocols}
+\section{Network Protocols}
 
-\subsubsection{Message Formats}
+\subsection{Message Formats}
 
 \paragraph{Computer to Robot}
 \label{sec:comp_robot_msg}
@@ -381,25 +404,25 @@ and write to \texttt{Serial1}, whereas in the latter, we utilize the typical
 \paragraph{ATmega32u4 to AR9331}
 \label{sec:mega_ath_msg}
 
-\section{Operating the Robot}
+\chapter{Operating the Robot}
 
-\subsection{Running the video stream from outside the app}
+\section{Running the video stream from outside the app}
 nc 192.168.1.1 5001 | mplayer -fps 60 -cache 1024 -
 
-\section{Troubleshooting}
+\chapter{Troubleshooting}
 
-\subsection{Mechanical Issues}
-\subsubsection{Chassis}
-\subsubsection{T-Shirt Cannon}
+\section{Mechanical Issues}
+\subsection{Chassis}
+\subsection{T-Shirt Cannon}
 
 \begin{center}
     \includegraphics[width=11cm]{pics/cannon/broken_release_valve.jpg}
 \end{center}
 
-\subsection{Electrical Issues}
+\section{Electrical Issues}
 
-\subsection{Software Issues}
-\subsubsection{Site to install xbox controller drivers}
+\section{Software Issues}
+\subsection{Site to install xbox controller drivers}
 OSX: http://tattiebogle.net/index.php/ProjectRoot/Xbox360Controller/OsxDriver
 
 
