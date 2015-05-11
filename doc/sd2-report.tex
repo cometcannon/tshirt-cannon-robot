@@ -169,7 +169,7 @@ a 12 VDC battery, a boost converter to supply 24 VDC and a buck converter to
 supply 5 VDC. The main requirement for the power subsystem was to have enough
 power for at least 10 minutes of high activity usage. Beyond that requirement,
 our 24 VDC electronics demand at least 1.5 A and our 5VDC electronics require
-at least 2 A.
+at least 2 A.\\
 
 The control subsystem consists of the two logic boards that provide the
 processing power for the on board software. The Arduino Yun runs the control
@@ -179,7 +179,7 @@ network. These boards communicate with the user base station to receive
 commands and to present the user with feedback. The requirement for this
 subsystem was that it should be able to receive command from at least 50 ft
 away from the base station while streaming video and 100 ft without the video
-stream.
+stream.\\
 
 The remaining electronics are the control circuits for the mechanical system.
 The electronic speed controllers (ESCs) allow the Arduino Yun to control the
@@ -190,7 +190,7 @@ pressure regulation.  Encoders, which are present but not implemented for
 reasons explained in Section 4.2, provide wheel rotation information back to
 the Arduino for velocity control. Finally, a piezo buzzer acts as a horn. There
 were no specific requirements for these components as they were constructed as
-solutions to meet other requirements.
+solutions to meet other requirements.\\
 
 \begin{figure}[h!]
   \centering
@@ -209,7 +209,7 @@ responds to commands from the Atheros to set the velocity of the robot, trigger
 and charge the cannon, and provide diagnostic information such as tank
 pressure. The software on the Atheros chip is mainly responsible for relaying
 commands from the base station to the ATmega and providing status updates to
-the bases station from the ATmega.
+the bases station from the ATmega.\\
 
 The Raspberry Pi is configured to provide the wireless network to which the
 base station and Arduino Yun connect. It is additionally responsible for
@@ -217,7 +217,7 @@ providing a live video stream from the robot to the base station. The base
 station, which consists of a Linux or Mac-based laptop and an Xbox controller,
 provides the user with and intuitive controller-based interface for controlling
 the robot and graphical user interface to provide the video stream and robot
-status information.
+status information.\\
 
 \begin{figure}[h!]
   \centering
@@ -304,10 +304,11 @@ acts as a horn. The prototyping board is pictured below.\\
 
 A Raspberry Pi single board computer provides wireless networking and video
 streaming to the robot. Originally, the network was hosted by the Arduino Yun.
-However, testing revealed that the signal strength of the Yun's network did not satisfy
-our design requirements.  The network was then hosted by the Raspberry Pi using
-an USB wireless adapter with a stronger antenna. This enabled us to achieve a maximum
-range of 75ft with a video stream and 150ft without a video stream.
+However, testing revealed that the signal strength of the Yun's network did not
+satisfy our design requirements.  The network was then hosted by the Raspberry
+Pi using an USB wireless adapter with a stronger antenna. This enabled us to
+achieve a maximum range of 75ft with a video stream and 150ft without a video
+stream.\\
 
 In the software of the control electronics are several safety power shutoffs.
 If communication ceases between the Atheros and the ATmega or between the user
@@ -528,7 +529,13 @@ distance to the closest object. If the sensor indicates that an object is in the
 path of the cannon, the MCU disables the cannon's triggering mechanism.
 
 \subsubsection{Recharging Circuit}
-\xxx{Omar, write me}
+Currently, in order to recharge the robot's battery, one must remove the
+battery from the robot, which requires unscrewing two bolts. It would be ideal
+if a charging circuit were included on the robot so that one doesn't have to
+remove this battery. We envision plugging the robot into a wall socket and
+letting it charge overnight. Google `Battery University' for more info about
+charging lead acid batteries. You can also google `Lead Acid Battery Charger'
+for examples of these types of chargers.
 
 \subsubsection{Turbo Mode}
 The robot has a top speed of around 6 mph in the forward direction and 4 mph
