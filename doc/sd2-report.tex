@@ -7,6 +7,14 @@
 \usepackage{hyperref}
 \usepackage{pdfpages}
 \usepackage{standalone}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RE,LO]{EE 4389 Senior Design II Final Report}
+\fancyhead[LE,RO]{Teleoperated Mobile Garment Accelerator}
+\fancyfoot[RE,LO]{Eckert, Hasan, Marcotte, and Rahman}
+\fancyfoot[LE,RO]{\thepage}
 
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
@@ -296,22 +304,108 @@ In order to command a desired robot velocity,
 
 \section{Project Implementation, Operation, and Assessment}
 \label{sec:implopassess}
-\xxx{Details of implementation} \\
-\xxx{Operational test results} \\
-\xxx{Evaluation of results relative to design criteria (how well did it do?)} \\
-\xxx{What changes are suggested by design results}
+
+\subsection{Proposed Deliverables}
+At the beginning of the semester, we outlined the following deliverables for our
+project.
+
+\begin{itemize}
+\item The assembled robot, with the following functionality:
+  \begin{itemize}
+  \item Capability to move laterally in response to remotely issued input commands.
+  \item Fixed-position cannon capable of being triggered remotely.
+  \item Emergency kill switch mechanism to manually disconnect power to the
+    robot's motors.
+  \end{itemize}
+\item The accompanying software package, which will include:
+  \begin{itemize}
+  \item Graphical user interface with embedded video stream from robot and
+    ability to issue remote commands.
+  \item Network setup to allow for communication between the user's computer and
+    the robot.
+  \item Utilities for user to monitor low-level robot activities.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Results}
+We have achieved all of the deliverables outlined in the previous section. The
+following sections show how we have achieved them.
+
+\subsubsection{Robot Motion}
+The robot is certainly capable of being driven remotely. It is quite responsive
+to the user's controls and moves very nimbly. It has a maximum speed of
+approximately 6 mph in the forward direction and 4 mph laterally. Teleoperation
+of the robot's motion is one of the system's most robust components at this
+point.
+
+\subsubsection{Cannon}
+The cannon is currently fixed to the frame of the robot at a 45-degree
+angle. Through the use of solenoids, we are able to trigger the cannon
+electronically. The user can do this by holding down both triggers on the
+controller. The cannon is capable of firing up to 150 feet at full
+pressure. This range can also be scaled back by decreasing the pressure in the
+tank.
+
+\subsubsection{Kill Switch}
+Our kill switch mechanism is still very similar to our original implementation:
+the robot's motors can be shut off by pressing a button on the circuit
+breaker. Though this may not be the easiest kill switch to utilize, it is
+effective and has worked well in our testing. In addition to the hardware kill
+switch, we also have the capability of sending software commands to turn off the
+motors. Furthermore, we have mechanisms in place to shut off the robot if it
+loses its connection with the user's laptop.
+
+\subsubsection{Graphical User Interface}
+Our desktop application does have a graphical user interface that displays a
+video stream and some information to the user. Though the interface is minimal,
+it still has useful information and capabilities. The GUI is shown in Figure
+\ref{fig:gui}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\textwidth]{pics/gui.png}
+  \caption{Graphical User Interface}
+  \label{fig:gui}
+\end{figure}
+
+\subsubsection{Network}
+The mobile ad hoc network that is set up by the microcontrollers does allow them
+to communicate with the user. The network has a range of approximately 75 feet
+while streaming video and approximately 150 feet without video streaming.
+
+\subsubsection{Monitoring Utilities}
+We have some minimalist utilities for monitoring the robot remotely. If the user
+remotely logs into the robot, they can access information about the commands it
+is receiving and executing as well as feedback about the pressure in the
+cannon's tank.
+
 
 \section{Final Scope of Work Statement}
 \label{sec:finalscope}
-\xxx{Summarize what has been done} \\
-\xxx{Summarize what still needs to be done} \\
-\xxx{Lessons learned and suggestions for future activities} \\
-\xxx{Describe any special details of the design that only you would know} \\
-\xxx{Related project management issues} \\
-\xxx{Address complete system life-cycle issues (marketing, sales, service, retirement)}
 
 \subsection{Summary of Project Work}
+\subsubsection{Mechanical}
+Our project had a substantial mechanical engineering component to it. We
+researched, selected, and assembled the chassis and wheels. We purchased a
+t-shirt cannon and modified it to be able to trigger electronically. We then
+mounted the cannon to the frame of the robot.
 
+\subsubsection{Electrical}
+We designed and implemented several circuits as a part of this project. We have
+electronic speed controllers that are signaled by the microcontroller and drive
+the wheel motors. We built circuits that allow for electronically triggering the
+cannon through the use of solenoids. We also added a piezo buzzer that acts as a
+horn for the robot.
+
+\subsubsection{Software}
+We developed software for both chips on the Arduino Yun as well as on the user's
+laptop. On the ATmega chip, we wrote software that receives commands from the
+Atheros chip and controls the various circuits of the robot, including the speed
+controllers, cannon pneumatics, and horn. We developed a daemon for the Atheros
+chip that receives commands from the user via a wireless network and passes them
+along to the ATmega chip. Finally, on the computer we wrote a desktop
+application with a graphical user interface that can receive inputs from an XBox
+controller and send them via a wireless network to the robot.
 
 \subsection{Future Work}
 \subsubsection{Network Improvements}
@@ -414,34 +508,6 @@ mobile application, particularly if the user is also mobile. To avoid the
 trouble of creating separate applications to support the various mobile
 platforms (iOS, Android, Windows), it may be preferable to create a
 browser-based application.
-
-\subsection{Cannon}
-The cannon we purchased has been tested manually and can achieve the desired
-range of 20 to 150 feet with a capacity of at least 20 shots. The electronic
-triggering and pressure regulation components have yet to be assembled and
-tested. This will be a priority task for next semester. Once this is completed
-we will mount the cannon onto the chassis.\\
-
-\subsection{Chassis, Control Electronics, and Power Distribution System}
-The chassis and the power distribution system have been assembled. The control
-electronics have been connected to the motors and encoder. The drive system has
-yet to be tested due to either defects in the motor controllers or bugs in the
-micro controller code. Next semester we hope to fix this issue and test our
-maximum velocity. The closed loop control, battery monitoring, and other
-software will be implemented next semester.\\
-
-\subsection{User Interface}
-\xxx{The current user interface is text based, keyboard controlled, and runs
-through a wireless SSH connection to the Atheros chip. We are able to establish
-communication between the Atheros and the ATmega and send commands to change
-desired motor velocities. Video streaming has been achieved and can be viewed
-through the browser on a computer connected to the same network as the
-Raspberry Pi. Next semester we will create the user application on a personal
-computer and display the video stream through that application’s graphical user
-interface. We will write the server application on the Atheros that receives
-messages from the user application and implement a full message protocol for
-the communication between the Atheros and the ATmega and the user application
-and the Atheros.}\\
 
 \section{Cost Estimation}
 
