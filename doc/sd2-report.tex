@@ -7,6 +7,14 @@
 \usepackage{hyperref}
 \usepackage{pdfpages}
 \usepackage{standalone}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[RE,LO]{EE 4389 Senior Design II Final Report}
+\fancyhead[LE,RO]{Teleoperated Mobile Garment Accelerator}
+\fancyfoot[RE,LO]{Eckert, Hasan, Marcotte, and Rahman}
+\fancyfoot[LE,RO]{\thepage}
 
 \usetikzlibrary{shapes.geometric, arrows, fit}
 
@@ -18,9 +26,9 @@
 
 \begin{document}
 
-\title{\textbf{EE 4388 Senior Design II\\Semester Report}}
+\title{\textbf{EE 4389 Senior Design II\\Semester Report}}
 \author{Hazen Eckert \hspace{3mm} Omar Hasan \hspace{3mm} Ryan Marcotte \hspace{3mm} Ridhwaan Rahman}
-\date{May 11, 2015}
+\date{11 May 2015}
 \maketitle
 
 \begin{center}
@@ -346,47 +354,210 @@ In order to command a desired robot velocity,
 
 \section{Project Implementation, Operation, and Assessment}
 \label{sec:implopassess}
-\xxx{Details of implementation} \\
-\xxx{Operational test results} \\
-\xxx{Evaluation of results relative to design criteria (how well did it do?)} \\
-\xxx{What changes are suggested by design results}
+
+\subsection{Proposed Deliverables}
+At the beginning of the semester, we outlined the following deliverables for our
+project.
+
+\begin{itemize}
+\item The assembled robot, with the following functionality:
+  \begin{itemize}
+  \item Capability to move laterally in response to remotely issued input commands.
+  \item Fixed-position cannon capable of being triggered remotely.
+  \item Emergency kill switch mechanism to manually disconnect power to the
+    robot's motors.
+  \end{itemize}
+\item The accompanying software package, which will include:
+  \begin{itemize}
+  \item Graphical user interface with embedded video stream from robot and
+    ability to issue remote commands.
+  \item Network setup to allow for communication between the user's computer and
+    the robot.
+  \item Utilities for user to monitor low-level robot activities.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Results}
+We have achieved all of the deliverables outlined in the previous section. The
+following sections show how we have achieved them.
+
+\subsubsection{Robot Motion}
+The robot is certainly capable of being driven remotely. It is quite responsive
+to the user's controls and moves very nimbly. It has a maximum speed of
+approximately 6 mph in the forward direction and 4 mph laterally. Teleoperation
+of the robot's motion is one of the system's most robust components at this
+point.
+
+\subsubsection{Cannon}
+The cannon is currently fixed to the frame of the robot at a 45-degree
+angle. Through the use of solenoids, we are able to trigger the cannon
+electronically. The user can do this by holding down both triggers on the
+controller. The cannon is capable of firing up to 150 feet at full
+pressure. This range can also be scaled back by decreasing the pressure in the
+tank.
+
+\subsubsection{Kill Switch}
+Our kill switch mechanism is still very similar to our original implementation:
+the robot's motors can be shut off by pressing a button on the circuit
+breaker. Though this may not be the easiest kill switch to utilize, it is
+effective and has worked well in our testing. In addition to the hardware kill
+switch, we also have the capability of sending software commands to turn off the
+motors. Furthermore, we have mechanisms in place to shut off the robot if it
+loses its connection with the user's laptop.
+
+\subsubsection{Graphical User Interface}
+Our desktop application does have a graphical user interface that displays a
+video stream and some information to the user. Though the interface is minimal,
+it still has useful information and capabilities. The GUI is shown in Figure
+\ref{fig:gui}.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\textwidth]{pics/gui.png}
+  \caption{Graphical User Interface}
+  \label{fig:gui}
+\end{figure}
+
+\subsubsection{Network}
+The mobile ad hoc network that is set up by the microcontrollers does allow them
+to communicate with the user. The network has a range of approximately 75 feet
+while streaming video and approximately 150 feet without video streaming.
+
+\subsubsection{Monitoring Utilities}
+We have some minimalist utilities for monitoring the robot remotely. If the user
+remotely logs into the robot, they can access information about the commands it
+is receiving and executing as well as feedback about the pressure in the
+cannon's tank.
+
 
 \section{Final Scope of Work Statement}
 \label{sec:finalscope}
-\xxx{Summarize what has been done} \\
-\xxx{Summarize what still needs to be done} \\
-\xxx{Lessons learned and suggestions for future activities} \\
-\xxx{Describe any special details of the design that only you would know} \\
-\xxx{Related project management issues} \\
-\xxx{Address complete system life-cycle issues (marketing, sales, service, retirement)}
 
-\subsection{T-Shirt Cannon}
-The cannon we purchased has been tested manually and can achieve the desired
-range of 20 to 150 feet with a capacity of at least 20 shots. The electronic
-triggering and pressure regulation components have yet to be assembled and
-tested. This will be a priority task for next semester. Once this is completed
-we will mount the cannon onto the chassis.\\
+\subsection{Summary of Project Work}
+\subsubsection{Mechanical}
+Our project had a substantial mechanical engineering component to it. We
+researched, selected, and assembled the chassis and wheels. We purchased a
+t-shirt cannon and modified it to be able to trigger electronically. We then
+mounted the cannon to the frame of the robot.
 
-\subsection{Chassis, Control Electronics, and Power Distribution System}
-The chassis and the power distribution system have been assembled. The control
-electronics have been connected to the motors and encoder. The drive system has
-yet to be tested due to either defects in the motor controllers or bugs in the
-micro controller code. Next semester we hope to fix this issue and test our
-maximum velocity. The closed loop control, battery monitoring, and other
-software will be implemented next semester.\\
+\subsubsection{Electrical}
+We designed and implemented several circuits as a part of this project. We have
+electronic speed controllers that are signaled by the microcontroller and drive
+the wheel motors. We built circuits that allow for electronically triggering the
+cannon through the use of solenoids. We also added a piezo buzzer that acts as a
+horn for the robot.
 
-\subsection{User Interface}
-\xxx{The current user interface is text based, keyboard controlled, and runs
-through a wireless SSH connection to the Atheros chip. We are able to establish
-communication between the Atheros and the ATmega and send commands to change
-desired motor velocities. Video streaming has been achieved and can be viewed
-through the browser on a computer connected to the same network as the
-Raspberry Pi. Next semester we will create the user application on a personal
-computer and display the video stream through that application’s graphical user
-interface. We will write the server application on the Atheros that receives
-messages from the user application and implement a full message protocol for
-the communication between the Atheros and the ATmega and the user application
-and the Atheros.}\\
+\subsubsection{Software}
+We developed software for both chips on the Arduino Yun as well as on the user's
+laptop. On the ATmega chip, we wrote software that receives commands from the
+Atheros chip and controls the various circuits of the robot, including the speed
+controllers, cannon pneumatics, and horn. We developed a daemon for the Atheros
+chip that receives commands from the user via a wireless network and passes them
+along to the ATmega chip. Finally, on the computer we wrote a desktop
+application with a graphical user interface that can receive inputs from an XBox
+controller and send them via a wireless network to the robot.
+
+\subsection{Future Work}
+\subsubsection{Network Improvements}
+Under our current implementation, the user connects a laptop to a mobile ad hoc
+network to which the Raspberry Pi and Arduino Yun are already connected. While
+our configuration does work, its performance is suboptimal and could be
+improved. The largest problem plaguing the network is that video streaming is
+very bandwidth-intensive. This causes the video stream to have large amounts of
+latency at times, and sometimes this latency seeks into the controls of the
+robot as well. Video streaming will always be bandwidth-intensive, and video
+streaming through a mobile ad hoc network will always be troublesome. One
+improvement that could be made, though, is to switch the transport protocol of
+the video stream from TCP to UDP. TCP has more overhead than UDP, which can
+cause large amounts of latency, particularly as a link deteriorates. Even if the
+video streaming performance is not optimal, changes could be made so that the
+video streaming does not affect the robot controls as drastically. Namely, we
+could introduce Quality of Service considerations into the network devices such
+that the control packets are prioritized over the video stream packets.
+
+\subsubsection{Automated Cannon Reloading}
+One of the most desirable additions to the robot would be a mechanism that
+allows automated reloading of the cannon. When we demonstrate the cannon to the
+public, this is one of the most requested features. It would be very cool to
+have the robot be able to fire a volley of t-shirts before having to return to
+the user for reloading. Though this is highly desirable, it is also very
+difficult. We discussed a few possibilities for this, including a conveyor belt
+system and a Howitzer-style rotating barrels setup. Both of these would likely
+require a team of mechanical engineers to implement effectively.
+
+\subsubsection{Tilting Cannon Mount}
+Another further refinement regarding the cannon is a mechanism to be able to
+tilt the cannon. Currently, the cannon is fixed at a 45-degree angle. This does
+work sufficiently well for our application, since we can modulate the range of
+the shot through changes in the pressure in the cannon's tank. However, it would
+be cool for the user to be able to tilt the cannon up and down on command. This
+could be accomplished by hinging the back of the robot and using a linear
+actuator to tilt the front up and down.
+
+\subsubsection{Encoders}
+We purchased encoders for each of the wheels to report estimated wheel
+velocities. We experimented with them but had mixed results, largely due to
+communication problems between the chips of the Arduino Yun. Fixing these issues
+and installing the encoders onto the robot would allow for monitoring of the
+robot speed and for closed-loop control of that speed.
+
+\subsubsection{Remote Teloperation}
+Though this falls outside the bounds of the intended application for this robot,
+remote teleoperation would be a very interesting application. The user could
+utilize the video stream coming from the robot to monitor the robot's progress
+and send commands with the controller. We attempted to do this by connecting the
+robot to the school's network. However, due to the restrictions of the network's
+firewall, it is not possible to connect devices together on that particular
+network. A more robust solution would be to set up an internet-connected server
+dedicated to this purpose. Both the robot and the user would then just connect
+to the internet and access the server. The server would be able to relay
+commands from the user to the robot and send the video stream back to the user.
+
+\subsubsection{Computer Vision}
+Our original motivation for putting the camera on the robot was to provide a
+sensor for some computer vision applications. We ended up not really pursuing
+this due to time constraints, but there are many interesting possibilities. One
+option would be to implement a ``targeting'' mechanism by which the robot could
+autonomously aim and fire at targets based on their color. Another option would
+be to implement visual servoing as a closed-loop control mechanism for the
+robot.
+
+\subsubsection{Cannon Failsafe}
+One of our primary concerns throughout the project was ensuring the safety of
+the user and the public. Because we are firing projectiles at a high rate of
+speed, there is the potential for injury. The most concerning situation would be
+if a person was very close to the cannon and it was triggered. Currently, we are
+relying mainly on the judgment of the operator to avoid such incidents. However,
+safety measures should probably be implemented to make the cannon more failsafe
+in this regard. Specifically, we should have a mechanism that disables the
+cannon from firing if any object is within a certain range of it. The best idea
+that we had for implementing this was with a laser rangefinder that reported the
+distance to the closest object. If the sensor indicates that an object is in the
+path of the cannon, the MCU disables the cannon's triggering mechanism.
+
+\subsubsection{Recharging Circuit}
+\xxx{Omar, write me}
+
+\subsubsection{Turbo Mode}
+The robot has a top speed of around 6 mph in the forward direction and 4 mph
+laterally. However, we have limited the speed of the robot in software so that
+it can only move at approximately half of its maximum speed. We did this for
+several reasons, including safety and usability. However, it would be good for
+the full potential of this robot to be accessible to the user if desired. This
+could be implemented in the form of a ``Turbo Mode'' in which the user holds
+down a button on the controller to get a speed boost. In addition to software
+changes that must occur for this to be possible, we also need to add larger
+charging capacitors in order to counteract the large current draws that are
+demanded during quick accelerations.
+
+\subsubsection{Mobile Application}
+As we have driven the robot around campus, we have realized that it is actually
+quite burdensome to only be able to control it from a desktop application. From
+a usability perspective, it would be much nicer to have the option of using a
+mobile application, particularly if the user is also mobile. To avoid the
+trouble of creating separate applications to support the various mobile
+platforms (iOS, Android, Windows), it may be preferable to create a
+browser-based application.
 
 \section{Cost Estimation}
 
@@ -448,11 +619,11 @@ Total Cost: \$2600.68
 \subsection{Tasks}
 Completed:
 \begin{itemize}
-    \item Pressure sensing and control of the cannon's air tank
-    \item Software development on the Arduino Yun
-    \item Chassis Assembly
-    \item Video streaming
-    \item Solenoid as triggering mechanism
+\item Pressure sensing and control of the cannon's air tank
+\item Software development on the Arduino Yun
+\item Chassis Assembly
+\item Video streaming
+\item Solenoid as triggering mechanism
 \end{itemize}
 
 Future Work:
